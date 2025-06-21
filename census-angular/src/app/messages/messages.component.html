@@ -1,0 +1,20 @@
+<div class="row" *ngIf="show">
+    <div class="col-12">
+      <div *ngIf="type == 'ERROR'" class="alert alert-danger fade show d-flex align-items-center message-style" role="alert">
+        <i class="bi bi-x-circle-fill" style="margin-right: 0.5rem;"></i> {{ message }}
+      </div>
+  
+      <div *ngIf="type == 'WARNING'" class="alert alert-warning fade show d-flex align-items-center message-style" role="alert">
+        <i class="bi bi-exclamation-triangle-fill" style="margin-right: 0.5rem;"></i> {{ message }}
+      </div>
+  
+      <div *ngIf="type == 'INFO'" class="alert alert-primary fade show d-flex align-items-center message-style" role="alert">
+        <i class="bi bi-info-circle" style="margin-right: 0.5rem;"></i> {{ message }}
+      </div>
+
+      <div *ngIf="type == 'SUCCESS'" class="alert alert-success fade show d-flex align-items-center message-style" role="alert">
+        <i class="bi bi-info-circle" style="margin-right: 0.5rem;"></i> {{ message }}
+      </div>
+    </div>
+</div>
+  

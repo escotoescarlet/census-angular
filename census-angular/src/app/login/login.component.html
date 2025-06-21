@@ -1,0 +1,59 @@
+<app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="col-md-4">
+    <div class="card border input-square">
+      <div class="card-body container_spaces">
+        <div class="background"></div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+          <div class="col-md-12 mb-4 mt-3 text-center">
+            <img src="../../assets/images/Login_icono.svg" class="mb-1" width="38px" height="38px">
+            <br>
+            <span class="login-title">{{ 'login' | translate }}</span>
+          </div>
+
+          <div class="form-group mb-2">
+              <div class="input-group">
+                  <input type="text" formControlName="username" class="form-control form-control-sm input-text" id="username" [placeholder]="'username_placeholder' | translate">
+              </div>
+          </div>
+
+          <div class="form-group mb-2">
+            <div class="input-group">
+                <input type="password" formControlName="password" class="form-control form-control-sm input-text" id="password" [placeholder]="'password_placeholder' | translate">
+            </div>
+          </div>
+        
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-group form-check m-0">
+              <input type="checkbox" formControlName="rememberMe" class="form-check-input" id="rememberMe">
+              <label class="form-check-label small checkbox-style" style="color: #757575; text-decoration: none;" for="rememberMe">{{ 'remember_me' | translate }}</label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-block mb-2 w-100 custom-btn">{{ 'login' | translate }}</button>
+
+          <button type="button" (click)="goToSite()" class="btn custom-btn-return mb-3 w-100">{{ 'back' | translate }}</button>
+
+        </form>
+
+      </div>
+    </div>
+
+    <div class="row mt-2">
+
+      <div class="col-6 d-flex justify-content-start">
+        <a href="/signup" class="another-options space_left">{{ 'create_new_account' | translate }}</a>
+      </div>
+
+      <div class="col-6 d-flex justify-content-end">
+        <a [routerLink]="['/reset_password']" class="another-options space_right">{{ 'forgot_password' | translate }}</a>
+      </div>
+
+    </div> 
+
+  </div>
+</div>

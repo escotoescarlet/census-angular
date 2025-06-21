@@ -1,0 +1,66 @@
+<div class="col-auto" style="height: 100vh;">
+    <!-- Contenido del sidebar -->
+    <nav id="sidebar" class="bg-light" style="height: 100%;" [ngClass]="limitSpace ? 'maxium-size' : 'minium-size'">
+        <div class="sidebar-header ml-2">
+            <div class="row align-items-center mt-2" style="padding-left: 8px;">
+
+                <div class="col-12" style="margin-top: 1rem;" [ngClass]="limitSpace ? 'icon-alineation-full' : 'icon-alination-small'">
+                    <!-- Mostrar imagen por defecto si no hay avatar -->
+                    <img *ngIf="!avatar"
+                         [width]="avatarWidth"
+                         [height]="avatarHeight"
+                         class="avatar_style img-fluid"
+                         src="assets/images/Customer.svg"
+                         alt="Default User"/>
+                  
+                    <!-- Mostrar avatar si está disponible -->
+                    <img *ngIf="avatar"
+                         [width]="avatarWidth"
+                         [height]="avatarHeight"
+                         class="avatar_style img-fluid"
+                         [src]="avatar"
+                         alt="User Avatar"/>
+                </div>
+
+                <div class="col-12 mt-2" *ngIf="limitSpace">
+                    <p class="small mb-0 text-muted text-center title" style="font-weight: 700;">{{ name }}</p>
+                    <p class="text-muted small mt-1 text-center subtitle">{{ email }}</p>
+                </div>
+
+            </div>
+        </div>
+
+        <ul class="nav flex-column">
+            <li class="nav-item tab" *ngFor="let tab of tabs">
+                <a class="nav-link d-flex align-items-center justify-content-between" [routerLink]="tab.link">
+                    <div class="d-flex align-items-center">
+
+                        <i [class]="tab.icon" 
+                            [ngClass]="{
+                            'icon-notification': tab.name === 'Notifications' && tab.hasBadge && !limitSpace,
+                            'tab_icon': true
+                            }">
+                        </i>
+
+                        <span class="tab_name" *ngIf="limitSpace">
+                            {{ tab.name }}
+                        </span>
+                    </div>
+                    <!--<span class="badge rounded-pill bg-danger ms-2" *ngIf="tab.hasBadge && limitSpace">
+                        {{ tab.badgeCount }}
+                    </span>-->
+                </a>
+            </li>            
+            
+            <li class="nav-item tab">
+                <a class="nav-link">
+                    <div class="row" style="cursor: pointer;">
+                        <div class="col-12" (click)="logout()">
+                            <i class="tab_icon bi-power"></i> <span class="tab_name" *ngIf="limitSpace">Logout</span>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        </ul> 
+    </nav>
+</div>

@@ -1,0 +1,36 @@
+.message-style {
+    width: 500px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-size: 16px;
+    font-weight: bold;
+    color: white !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Colores tipo neón personalizados */
+.alert-danger {
+    background-color: #ff0033 !important; /* Neón rojo */
+    border-color: #ff0033 !important;
+    box-shadow: 0 0 10px #ff0033;
+}
+
+.alert-warning {
+    background-color: #d4ac0d !important; /* Neón amarillo */
+    border-color: #d4ac0d !important;
+    box-shadow: 0 0 10px #d4ac0d;
+}
+
+.alert-primary {
+    background-color: #00bfff !important; /* Neón azul */
+    border-color: #00bfff !important;
+    box-shadow: 0 0 10px #00bfff;
+}
+
+.alert-success {
+    background-color: #229954 !important; /* Neón verde */
+    border-color: #229954 !important;
+    box-shadow: 0 0 10px #229954;
+}
