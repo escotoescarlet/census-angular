@@ -1,16 +1,50 @@
-<app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
+<div class="container mt-4">
+  <h3>Resumen del Sistema</h3>
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-auto" style="padding: 0;">
-            <app-sidebar [body]="body"></app-sidebar>
-        </div>
-        
-        <!-- Contenido principal de la página -->
-        <div class="col">
-            <div class="container mt-4">
-            </div>
-        </div>
+  <div class="row my-3">
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5>Grupos Totales</h5>
+        <p>{{ data.groups_total }}</p>
+      </div>
     </div>
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5>Compañías Totales</h5>
+        <p>{{ data.companies_total }}</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5>Miembros Totales</h5>
+        <p>{{ data.members_total }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row my-3">
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5>Miembros Activos</h5>
+        <p>{{ data.members_active }}</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5>Miembros Inactivos</h5>
+        <p>{{ data.members_inactive }}</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card p-3">
+        <h5>Inscritos últimos 6 meses</h5>
+        <p>{{ totalEnrolled }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-4 p-4">
+    <h5>Miembros registrados por mes</h5>
+    <canvas id="miembrosChart"></canvas>
+  </div>
 </div>

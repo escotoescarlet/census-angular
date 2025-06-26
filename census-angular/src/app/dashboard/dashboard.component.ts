@@ -3,46 +3,78 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MessagesComponent } from '../messages/messages.component';
 import { Router } from '@angular/router';
 import { StorageService } from '../storage.service';
+import { HeaderNavComponent } from '../header-nav/header-nav.component';
+import { ServiceService } from '../service.service';
+import { Chart, registerables } from 'chart.js';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    SidebarComponent,
-    MessagesComponent
+    
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
 
-  public body: any = {};
-  public messageInfo: string = '';
-  public typeMessage: string = '';
-  public showMsg: boolean = false;
+  public data: any = {};
+  public totalEnrolled: number = 0;
 
-  constructor(private router: Router, 
-    private storage: StorageService) {
-  }
+  constructor(private service: ServiceService) {}
 
   ngOnInit(): void {
-    this.buildSidebar();
+    this.loadData();
   }
 
-  private buildSidebar() {
-    let data: any = this.storage.getItem('_user');
+  loadData() {
+    this.service.getDashboardData().subscribe((response: any) => {
+      this.data = response;
+    });
 
-    this.body = {
-      name: data?.name,
-      email: data?.email,
-      tabs: [
-        { name: 'Dashboard', link: '/home/dashboard', icon: 'bi bi-grid-1x2', hasBadge: false },
-        { name: 'Groups', link: '/home/groups', icon: 'bi bi-collection', hasBadge: false },
-        { name: 'Companies', link: '/home/companies', icon: 'bi bi-building', hasBadge: true, badgeCount: 0 },
-        { name: 'Members', link: '/home/members', icon: 'bi bi-people', hasBadge: false },
-        { name: 'Logs', link: '/home/logs', icon: 'bi bi-distribute-vertical', hasBadge: false },
-      ]
-    };
+    this.service.getTotalEnrolled().subscribe((response: any) => {
+      this.totalEnrolled = response.total;
+    });
+
+    this.buildChart();
   }
+
+  buildChart() {
+    this.service.getMembersByMonth().subscribe((data: any) => {
+      const labels = data.map((d: any) =>
+        new Date(d.mes).toLocaleString('default', { month: 'short', year: 'numeric' })
+      );
+      const valores = data.map((d: any) => parseInt(d.cantidad_miembros));
+
+      const ctx = document.getElementById('miembrosChart') as HTMLCanvasElement;
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Miembros por mes',
+            data: valores,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+  }
+
+
+
+
+
+
+
 
 }
