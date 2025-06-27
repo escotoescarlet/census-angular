@@ -5,6 +5,11 @@ import { Router } from '@angular/router';
 import { StorageService } from '../storage.service';
 import { HeaderNavComponent } from '../header-nav/header-nav.component';
 import { ServiceService } from '../service.service';
+import * as am5 from "@amcharts/amcharts5";
+import * as am5map from "@amcharts/amcharts5/map";
+import am5geodata_usaLow from "@amcharts/amcharts5-geodata/usaLow";
+import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
+
 import {
   Chart,
   BarElement,
@@ -16,7 +21,8 @@ import {
   LinearScale,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 } from 'chart.js';
 import { CommonModule } from '@angular/common';
 
@@ -39,7 +45,63 @@ export class DashboardComponent implements OnInit {
   public averageGrowth: number = 0;
 
   public membersByState: any[] = [];
+  private root!: am5.Root;
 
+  private stateNameToCode: Record<string, string> = {
+    ALABAMA: "AL",
+    ALASKA: "AK",
+    ARIZONA: "AZ",
+    ARKANSAS: "AR",
+    CALIFORNIA: "CA",
+    COLORADO: "CO",
+    CONNECTICUT: "CT",
+    DELAWARE: "DE",
+    FLORIDA: "FL",
+    GEORGIA: "GA",
+    HAWAII: "HI",
+    IDAHO: "ID",
+    ILLINOIS: "IL",
+    INDIANA: "IN",
+    IOWA: "IA",
+    KANSAS: "KS",
+    KENTUCKY: "KY",
+    LOUISIANA: "LA",
+    MAINE: "ME",
+    MARYLAND: "MD",
+    MASSACHUSETTS: "MA",
+    MICHIGAN: "MI",
+    MINNESOTA: "MN",
+    MISSISSIPPI: "MS",
+    MISSOURI: "MO",
+    MONTANA: "MT",
+    NEBRASKA: "NE",
+    NEVADA: "NV",
+    "NEW HAMPSHIRE": "NH",
+    "NEW JERSEY": "NJ",
+    "NEW MEXICO": "NM",
+    "NEW YORK": "NY",
+    "NORTH CAROLINA": "NC",
+    "NORTH DAKOTA": "ND",
+    OHIO: "OH",
+    OKLAHOMA: "OK",
+    OREGON: "OR",
+    PENNSYLVANIA: "PA",
+    "RHODE ISLAND": "RI",
+    "SOUTH CAROLINA": "SC",
+    "SOUTH DAKOTA": "SD",
+    TENNESSEE: "TN",
+    TEXAS: "TX",
+    UTAH: "UT",
+    VERMONT: "VT",
+    VIRGINIA: "VA",
+    WASHINGTON: "WA",
+    "WEST VIRGINIA": "WV",
+    WISCONSIN: "WI",
+    WYOMING: "WY",
+    "DISTRICT OF COLUMBIA": "DC",
+    "PUERTO RICO": "PR",
+    "VIRGIN ISLANDS": "VI"
+  };
 
   constructor(private service: ServiceService) {
     Chart.register(
@@ -52,7 +114,8 @@ export class DashboardComponent implements OnInit {
       LinearScale,
       Title,
       Tooltip,
-      Legend
+      Legend,
+      Filler
     );
   }
 
@@ -136,17 +199,125 @@ export class DashboardComponent implements OnInit {
   }
 
   buildMap(): void {
-    this.service.getMembersByState().subscribe(
-      (data: any) => {
-        console.log('Members by state:', data);
+    this.service.getMembersByState().subscribe((data: any) => {
+      if (this.root) this.root.dispose();
 
-        this.membersByState = data;
-      },
-      (error: any) => {
-        console.error('Error loading state members:', error);
-      }
-    );
+      this.root = am5.Root.new("chartdiv");
+      this.root.setThemes([am5themes_Animated.new(this.root)]);
+
+      const chart = this.root.container.children.push(
+        am5map.MapChart.new(this.root, {
+          panX: "none",
+          panY: "none",
+          wheelY: "none",
+          projection: am5map.geoAlbersUsa(),
+        })
+      );
+
+      const usaSeries = chart.series.push(
+        am5map.MapPolygonSeries.new(this.root, {
+          geoJSON: am5geodata_usaLow,
+          valueField: "value",
+          calculateAggregates: true,
+          idField: "id"
+        })
+      );
+
+      const bubbleSeries = chart.series.push(
+        am5map.MapPointSeries.new(this.root, {})
+      );
+
+      const nameToCode: Record<string, string> = {
+        "ALABAMA": "AL", "ALASKA": "AK", "ARIZONA": "AZ", "ARKANSAS": "AR", "CALIFORNIA": "CA",
+        "COLORADO": "CO", "CONNECTICUT": "CT", "DELAWARE": "DE", "FLORIDA": "FL", "GEORGIA": "GA",
+        "HAWAII": "HI", "IDAHO": "ID", "ILLINOIS": "IL", "INDIANA": "IN", "IOWA": "IA",
+        "KANSAS": "KS", "KENTUCKY": "KY", "LOUISIANA": "LA", "MAINE": "ME", "MARYLAND": "MD",
+        "MASSACHUSETTS": "MA", "MICHIGAN": "MI", "MINNESOTA": "MN", "MISSISSIPPI": "MS", "MISSOURI": "MO",
+        "MONTANA": "MT", "NEBRASKA": "NE", "NEVADA": "NV", "NEW HAMPSHIRE": "NH", "NEW JERSEY": "NJ",
+        "NEW MEXICO": "NM", "NEW YORK": "NY", "NORTH CAROLINA": "NC", "NORTH DAKOTA": "ND", "OHIO": "OH",
+        "OKLAHOMA": "OK", "OREGON": "OR", "PENNSYLVANIA": "PA", "RHODE ISLAND": "RI", "SOUTH CAROLINA": "SC",
+        "SOUTH DAKOTA": "SD", "TENNESSEE": "TN", "TEXAS": "TX", "UTAH": "UT", "VERMONT": "VT",
+        "VIRGINIA": "VA", "WASHINGTON": "WA", "WEST VIRGINIA": "WV", "WISCONSIN": "WI", "WYOMING": "WY",
+        "DISTRICT OF COLUMBIA": "DC", "PUERTO RICO": "PR", "VIRGIN ISLANDS": "VI"
+      };
+
+      usaSeries.events.once("datavalidated", () => {
+        usaSeries.mapPolygons.each((polygon: any) => {
+          const fullId = polygon.dataItem?.get("id"); // e.g., US-FL
+          const stateId = fullId?.split("-")[1]; // FL
+
+          console.log("Processing:", stateId);
+
+          if (!stateId) return;
+
+          const match = data.find((item: any) => {
+            let input = item.state.trim().toUpperCase();
+            if (input.length > 2) input = nameToCode[input] || input;
+            return input === stateId.toUpperCase();
+          });
+
+          console.log("Buscando match para:", stateId, "Encontrado:", match);
+
+          if (match) {
+            const geo = polygon.geoCentroid();
+            if (!geo) return;
+
+            const size = Math.max(Math.sqrt(match.members) * 1.5, 5);
+
+            const container = am5.Container.new(this.root, {
+              centerX: am5.p50,
+              centerY: am5.p50,
+              width: size * 2,
+              height: size * 2
+            });
+
+            const circle = am5.Circle.new(this.root, {
+              radius: size,
+              fill: am5.color(0x006BD1),
+              opacity: 0.7
+            });
+
+            circle.set("tooltipText", `${stateId}: ${match.members} members`);
+
+            const label = am5.Label.new(this.root, {
+              text: `${match.members}`,
+              centerX: am5.p50,
+              centerY: am5.p50,
+              fontSize: 12,
+              fill: am5.color(0xffffff),
+              fontWeight: "bold"
+            });
+
+            container.children.push(circle);
+            container.children.push(label);
+
+            const point = bubbleSeries.pushDataItem({
+              latitude: geo.latitude,
+              longitude: geo.longitude
+            });
+
+            bubbleSeries.bullets.push((_root, _dataItem) => {
+              return am5.Bullet.new(this.root, {
+                locationX: 0.5,
+                locationY: 0.5,
+                sprite: container
+              });
+            });
+          }
+        });
+      });
+    });
   }
+
+
+
+
+
+
+
+
+
+
 
   calcAverageGrowth(values: number[]) {
     let growthRates: number[] = [];
