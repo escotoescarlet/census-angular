@@ -1,50 +1,183 @@
 <div class="container mt-4">
-  <h3>Resumen del Sistema</h3>
 
-  <div class="row my-3">
+  <div class="row">
     <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Grupos Totales</h5>
-        <p>{{ data.groups_total }}</p>
-      </div>
+        <div class="card w-100 card-style">
+            <div class="card-body" style="padding-bottom: 0;">
+                <div class="row">
+                <div class="col-md-4">
+                    <i class="bi bi-buildings icon-style-orange"></i>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="section-number section-number-title-black">
+                                Total Groups
+                            </span>
+                        </div>
+                        <div class="col-md-12">
+                            <span class="section-number section-number-body-black">
+                                {{ data.groups_total }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
     </div>
+
     <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Compañías Totales</h5>
-        <p>{{ data.companies_total }}</p>
-      </div>
+        <div class="card w-100 card-style">
+            <div class="card-body" style="padding-bottom: 0;">
+                <div class="row">
+                <div class="col-md-4">
+                    <i class="bi bi-building icon-style-red"></i>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="section-number section-number-title-black">
+                                Total Companies
+                            </span>
+                        </div>
+                        <div class="col-md-12">
+                            <span class="section-number section-number-body-black">
+                                {{ data.companies_total }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
     </div>
+
     <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Miembros Totales</h5>
-        <p>{{ data.members_total }}</p>
-      </div>
+        <div class="card w-100 card-style">
+            <div class="card-body" style="padding-bottom: 0;">
+                <div class="row">
+                <div class="col-md-4">
+                    <i class="bi bi-person icon-style-green"></i>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="section-number section-number-title-black">
+                                Total Members
+                            </span>
+                        </div>
+                        <div class="col-md-12">
+                            <span class="section-number section-number-body-black">
+                                {{ data.members_total }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mt-2">
+        <div class="card w-100 card-style">
+            <div class="card-body" style="padding-bottom: 0;">
+                <div class="row">
+                <div class="col-md-4">
+                    <i class="bi bi-person-check icon-style-blue"></i>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="section-number section-number-title-black">
+                                Total Members Active
+                            </span>
+                        </div>
+                        <div class="col-md-12">
+                            <span class="section-number section-number-body-black">
+                                {{ data.members_active }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mt-2">
+        <div class="card w-100 card-style">
+            <div class="card-body" style="padding-bottom: 0;">
+                <div class="row">
+                <div class="col-md-4">
+                    <i class="bi bi-person-dash icon-style-purple"></i>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="section-number section-number-title-black">
+                                Total Members Inactive
+                            </span>
+                        </div>
+                        <div class="col-md-12">
+                            <span class="section-number section-number-body-black">
+                                {{ data.members_inactive }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mt-2">
+        <div class="card w-100 card-style">
+            <div class="card-body" style="padding-bottom: 0;">
+                <div class="row">
+                <div class="col-md-4">
+                    <i class="bi bi-person-plus icon-style-yellow"></i>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="section-number section-number-title-black">
+                                Enrolled Last 6 Month
+                            </span>
+                        </div>
+                        <div class="col-md-12">
+                            <span class="section-number section-number-body-black">
+                                {{ totalEnrolled }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
     </div>
   </div>
 
-  <div class="row my-3">
+  <div class="row mt-4">
     <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Miembros Activos</h5>
-        <p>{{ data.members_active }}</p>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Miembros Inactivos</h5>
-        <p>{{ data.members_inactive }}</p>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card p-3">
-        <h5>Inscritos últimos 6 meses</h5>
-        <p>{{ totalEnrolled }}</p>
-      </div>
-    </div>
-  </div>
+        <div class="card card-style-line">
+            <div class="row">
+                <div class="col-md-12 mt-2">
+                    <span class="section-number section-number-title-growth">
+                        Average Growth (Last 6 Months)
+                    </span>
 
-  <div class="card mt-4 p-4">
-    <h5>Miembros registrados por mes</h5>
-    <canvas id="miembrosChart"></canvas>
+                    <span class="section-number section-number-body-black" [ngClass]="averageGrowth > 0 ? 'growth-value-increase' : 'growth-value-decrease'">
+                        {{ averageGrowth | number:'1.0-0' }}%
+                    </span>
+                </div>
+
+                <div class="col-md-12">
+                    <canvas id="membersChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
   </div>
+  
 </div>

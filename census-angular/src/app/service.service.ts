@@ -64,4 +64,10 @@ export class ServiceService {
     );
   }
 
+  getMembersByState() {
+    return this.http.get(`${this.server}/dashboard/members_by_state`,
+      {headers: this.getAuthHeaders()}
+    );
+  }
+
 }
