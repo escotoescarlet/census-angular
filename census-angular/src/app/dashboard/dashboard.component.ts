@@ -43,6 +43,7 @@ export class DashboardComponent implements OnInit {
   public data: any = {};
   public totalEnrolled: number = 0;
   public averageGrowth: number = 0;
+  public topFive: any;
 
   public membersByState: any[] = [];
   private root!: am5.Root;
@@ -124,13 +125,9 @@ export class DashboardComponent implements OnInit {
   }
 
   loadData() {
-    this.service.getDashboardData().subscribe((response: any) => {
-      this.data = response;
-    });
-
-    this.service.getTotalEnrolled().subscribe((response: any) => {
-      this.totalEnrolled = response.total;
-    });
+    this.getTotalEnrolled();
+    this.getDashboardData();
+    this.getTopFiveStates();
 
     this.buildChart();
     this.buildMap();
@@ -275,7 +272,7 @@ export class DashboardComponent implements OnInit {
             });
 
             circle.set("tooltipText", `${stateId}: ${match.members} members`);
-            console.log('match.members', match.members);
+
             const label = am5.Label.new(this.root, {
               text: `${match.members}`,
               centerX: am5.p50,
@@ -354,6 +351,52 @@ export class DashboardComponent implements OnInit {
     return Math.ceil(growthRates.reduce((sum, g) => sum + g, 0) / growthRates.length);
   }
 
+  getTotalEnrolled() {
+    this.service.getTotalEnrolled().subscribe((response: any) => {
+      this.totalEnrolled = response.total;
+    });
+  }
+
+  getDashboardData() {
+    this.service.getDashboardData().subscribe((response: any) => {
+      this.data = response;
+    });
+  }
+
+  getTopFiveStates() {
+    this.service.getMembersByStateTop5().subscribe((data: any) => {
+      this.topFive = data;
+    }, (error: any) => {
+      console.log(error);
+    });
+  }
+
+  getStateNameFromCode(code: string): string | undefined {
+    const nameToCode: Record<string, string> = {
+      "ALABAMA": "AL", "ALASKA": "AK", "ARIZONA": "AZ", "ARKANSAS": "AR", "CALIFORNIA": "CA",
+      "COLORADO": "CO", "CONNECTICUT": "CT", "DELAWARE": "DE", "FLORIDA": "FL", "GEORGIA": "GA",
+      "HAWAII": "HI", "IDAHO": "ID", "ILLINOIS": "IL", "INDIANA": "IN", "IOWA": "IA",
+      "KANSAS": "KS", "KENTUCKY": "KY", "LOUISIANA": "LA", "MAINE": "ME", "MARYLAND": "MD",
+      "MASSACHUSETTS": "MA", "MICHIGAN": "MI", "MINNESOTA": "MN", "MISSISSIPPI": "MS", "MISSOURI": "MO",
+      "MONTANA": "MT", "NEBRASKA": "NE", "NEVADA": "NV", "NEW HAMPSHIRE": "NH", "NEW JERSEY": "NJ",
+      "NEW MEXICO": "NM", "NEW YORK": "NY", "NORTH CAROLINA": "NC", "NORTH DAKOTA": "ND", "OHIO": "OH",
+      "OKLAHOMA": "OK", "OREGON": "OR", "PENNSYLVANIA": "PA", "RHODE ISLAND": "RI", "SOUTH CAROLINA": "SC",
+      "SOUTH DAKOTA": "SD", "TENNESSEE": "TN", "TEXAS": "TX", "UTAH": "UT", "VERMONT": "VT",
+      "VIRGINIA": "VA", "WASHINGTON": "WA", "WEST VIRGINIA": "WV", "WISCONSIN": "WI", "WYOMING": "WY",
+      "DISTRICT OF COLUMBIA": "DC", "PUERTO RICO": "PR", "VIRGIN ISLANDS": "VI"
+    };
+
+    const codeToName: Record<string, string> = Object.entries(nameToCode).reduce((acc, [name, abbr]) => {
+      acc[abbr] = this.toTitleCase(name);
+      return acc;
+    }, {} as Record<string, string>);
+
+    return codeToName[code.toUpperCase()];
+  }
+
+  toTitleCase(str: string): string {
+    return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+  }
 
 
 }

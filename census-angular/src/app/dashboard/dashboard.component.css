@@ -94,5 +94,10 @@ canvas#membersChart {
     padding-right: 24px;
 }
 
+.topFiveStyle {
+    color: #00C2A6;
+    float: right;
+    margin-right: 24px;
+}
 
 

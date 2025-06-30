@@ -57,6 +57,13 @@ export class ServiceService {
     );
   }
 
+  getMembersByStateTop5() {
+    return this.http.get(
+      `${this.server}/dashboard/by_state`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getTotalEnrolled() {
     return this.http.get(
       `${this.server}/dashboard/total_enrolled_last_six_month`,
@@ -69,5 +76,12 @@ export class ServiceService {
       {headers: this.getAuthHeaders()}
     );
   }
+
+  getGroups() {
+    return this.http.get(`${this.server}/groups`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
 
 }
