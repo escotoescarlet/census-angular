@@ -1,0 +1,103 @@
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../../assets/webfonts/opensans_bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans Light';
+    src: url('../../assets/webfonts/opensans_light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.card-style {
+    background-color: rgb(249, 249, 249);
+    border: 1px solid #e8ebf0;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    border-radius: 0;
+    border-radius: 8px;
+}
+
+.section-number {
+    float: right;
+}
+
+.icon-style {
+    font-size: 5rem;
+    color: white;
+}
+
+.section-number-title-black {
+    font-size: larger;
+    color: rgb(163, 174, 208);
+}
+
+.section-number-body-black {
+    font-size: xxx-large;
+    color: rgb(43, 54, 116);
+}
+
+canvas#membersChart {
+  box-shadow: 0 4px 20px rgb(249, 249, 249);
+}
+
+.icon-style-blue {
+    font-size: 5rem;
+    color: #006BD1;
+}
+
+.icon-style-orange {
+    font-size: 5rem;
+    color: #EF802E;
+}
+
+.icon-style-green {
+    font-size: 5rem;
+    color: #00C2A6;
+}
+
+.icon-style-red {
+    font-size: 5rem;
+    color: #FF0000;
+}
+
+.icon-style-purple {
+    font-size: 5rem;
+    color: #9b59b6;
+}
+
+.icon-style-yellow {
+    font-size: 5rem;
+    color: #f1c40f;
+}
+
+.card-style-line {
+    background-color: rgb(249, 249, 249);
+    border: 1px solid #e8ebf0;
+}
+
+.growth-value-increase {
+    padding-right: 24px;
+    color: #00C2A6;
+}
+
+.growth-value-decrease {
+    padding-right: 24px;
+    color: #FF0000;
+}
+
+.section-number-title-growth {
+    font-size: larger;
+    color: rgb(163, 174, 208);
+    padding-right: 24px;
+}
+
+.topFiveStyle {
+    color: #00C2A6;
+    float: right;
+    margin-right: 24px;
+}
+
+
