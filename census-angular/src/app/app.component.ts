@@ -39,11 +39,11 @@ export class AppComponent implements OnInit {
       name: data?.name,
       email: data?.email,
       tabs: [
-        { name: 'Dashboard', link: '/home/dashboard', icon: 'bi bi-grid-1x2', hasBadge: false },
-        { name: 'Groups', link: '/home/groups', icon: 'bi bi-collection', hasBadge: false },
-        { name: 'Companies', link: '/home/companies', icon: 'bi bi-building', hasBadge: true, badgeCount: 0 },
-        { name: 'Members', link: '/home/members', icon: 'bi bi-people', hasBadge: false },
-        { name: 'Logs', link: '/home/logs', icon: 'bi bi-distribute-vertical', hasBadge: false },
+        { name: 'Dashboard', link: '/dashboard', icon: 'bi bi-grid-1x2', hasBadge: false },
+        { name: 'Groups', link: '/groups', icon: 'bi bi-collection', hasBadge: false },
+        { name: 'Companies', link: '/companies', icon: 'bi bi-building', hasBadge: true, badgeCount: 0 },
+        { name: 'Members', link: '/members', icon: 'bi bi-people', hasBadge: false },
+        { name: 'Logs', link: '/logs', icon: 'bi bi-distribute-vertical', hasBadge: false },
       ]
     };
   }

@@ -1,1 +1,110 @@
-<p>group works!</p>
+<div class="row justify-content-center">
+  <div class="col-md-11 d-flex align-items-center">
+    <i class="bi bi-collection me-2 icon-style"></i>
+    <span class="section-title">Groups</span>
+  </div>
+</div>
+
+<div class="row justify-content-center mt-2">
+  <div class="col-11 d-flex justify-content-between align-items-center">
+
+    <!-- Input de búsqueda al extremo izquierdo con ancho tipo col-6 -->
+    <div style="width: 50%;">
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control placeholder-input"
+          placeholder="Insert Plan Id or Company Name"
+          aria-label="Insert Plan Id or Company Name"
+          aria-describedby="button-addon2"
+        />
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+          <i class="bi bi-search me-2"></i>
+          <span class="search-btn">Search</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Botón al extremo derecho -->
+    <div>
+        <button type="button" class="btn custom-btn">
+            <i class="bi bi-plus-circle"></i>
+            New Group
+        </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="row justify-content-center table-row">
+
+  <div class="col-md-11">
+    <table class="table text-center">
+      <thead>
+        <tr>
+            <th scope="col" class="text-start">
+                <div class="d-flex align-items-center">
+                    <span class="section-number-title">Name</span>
+                    <button type="button" class="btn btn-link p-0 ms-2">
+                    <i class="bi bi-arrow-up"></i>
+                    </button>
+                </div>
+            </th>
+            <th scope="col" class="text-start">
+                <span class="section-number-title">Companies</span>
+            </th>
+            <th scope="col" class="text-start">
+                <span class="section-number-title">Status</span>
+            </th>
+            <th scope="col">
+                <span class="section-number-title">Actions</span>
+            </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let group of groups">
+            <th scope="row" class="text-start">
+                <span class="section-number-data">
+                    {{ group.name }}
+                </span>
+            </th>
+            <td class="text-start">
+                <span class="section-number-data">
+                    {{ group.companies_count }}
+                </span>
+            </td>
+            <td class="text-start">
+                <div class="form-check form-switch d-flex align-items-center">
+                    <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    [checked]="group.is_active == true"
+                    id="switchCheckChecked-{{ group.id }}" />
+                    
+                    <label
+                    class="form-check-label ms-2"
+                    [for]="'switchCheckChecked-' + group.id">
+                        <span class="section-number-data">Active</span>
+                    </label>
+                </div>
+            </td>
+            <td>
+                <button type="button" class="btn btn-link">
+                    <i class="bi bi-eye"></i>
+                </button>
+
+                <button type="button" class="btn btn-link">
+                    <i class="bi bi-pencil"></i>
+                </button>
+
+                <button type="button" class="btn btn-link">
+                    <i class="bi bi-trash3"></i>
+                </button>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

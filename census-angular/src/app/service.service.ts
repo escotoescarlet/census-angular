@@ -78,9 +78,9 @@ export class ServiceService {
   }
 
   getGroups() {
-    return this.http.get(`${this.server}/groups`, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.get(`${this.server}/groups`,
+      { headers: this.getAuthHeaders() }
+    );
   }
 
 
