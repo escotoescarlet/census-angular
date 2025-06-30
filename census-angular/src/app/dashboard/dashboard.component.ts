@@ -243,10 +243,8 @@ export class DashboardComponent implements OnInit {
 
       usaSeries.events.once("datavalidated", () => {
         usaSeries.mapPolygons.each((polygon: any) => {
-          const fullId = polygon.dataItem?.get("id"); // e.g., US-FL
-          const stateId = fullId?.split("-")[1]; // FL
-
-          console.log("Processing:", stateId);
+          const fullId = polygon.dataItem?.get("id");
+          const stateId = fullId?.split("-")[1];
 
           if (!stateId) return;
 
@@ -256,13 +254,12 @@ export class DashboardComponent implements OnInit {
             return input === stateId.toUpperCase();
           });
 
-          console.log("Buscando match para:", stateId, "Encontrado:", match);
-
           if (match) {
             const geo = polygon.geoCentroid();
             if (!geo) return;
 
-            const size = Math.max(Math.sqrt(match.members) * 1.5, 5);
+            //const size = Math.max(Math.sqrt(match.members) * 1.5, 5);
+            const size = 3;
 
             const container = am5.Container.new(this.root, {
               centerX: am5.p50,
@@ -278,7 +275,7 @@ export class DashboardComponent implements OnInit {
             });
 
             circle.set("tooltipText", `${stateId}: ${match.members} members`);
-
+            console.log('match.members', match.members);
             const label = am5.Label.new(this.root, {
               text: `${match.members}`,
               centerX: am5.p50,
@@ -291,33 +288,60 @@ export class DashboardComponent implements OnInit {
             container.children.push(circle);
             container.children.push(label);
 
-            const point = bubbleSeries.pushDataItem({
+            bubbleSeries.pushDataItem({
               latitude: geo.latitude,
-              longitude: geo.longitude
-            });
+              longitude: geo.longitude,
+              state: stateId,
+              members: match.members
+            } as any);
+            
+            bubbleSeries.bullets.push((root, _series, dataItem) => {
+              const context = dataItem.dataContext as any;
+              const settings = dataItem as any;
+              const members = settings._settings.members;
+              const stateId = settings._settings.state;
+              
+              //const size = Math.max(Math.sqrt(members) * 1.5, 5);
+              const size = 15;
 
-            bubbleSeries.bullets.push((_root, _dataItem) => {
-              return am5.Bullet.new(this.root, {
+              const container = am5.Container.new(root, {
+                centerX: am5.p50,
+                centerY: am5.p50,
+                width: size * 2,
+                height: size * 2
+              });
+
+              const circle = am5.Circle.new(root, {
+                radius: size,
+                fill: am5.color(0x006BD1),
+                opacity: 0.7,
+                tooltipText: `${stateId}: ${members} members`
+              });
+
+              const label = am5.Label.new(root, {
+                text: `${members}`,
+                centerX: am5.p50,
+                centerY: am5.p50,
+                fontSize: 12,
+                fill: am5.color(0xffffff),
+                fontWeight: "bold"
+              });
+
+              container.children.push(circle);
+              container.children.push(label);
+
+              return am5.Bullet.new(root, {
                 locationX: 0.5,
                 locationY: 0.5,
                 sprite: container
               });
             });
+
           }
         });
       });
     });
   }
-
-
-
-
-
-
-
-
-
-
 
   calcAverageGrowth(values: number[]) {
     let growthRates: number[] = [];
@@ -329,14 +353,6 @@ export class DashboardComponent implements OnInit {
 
     return Math.ceil(growthRates.reduce((sum, g) => sum + g, 0) / growthRates.length);
   }
-
-
-
-
-
-
-
-
 
 
 
