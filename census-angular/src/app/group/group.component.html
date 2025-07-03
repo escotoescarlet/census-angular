@@ -1,3 +1,5 @@
+<app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
+
 <div class="row justify-content-center">
   <div class="col-md-11 d-flex align-items-center">
     <i class="bi bi-collection me-2 icon-style"></i>
@@ -14,12 +16,12 @@
         <input
           type="text"
           class="form-control placeholder-input"
-          placeholder="Insert Plan Id or Company Name"
-          aria-label="Insert Plan Id or Company Name"
+          placeholder="Example: Group A"
+          aria-label="Search by Name"
           aria-describedby="button-addon2"
         />
         <button class="btn btn-outline-secondary" type="button" id="button-addon2">
-          <i class="bi bi-search me-2"></i>
+          <i class="bi bi-search"></i>
           <span class="search-btn">Search</span>
         </button>
       </div>
@@ -27,7 +29,7 @@
 
     <!-- Botón al extremo derecho -->
     <div>
-        <button type="button" class="btn custom-btn">
+        <button type="button" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#addGroupModal">
             <i class="bi bi-plus-circle"></i>
             New Group
         </button>
@@ -108,3 +110,228 @@
   </div>
 
 </div>
+
+<nav *ngIf="totalPages > 1" aria-label="Group pagination" class="mt-3 d-flex justify-content-center">
+  <ul class="pagination">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <button class="page-link directions-btn" (click)="goToPage(currentPage - 1)">Previous</button>
+    </li>
+
+    <li 
+      class="page-item" 
+      *ngFor="let page of [].constructor(totalPages); let i = index"
+      [class.active]="i + 1 === currentPage">
+        <button class="page-link directions-btn" (click)="goToPage(i + 1)">
+            {{ i + 1 }}
+        </button>
+    </li>
+
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <button class="page-link directions-btn" (click)="goToPage(currentPage + 1)">Next</button>
+    </li>
+  </ul>
+</nav>
+
+<!-- Modal Create Group -->
+<div class="modal fade" id="addGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <form [formGroup]="groupForm" (ngSubmit)="onSubmitCreate()">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            <i class="bi bi-collection me-2 icon-style"></i>
+            <span class="section-title">New Group</span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="section-number-title-section">General Data</label>
+
+                    <div>
+                        <label class="section-number-title-light mt-2">Name</label>
+                        <input 
+                            formControlName="name" 
+                            type="text" 
+                            class="form-control placeholder-input"
+                            [ngClass]="{
+                            'is-invalid': groupForm.get('name')?.touched && groupForm.get('name')?.invalid
+                            }"
+                            required
+                        />
+                        <div class="invalid-feedback" *ngIf="groupForm.get('name')?.touched && groupForm.get('name')?.invalid">
+                            <span class="error-text">Group Name is required.</span>
+                        </div>
+                    </div>
+
+                    <label class="section-number-title-section mt-4">Contact Info</label>
+
+                    <div class="section-number-title-light mt-2">
+                        <label class="mb-1">Address</label>
+                        <input formControlName="address" type="text" class="form-control placeholder-input">
+                    </div>
+
+                    <div class="section-number-title-light mt-2">
+                        <label class="mb-1">Contact Name</label>
+                        <input 
+                            formControlName="contact_name" 
+                            type="text" 
+                            class="form-control placeholder-input"
+                            [ngClass]="{
+                            'is-invalid': groupForm.get('contact_name')?.touched && groupForm.get('contact_name')?.invalid
+                            }"
+                        />
+                        <div class="invalid-feedback" *ngIf="groupForm.get('contact_name')?.touched && groupForm.get('contact_name')?.invalid">
+                            <span class="error-text">Contact Name is required.</span>
+                        </div>
+                    </div>
+
+                    <div class="section-number-title-light mt-2">
+                        <label class="mb-1">Contact Email</label>
+                        <input 
+                            formControlName="contact_email" 
+                            type="email" 
+                            class="form-control placeholder-input"
+                            [ngClass]="{
+                            'is-invalid': groupForm.get('contact_email')?.touched && groupForm.get('contact_email')?.invalid
+                            }"
+                        />
+                        <div class="invalid-feedback" *ngIf="groupForm.get('contact_email')?.touched && groupForm.get('contact_email')?.errors as errors">
+                            <span *ngIf="errors['required']">Contact Email is required.</span>
+                            <span *ngIf="errors['email']">Invalid email format.</span>
+                        </div>
+                    </div>
+
+                    <div class="section-number-title-light mt-2">
+                        <label class="mb-1">Contact Phone</label>
+                        <input formControlName="contact_phone" type="text" class="form-control placeholder-input">
+                    </div>
+
+                </div>
+              
+                <div class="col-md-4 mb-3">
+                    <label class="section-number-title-section">Accounts Info</label>
+
+                    <div class="section-number-title-light mt-2">
+                        <label>Primary Name</label>
+                        <input formControlName="primary_name" type="text" class="form-control placeholder-input"/>
+                    </div>
+
+                    <div class="section-number-title-light mt-2">
+                        <label>Primary Email</label>
+                        <input
+                            formControlName="primary_email"
+                            type="email"
+                            class="form-control placeholder-input"
+                            [ngClass]="{ 'is-invalid': groupForm.get('primary_email')?.touched && groupForm.get('primary_email')?.invalid }"
+                        />
+                        <div class="invalid-feedback" *ngIf="groupForm.get('primary_email')?.touched && groupForm.get('primary_email')?.errors as errors">
+                            <span *ngIf="errors['email']">Invalid email format.</span>
+                        </div>
+                    </div>
+
+                    <div class="section-number-title-light mt-2">
+                        <label>Secondary Name</label>
+                        <input formControlName="secondary_name" type="text" class="form-control placeholder-input">
+                    </div>
+
+                    <div class="section-number-title-light mt-2">
+                        <label>Secondary Email</label>
+                        <input formControlName="secondary_email" type="text" class="form-control placeholder-input">
+                    </div>
+
+                    <div class="section-number-title-light col-md-12 mt-3 d-flex align-items-center">
+                        <input class="form-check-input me-2" type="checkbox" id="activeSwitch" formControlName="is_active">
+                        <label class="form-check-label" for="activeSwitch">Active?</label>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="section-number-title-section">Billing Info</label>
+
+                    <div class="section-number-title-light mt-2">
+                        <label>Billing Address</label>
+                        <input formControlName="billing_address" type="text" class="form-control placeholder-input">
+                    </div>
+
+                    <div class="section-number-title-light mt-2">
+                        <label>Billing Contact Name</label>
+                        <input formControlName="billing_contact_name" type="text" class="form-control placeholder-input">
+                    </div>
+
+                    <div class="section-number-title-light mt-2">
+                        <label>Billing Phone</label>
+                        <input formControlName="billing_phone" type="text" class="form-control placeholder-input">
+                    </div>
+
+                    <div class="section-number-title-light mt-2">
+                        <label>Billing Email</label>
+                        <input formControlName="billing_email" type="text" class="form-control placeholder-input">
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="col-md-12">
+                <label class="section-number-title-section mb-4">Benefits</label>
+
+                <div formArrayName="benefits">
+                    <div class="row">
+                    <div class="col-md-4 mb-3" *ngFor="let benefit of benefits; let i = index">
+                        <div class="d-flex justify-content-between align-items-center">
+                        
+                        <!-- Checkbox con nombre -->
+                        <div class="form-check">
+                            <input
+                            type="checkbox"
+                            class="form-check-input"
+                            [formControlName]="i"
+                            (change)="toggleBenefit(benefit.id, benefit.name, getCheckedValue($event))"
+                            [id]="'benefitCheck' + i"
+                            />
+                            <label
+                            class="form-check-label section-number-title-light ms-1"
+                            [for]="'benefitCheck' + i"
+                            >
+                            {{ benefit.name }}
+                            </label>
+                        </div>
+
+                        <!-- Input visible solo si está activado -->
+                        <input
+                            *ngIf="groupForm.get('benefits')?.value[i]"
+                            type="number"
+                            class="form-control form-control-sm placeholder-input"
+                            style="max-width: 80px;"
+                            [value]="benefit.price"
+                            (input)="updateBenefitPrice(benefit.id, getInputValue($event))"
+                            placeholder="$"
+                        />
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="submit"
+                    class="btn btn-primary custom-btn d-flex align-items-center"
+                    [disabled]="groupForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                {{ isLoading ? 'Saving...' : 'Save Group' }}
+            </button>
+
+            <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+

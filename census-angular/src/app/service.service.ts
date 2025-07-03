@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from './environments/environment';
 import { StorageService } from './storage.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -77,11 +78,27 @@ export class ServiceService {
     );
   }
 
-  getGroups() {
-    return this.http.get(`${this.server}/groups`,
-      { headers: this.getAuthHeaders() }
-    );
+  getGroups(page: number = 1) {
+    return this.http.get(`${this.server}/groups?page=${page}`, {
+      headers: this.getAuthHeaders()
+    });
   }
+
+  createGroup(groupData: any) {
+    return this.http.post(`${this.server}/groups`, groupData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getBenefits(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.server}/benefits`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+
+
+
 
 
 }

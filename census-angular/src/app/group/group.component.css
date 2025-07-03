@@ -31,6 +31,12 @@
     font-size: 16px;
 }
 
+.section-number-title-light {
+    color: #A7A9B7;
+    font-family: 'OpenSans Normal';
+    font-size: 14px;
+}
+
 .card-style-line {
     background-color: rgb(249, 249, 249);
     border: 1px solid #e8ebf0;
@@ -53,7 +59,7 @@
 
 .placeholder-input {
     color: #A7A9B7;
-    font-family: 'OpenSans Normal';
+    font-family: 'OpenSans Light';
     font-size: 12px;
 }
 
@@ -66,6 +72,31 @@
     font-family: "OpenSans";
 }
 
+.custom-btn-return {
+    color: #fff;
+    background: #D9DAE2;
+    border: 1px solid white;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    font-family: "OpenSans";
+    height: 42px;
+}
+
 .table-row {
     margin-top: 60px;
+}
+
+.section-number-title-section {
+    color: #A7A9B7;
+    font-family: 'OpenSans';
+    font-size: 24px;
+}
+
+.error-text {
+    font-family: 'OpenSans Normal';
+    font-size: 12px;
+}
+
+.directions-btn {
+    font-family: 'OpenSans Normal';
+    font-size: 12px;
 }
