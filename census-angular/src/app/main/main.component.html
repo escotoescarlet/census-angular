@@ -1,0 +1,22 @@
+<!-- Mensajes -->
+<app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
+
+<!-- Navbar arriba del todo -->
+<app-header-nav></app-header-nav>
+
+<!-- Contenedor principal con sidebar y contenido -->
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-auto" style="padding: 0;">
+      <app-sidebar [body]="body"></app-sidebar>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="col">
+      <div class="container mt-4">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

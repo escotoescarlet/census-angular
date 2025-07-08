@@ -4,9 +4,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MessagesComponent } from '../messages/messages.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../storage.service';
 import { ServiceService } from '../service.service';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
@@ -20,9 +20,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     MessagesComponent,
     TranslateModule
   ],
-  providers: [
-    StorageService
-  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -30,7 +27,7 @@ export class LoginComponent implements OnInit {
 
   public loginForm!: FormGroup;
   public errorMsg: string = '';
-  showErrorToast: boolean = false;
+  public showErrorToast: boolean = false;
 
   public messageInfo: string = '';
   public typeMessage: string = '';
@@ -45,6 +42,8 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.logout();
+
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
@@ -54,13 +53,21 @@ export class LoginComponent implements OnInit {
 
   setLanguage() {
     this.translate.addLangs(['en', 'es']);
-    const savedLang = localStorage.getItem('selectedLang') || 'en';
+
+    const savedLang = typeof window !== 'undefined' && localStorage.getItem('selectedLang') || 'en';
     this.changeLanguage(savedLang);
   }
 
   changeLanguage(lang: string) {
     this.translate.use(lang);
-    localStorage.setItem('selectedLang', lang);
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('selectedLang', lang);
+    }
+  }
+
+  logout(): void {
+    this.storageService.clear();
+    this.router.navigate(['/login']);
   }
 
   goToSite() {
@@ -80,7 +87,7 @@ export class LoginComponent implements OnInit {
       this.service.login(credentials).subscribe(
         (data: any) => {
           this.setSession(data);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/main/dashboard']);
         }, (error: any) => {
           this.showErrorMsg(error);
         }
@@ -103,5 +110,4 @@ export class LoginComponent implements OnInit {
       this.showMsg = false;
     }, 5000);
   }
-
 }
