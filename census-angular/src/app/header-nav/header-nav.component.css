@@ -1,0 +1,44 @@
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../../assets/webfonts/opensans_bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans Normal';
+    src: url('../../assets/webfonts/opensans_regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans Light';
+    src: url('../../assets/webfonts/opensans_light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.title-style {
+    font-family: 'OpenSans';
+    color: rgb(163, 174, 208);
+}
+
+.option-text-info {
+    margin-left: 8px;
+    font-family: 'OpenSans Normal';
+    color: #70778C;
+}
+
+.icon-style {
+    color: #414759;
+}
+
+.icon-header-style {
+    color: #70778C;
+}
+
+.see-more {
+    color: rgb(163, 174, 208);
+    font-family: 'OpenSans Light';
+}
