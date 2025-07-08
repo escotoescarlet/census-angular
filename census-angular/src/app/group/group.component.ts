@@ -67,6 +67,21 @@ export class GroupComponent implements OnInit {
     this.getGroups(1);
   }
 
+  onToggleActive(event: Event, group: any) {
+    const input = event.target as HTMLInputElement;
+    const newValue = input.checked;
+
+    this.service.toggleGroupActive(group.id, newValue).subscribe({
+      next: (response: any) => {
+        group.is_active = response.group.is_active;
+      },
+      error: (err) => {
+        console.error('Error updating status', err);
+        group.is_active = !newValue;
+      }
+    });
+  }
+
   initModalCreate() {
     this.groupForm = this.fb.group({
       name: ['', Validators.required],

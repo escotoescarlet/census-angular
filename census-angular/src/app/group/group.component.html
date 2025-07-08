@@ -82,12 +82,13 @@
             <td class="text-start">
                 <div class="form-check form-switch d-flex align-items-center">
                     <input
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    [checked]="group.is_active == true"
-                    id="switchCheckChecked-{{ group.id }}" />
-                    
+                        class="form-check-input"
+                        type="checkbox"
+                        role="switch"
+                        [checked]="group.is_active"
+                        id="switchCheckChecked-{{ group.id }}"
+                        (change)="onToggleActive($event, group)"/>
+
                     <label
                     class="form-check-label ms-2"
                     [for]="'switchCheckChecked-' + group.id">

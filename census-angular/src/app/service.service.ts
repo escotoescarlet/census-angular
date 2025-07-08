@@ -44,6 +44,13 @@ export class ServiceService {
     );
   }
 
+  toggleGroupActive(groupId: number, isActive: boolean) {
+    return this.http.patch(`${this.server}/groups/${groupId}/toggle_active`, 
+      { is_active: isActive },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getDashboardData() {
     return this.http.get(
       `${this.server}/dashboard/show`,
