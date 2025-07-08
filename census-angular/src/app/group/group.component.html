@@ -17,10 +17,11 @@
           type="text"
           class="form-control placeholder-input"
           placeholder="Example: Group A"
+          [(ngModel)]="searchTerm"
           aria-label="Search by Name"
           aria-describedby="button-addon2"
         />
-        <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2" (click)="getGroups(1)">
           <i class="bi bi-search"></i>
           <span class="search-btn">Search</span>
         </button>
@@ -47,8 +48,11 @@
             <th scope="col" class="text-start">
                 <div class="d-flex align-items-center">
                     <span class="section-number-title">Name</span>
-                    <button type="button" class="btn btn-link p-0 ms-2">
-                    <i class="bi bi-arrow-up"></i>
+                    <button type="button" class="btn btn-link p-0 ms-2" (click)="toggleSortDirection()">
+                        <i class="bi" [ngClass]="{
+                            'bi-arrow-up': direction === 'asc',
+                            'bi-arrow-down': direction === 'desc'
+                        }"></i>
                     </button>
                 </div>
             </th>

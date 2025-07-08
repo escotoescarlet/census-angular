@@ -31,6 +31,10 @@ export class GroupComponent implements OnInit {
   public typeMessage: string = '';
   public showMsg: boolean = false;
 
+  public searchTerm: string = '';
+  public sort: string = 'name';
+  public direction: string = 'asc';
+
   public groupForm!: FormGroup;
   public benefits: any[] = [];
   public selectedBenefits: string[] = [];
@@ -46,7 +50,7 @@ export class GroupComponent implements OnInit {
   }
 
   getGroups(page: number) {
-    this.service.getGroups(page).subscribe(
+    this.service.getGroups(page, this.searchTerm, this.sort, this.direction).subscribe(
       (data: any) => {
         this.groups = data.groups;
         this.totalPages = data.total_pages;
@@ -56,6 +60,11 @@ export class GroupComponent implements OnInit {
         console.error('Error fetching groups', error);
       }
     );
+  }
+
+  toggleSortDirection() {
+    this.direction = this.direction === 'asc' ? 'desc' : 'asc';
+    this.getGroups(1);
   }
 
   initModalCreate() {

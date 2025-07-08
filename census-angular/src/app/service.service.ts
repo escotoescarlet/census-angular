@@ -78,9 +78,16 @@ export class ServiceService {
     );
   }
 
-  getGroups(page: number = 1) {
-    return this.http.get(`${this.server}/groups?page=${page}`, {
-      headers: this.getAuthHeaders()
+  getGroups(page: number = 1, searchTerm: string = '', sort: string = '', direction: string = '') {
+    const params: any = { page };
+
+    if (searchTerm.trim()) params.q = searchTerm.trim();
+    if (sort) params.sort = sort;
+    if (direction) params.direction = direction;
+
+    return this.http.get(`${this.server}/groups`, {
+      headers: this.getAuthHeaders(),
+      params
     });
   }
 
