@@ -52,6 +52,7 @@ export class GroupComponent implements OnInit {
   public paginatedCompanies: any[] = [];
   public filteredCompanies: any[] = [];
 
+  public groupToRemove: any;
 
   constructor(private fb: FormBuilder, private service: ServiceService) {
   }
@@ -110,6 +111,10 @@ export class GroupComponent implements OnInit {
     this.paginatedCompanies = this.filteredCompanies.slice(start, end);
   }
 
+  readyToRemove(group: any) {
+    this.groupToRemove = group;
+  }
+
   showDetails(selected: any): void {
     const groupId = selected.id;
 
@@ -138,7 +143,7 @@ export class GroupComponent implements OnInit {
 
   searchCompanies(): void {
     const term = this.searchTermCompanies.trim().toLowerCase();
-    
+
     if (term) {
       this.filteredCompanies = this.groupDetail.companies.filter((company: any) =>
         company.name?.toLowerCase().includes(term)

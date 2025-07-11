@@ -157,3 +157,8 @@
     font-size: 12px;
     cursor: pointer;
 }
+
+.want-delete {
+    color: #FF0000;
+    font-family: 'OpenSans';
+}
