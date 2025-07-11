@@ -51,6 +51,13 @@ export class ServiceService {
     );
   }
 
+  toggleCompanyActive(companyId: number, isActive: boolean) {
+    return this.http.patch(`${this.server}/companies/${companyId}/toggle_active`, 
+      { is_active: isActive },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getDashboardData() {
     return this.http.get(
       `${this.server}/dashboard/show`,
@@ -96,6 +103,12 @@ export class ServiceService {
       headers: this.getAuthHeaders(),
       params
     });
+  }
+
+  getGroupDetails(groupId: string): Observable<any> {
+    return this.http.get(`${this.server}/groups/${groupId}`,
+      {headers: this.getAuthHeaders()}
+    );
   }
 
   createGroup(groupData: any) {

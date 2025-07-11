@@ -5,6 +5,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { MessagesComponent } from '../messages/messages.component';
+import { group } from 'node:console';
 
 declare var bootstrap: any;
 
@@ -22,6 +23,8 @@ declare var bootstrap: any;
 })
 export class GroupComponent implements OnInit {
 
+  Math = Math;
+
   public groups: any[] = [];
   public totalPages: number = 0;
   public currentPage: number = 1;
@@ -35,10 +38,20 @@ export class GroupComponent implements OnInit {
   public sort: string = 'name';
   public direction: string = 'asc';
 
+  public searchTermCompanies: string = '';
+
   public groupForm!: FormGroup;
   public benefits: any[] = [];
   public selectedBenefits: string[] = [];
   public benefitPrices: { [key: string]: number } = {};
+  public groupDetail: any;
+  public activeBenefits: any[] = [];
+
+  public companiesPerPage = 10;
+  public currentCompanyPage = 1;
+  public paginatedCompanies: any[] = [];
+  public filteredCompanies: any[] = [];
+
 
   constructor(private fb: FormBuilder, private service: ServiceService) {
   }
@@ -67,17 +80,90 @@ export class GroupComponent implements OnInit {
     this.getGroups(1);
   }
 
-  onToggleActive(event: Event, group: any) {
+  onToggleActive(event: Event, group: any, fromModal: boolean) {
     const input = event.target as HTMLInputElement;
     const newValue = input.checked;
 
     this.service.toggleGroupActive(group.id, newValue).subscribe({
       next: (response: any) => {
         group.is_active = response.group.is_active;
+
+        if(fromModal) {
+          let groupFounded : any = this.searchGroup(group.id);
+          groupFounded.is_active = response.group.is_active;
+        }
       },
       error: (err) => {
         console.error('Error updating status', err);
         group.is_active = !newValue;
+      }
+    });
+  }
+
+  searchGroup(id: number) : any {
+    return this.groups.find(group => group.id == id);
+  }
+
+  updatePaginatedCompanies(): void {
+    const start = (this.currentCompanyPage - 1) * this.companiesPerPage;
+    const end = start + this.companiesPerPage;
+    this.paginatedCompanies = this.filteredCompanies.slice(start, end);
+  }
+
+  showDetails(selected: any): void {
+    const groupId = selected.id;
+
+    this.service.getGroupDetails(groupId).subscribe({
+      next: (response: any) => {
+        this.groupDetail = response;
+        this.activeBenefits = this.groupDetail.benefits;
+        this.currentCompanyPage = 1;
+        this.filteredCompanies = this.groupDetail.companies || [];
+        this.updatePaginatedCompanies();
+      },
+      error: (error: any) => {
+        this.showErrorMsg(error);
+      }
+    });
+  }
+
+  changeCompanyPage(page: number): void {
+    this.currentCompanyPage = page;
+    this.updatePaginatedCompanies();
+  }
+
+  onToggleBenefit(event: any, b: any) {
+
+  }
+
+  searchCompanies(): void {
+    const term = this.searchTermCompanies.trim().toLowerCase();
+    
+    if (term) {
+      this.filteredCompanies = this.groupDetail.companies.filter((company: any) =>
+        company.name?.toLowerCase().includes(term)
+      );
+    } else {
+      this.filteredCompanies = this.groupDetail.companies;
+    }
+
+    this.currentCompanyPage = 1;
+    this.updatePaginatedCompanies();
+  }
+
+  onToggleCompanyStatus(event: any, company: any): void {
+    const isChecked = event.target.checked;
+
+    const previousStatus = company.is_active;
+    company.is_active = isChecked;
+
+    this.service.toggleCompanyActive(company.id, isChecked).subscribe({
+      next: (response: any) => {
+        company.is_active = response.company?.is_active ?? isChecked;
+      },
+      error: (err) => {
+        console.error('Error updating company status:', err);
+        company.is_active = previousStatus; // Revert on error
       }
     });
   }

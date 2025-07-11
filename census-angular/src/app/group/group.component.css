@@ -100,3 +100,60 @@
     font-family: 'OpenSans Normal';
     font-size: 12px;
 }
+
+.skeleton-loader {
+  background: linear-gradient(90deg, #eee, #f5f5f5, #eee);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.badge-com-enabled {
+    color: #00C2A6;
+}
+
+.badge-com-disabled {
+    color: #FF0000;
+}
+
+.account-text {
+    font-family: 'OpenSans Normal';
+    font-size: 12px;
+    color: #A7A9B7;
+}
+
+.title-info {
+    font-family: 'OpenSans Normal';
+    font-size: 0.875rem;
+    color: #A7A9B7;
+}
+
+.title-info-data {
+    font-family: 'OpenSans Normal';
+    font-size: 0.875rem;
+    color: #A7A9B7;
+}
+
+.no-accounts {
+    font-size: 0.875rem;
+    color: #A7A9B7
+}
+
+.form-check-input {
+  cursor: pointer;
+}
+
+.nav-btn {
+    font-family: 'OpenSans Light';
+    font-size: 12px;
+    cursor: pointer;
+}
