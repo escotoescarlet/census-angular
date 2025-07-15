@@ -162,3 +162,13 @@
     color: #FF0000;
     font-family: 'OpenSans';
 }
+
+.error-message {
+    font-size: 12px;
+    font-family: 'OpenSans Normal';
+}
+
+.icon-right-space {
+    padding-right: 16px;
+    cursor: pointer;
+}
