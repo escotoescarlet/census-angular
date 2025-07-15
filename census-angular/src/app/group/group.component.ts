@@ -39,6 +39,7 @@ export class GroupComponent implements OnInit {
   public direction: string = 'asc';
 
   public searchTermCompanies: string = '';
+  public searchTermEditCompanies: string = '';
 
   public groupForm!: FormGroup;
   public benefits: any[] = [];
@@ -48,11 +49,46 @@ export class GroupComponent implements OnInit {
   public activeBenefits: any[] = [];
 
   public companiesPerPage = 10;
+  public companiesEditPerPage = 10;
   public currentCompanyPage = 1;
+  public currentCompanyEditPage = 1;
   public paginatedCompanies: any[] = [];
+  public paginatedEditCompanies: any[] = [];
   public filteredCompanies: any[] = [];
-
+  public filteredCompaniesEdit: any[] = [];
   public groupToRemove: any;
+
+  public groupDetailEdit: {
+    id: number | null;
+    name: string;
+    description: string | null;
+    is_active: boolean;
+    contact_name: string | null;
+    contact_email: string | null;
+    contact_phone: string | null;
+    billing_email: string | null;
+    billing_phone: string | null;
+    billing_address: string | null;
+    address: string | null;
+    benefits: any[];
+    companies: any[];
+    admin_accounts: any[];
+  } = {
+    id: null,
+    name: '',
+    description: '',
+    is_active: false,
+    contact_name: null,
+    contact_email: null,
+    contact_phone: null,
+    billing_email: null,
+    billing_phone: null,
+    billing_address: null,
+    address: null,
+    benefits: [],
+    companies: [],
+    admin_accounts: []
+  };
 
   constructor(private fb: FormBuilder, private service: ServiceService) {
   }
@@ -111,6 +147,12 @@ export class GroupComponent implements OnInit {
     this.paginatedCompanies = this.filteredCompanies.slice(start, end);
   }
 
+  updatePaginatedEditCompanies(): void {
+    const start = (this.currentCompanyEditPage - 1) * this.companiesEditPerPage;
+    const end = start + this.companiesEditPerPage;
+    this.paginatedEditCompanies = this.filteredCompaniesEdit.slice(start, end);
+  }
+
   readyToRemove(group: any) {
     this.groupToRemove = group;
   }
@@ -132,13 +174,72 @@ export class GroupComponent implements OnInit {
     });
   }
 
+  prepareEditGroup(selected: any) {
+    const groupId = selected.id;
+
+    this.service.getGroupDetails(groupId).subscribe({
+      next: (response: any) => {
+        this.groupDetailEdit = response;
+        this.currentCompanyEditPage = 1;
+        this.filteredCompaniesEdit = this.groupDetailEdit.companies || [];
+        this.updatePaginatedEditCompanies();
+      },
+      error: (error: any) => {
+        this.showErrorMsg(error);
+      }
+    });
+  }
+
+  isArrayAndNotEmpty(arr: any): boolean {
+    return Array.isArray(arr) && arr.length > 0;
+  }
+
   changeCompanyPage(page: number): void {
     this.currentCompanyPage = page;
     this.updatePaginatedCompanies();
   }
 
-  onToggleBenefit(event: any, b: any) {
+  changeCompanyEditPage(page: number) {
+    this.currentCompanyEditPage = page;
+    this.updatePaginatedEditCompanies();
+  }
 
+  onToggleBenefitUpdate(event: any, b: any): void {
+    if (this.groupDetailEdit.id != null) {
+      const newValue = event.target.checked;
+
+      this.service.updateGroupBenefits(this.groupDetailEdit.id, [
+        { id: b.id, enabled: newValue }
+      ]).subscribe({
+        next: (data) => {
+          b.enabled = newValue;
+          this.showSuccessMsg(data.message);
+        },
+        error: err => {
+          this.showErrorMsg(err);
+          event.target.checked = !newValue;
+        }
+      });
+    }
+  }
+
+  onToggleBenefit(event: any, b: any): void {
+    if (this.groupDetail.id != null) {
+      const newValue = event.target.checked;
+
+      this.service.updateGroupBenefits(this.groupDetail.id, [
+        { id: b.id, enabled: newValue }
+      ]).subscribe({
+        next: (data) => {
+          b.enabled = newValue;
+          this.showSuccessMsg(data.message);
+        },
+        error: err => {
+          this.showErrorMsg(err);
+          event.target.checked = !newValue;
+        }
+      });
+    }
   }
 
   searchCompanies(): void {
@@ -156,6 +257,35 @@ export class GroupComponent implements OnInit {
     this.updatePaginatedCompanies();
   }
 
+  searchCompaniesEdit(): void {
+    const term = this.searchTermEditCompanies.trim().toLowerCase();
+
+    if (term) {
+      this.filteredCompaniesEdit = this.groupDetailEdit.companies.filter((company: any) =>
+        company.name?.toLowerCase().includes(term)
+      );
+    } else {
+      this.filteredCompaniesEdit = this.groupDetailEdit.companies;
+    }
+
+    this.currentCompanyEditPage = 1;
+    this.updatePaginatedEditCompanies();
+  }
+
+  removeAdminAccount(account: any): void {
+    if (this.groupDetailEdit.id !== null) {
+      this.service.removeAdminFromGroup(this.groupDetailEdit.id, account.account_id).subscribe(
+        (data: any) => {
+          this.groupDetailEdit.admin_accounts = this.groupDetailEdit.admin_accounts.filter(
+            acc => acc.account_id !== account.account_id
+          );
+        }, (error: any) => {
+          this.showErrorMsg(error);
+        }
+      );
+    }
+  }
+
   onToggleGroupCompanyStatus(event: any, company: any): void {
     const isChecked = event.target.checked;
 
@@ -168,7 +298,19 @@ export class GroupComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error updating company status:', err);
-        company.is_active = previousStatus; // Revert on error
+        company.is_active = previousStatus;
+      }
+    });
+  }
+
+  onSaveChanges(): void {
+    this.service.updateGroup(this.groupDetailEdit).subscribe({
+      next: (data: any) => {
+        this.showSuccessMsg(data.message);
+        this.closeModalEditGroup();
+      },
+      error: (err: any) => {
+        this.showErrorMsg(err);
       }
     });
   }
@@ -246,6 +388,14 @@ export class GroupComponent implements OnInit {
 
   closeModalAddGroup() {
     const modalElement = document.getElementById('addGroupModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
+
+  closeModalEditGroup() {
+    const modalElement = document.getElementById('editGroupModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
