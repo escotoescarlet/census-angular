@@ -45,14 +45,14 @@ export class ServiceService {
   }
 
   toggleGroupActive(groupId: number, isActive: boolean) {
-    return this.http.patch(`${this.server}/groups/${groupId}/toggle_active`, 
+    return this.http.patch(`${this.server}/groups/${groupId}/toggle_active`,
       { is_active: isActive },
       { headers: this.getAuthHeaders() }
     );
   }
 
   toggleCompanyActive(companyId: number, isActive: boolean) {
-    return this.http.patch(`${this.server}/companies/${companyId}/toggle_active`, 
+    return this.http.patch(`${this.server}/companies/${companyId}/toggle_active`,
       { is_active: isActive },
       { headers: this.getAuthHeaders() }
     );

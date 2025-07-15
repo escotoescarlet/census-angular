@@ -156,7 +156,7 @@ export class GroupComponent implements OnInit {
     this.updatePaginatedCompanies();
   }
 
-  onToggleCompanyStatus(event: any, company: any): void {
+  onToggleGroupCompanyStatus(event: any, company: any): void {
     const isChecked = event.target.checked;
 
     const previousStatus = company.is_active;
@@ -288,7 +288,7 @@ export class GroupComponent implements OnInit {
     this.service.createGroup(data).subscribe(
       (data: any) => {
         console.log('Group created', data);
-        
+
         this.groupForm.reset();
         this.selectedBenefits = [];
         this.benefitPrices = {};
