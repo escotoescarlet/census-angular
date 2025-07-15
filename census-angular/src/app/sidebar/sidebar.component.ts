@@ -75,20 +75,7 @@ export class SidebarComponent implements OnChanges {
     this.email = this.body.email;
     this.tabs = this.body.tabs;
     this.avatar = this.body.avatar;
-    //this.getAvatar();
   }
-
-  /*private getAvatar() {
-    this.service.getAvatar(this.name).subscribe(
-      (data: any) => {
-        if(data.response) {
-          this.avatar = this.service.buildServerImage(data.response);
-        }
-      }, (error: any) => {
-        this.avatar = '';
-      }
-    );
-  }*/
 
   logout() {
     this.storageService.clear();

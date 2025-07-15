@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from './environments/environment';
 import { StorageService } from './storage.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,20 @@ export class ServiceService {
     );
   }
 
+  toggleGroupActive(groupId: number, isActive: boolean) {
+    return this.http.patch(`${this.server}/groups/${groupId}/toggle_active`, 
+      { is_active: isActive },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  toggleCompanyActive(companyId: number, isActive: boolean) {
+    return this.http.patch(`${this.server}/companies/${companyId}/toggle_active`, 
+      { is_active: isActive },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getDashboardData() {
     return this.http.get(
       `${this.server}/dashboard/show`,
@@ -77,11 +92,40 @@ export class ServiceService {
     );
   }
 
-  getGroups() {
+  getGroups(page: number = 1, searchTerm: string = '', sort: string = '', direction: string = '') {
+    const params: any = { page };
+
+    if (searchTerm.trim()) params.q = searchTerm.trim();
+    if (sort) params.sort = sort;
+    if (direction) params.direction = direction;
+
     return this.http.get(`${this.server}/groups`, {
+      headers: this.getAuthHeaders(),
+      params
+    });
+  }
+
+  getGroupDetails(groupId: string): Observable<any> {
+    return this.http.get(`${this.server}/groups/${groupId}`,
+      {headers: this.getAuthHeaders()}
+    );
+  }
+
+  createGroup(groupData: any) {
+    return this.http.post(`${this.server}/groups`, groupData, {
       headers: this.getAuthHeaders()
     });
   }
+
+  getBenefits(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.server}/benefits`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+
+
+
 
 
 }
