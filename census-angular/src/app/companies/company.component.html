@@ -493,38 +493,38 @@
                   <span class="skeleton-loader" style="width: 100px; height: 15px; display: inline-block;"></span>
                 </ng-template>
               </div>
-            </div>
 
-            <div class="mt-1">
-              <strong class="title-info">
-                <i class="bi bi-geo"></i>
-                Active Members:
-              </strong>
-              <ng-container *ngIf="companyDetail; else loading">
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-geo"></i>
+                  Active Members:
+                </strong>
+                <ng-container *ngIf="companyDetail; else loading">
                                     <span class="title-info-data">
-                                        {{ companyDetail.dtc_plan_id !== null && companyDetail.dtc_plan_id !== undefined ? companyDetail.dtc_plan_id : 'N/A' }}
+                                        {{ companyDetail.active_members_count !== null && companyDetail.active_members_count !== undefined ? companyDetail.active_members_count : 'N/A' }}
                                     </span>
-              </ng-container>
+                </ng-container>
 
-              <ng-template #loading>
-                <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
-              </ng-template>
-            </div>
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
 
-            <div class="mt-1">
-              <strong class="title-info">
-                <i class="bi bi-geo"></i>
-                Inactive Members:
-              </strong>
-              <ng-container *ngIf="companyDetail; else loading">
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-geo"></i>
+                  Inactive Members:
+                </strong>
+                <ng-container *ngIf="companyDetail; else loading">
                                     <span class="title-info-data">
-                                        {{ companyDetail.dtc_plan_id !== null && companyDetail.dtc_plan_id !== undefined ? companyDetail.dtc_plan_id : 'N/A' }}
+                                        {{ companyDetail.inactive_members_count !== null && companyDetail.inactive_members_count !== undefined ? companyDetail.inactive_members_count : 'N/A' }}
                                     </span>
-              </ng-container>
+                </ng-container>
 
-              <ng-template #loading>
-                <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
-              </ng-template>
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
             </div>
 
             <!-- Accounts Info -->
