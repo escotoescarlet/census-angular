@@ -1,0 +1,786 @@
+<app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
+
+<div class="row justify-content-center">
+  <div class="col-md-11 d-flex align-items-center">
+    <i class="bi bi-collection me-2 icon-style"></i>
+    <span class="section-title">Companies</span>
+  </div>
+</div>
+
+<div class="row justify-content-center mt-2">
+  <div class="col-11 d-flex justify-content-between align-items-center">
+
+    <!-- Input de búsqueda al extremo izquierdo con ancho tipo col-6 -->
+    <div style="width: 50%;">
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control placeholder-input"
+          placeholder="Example: Company A"
+          [(ngModel)]="searchTerm"
+          aria-label="Search by Name"
+          aria-describedby="button-addon2"
+        />
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2" (click)="getCompanies(1)">
+          <i class="bi bi-search"></i>
+          <span class="search-btn">Search</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Botón al extremo derecho -->
+    <div>
+      <button type="button" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#addCompanyModal">
+        <i class="bi bi-plus-circle"></i>
+        New Company
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="row justify-content-center table-row">
+  <div class="col-md-11">
+    <table class="table text-center">
+      <thead>
+      <tr>
+        <th scope="col" class="text-start">
+          <div class="d-flex align-items-center">
+            <span class="section-number-title">Name</span>
+            <button type="button" class="btn btn-link p-0 ms-2" (click)="toggleSortDirection()">
+              <i class="bi" [ngClass]="{
+                            'bi-arrow-up': direction === 'asc',
+                            'bi-arrow-down': direction === 'desc'
+                        }"></i>
+            </button>
+          </div>
+        </th>
+        <th scope="col" class="text-start">
+          <span class="section-number-title">Members</span>
+        </th>
+        <th scope="col" class="text-start">
+          <span class="section-number-title">Plan ID</span>
+        </th>
+        <th scope="col" class="text-start">
+          <span class="section-number-title">Status</span>
+        </th>
+        <th scope="col">
+          <span class="section-number-title">Actions</span>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let company of companies">
+        <th scope="row" class="text-start">
+                <span class="section-number-data">
+                    {{ company.name }}
+                </span>
+        </th>
+        <td class="text-start">
+                <span class="section-number-data">
+                    {{ company.members_count }}
+                </span>
+        </td>
+        <td class="text-start">
+                <span class="section-number-data">
+                    {{ company.dct_plan_id }}
+                </span>
+        </td>
+        <td class="text-start">
+          <div class="form-check form-switch d-flex align-items-center">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              [checked]="company.is_active"
+              id="switchCheckChecked-{{ company.id }}"
+              (change)="onToggleActive($event, company, false)"/>
+
+            <label
+              class="form-check-label ms-2"
+              [for]="'switchCheckChecked-' + company.id">
+              <span class="section-number-data">Active</span>
+            </label>
+          </div>
+        </td>
+        <td>
+          <button type="button" (click)="showDetails(company)" class="btn btn-link" data-bs-toggle="modal"
+                  data-bs-target="#showCompanyModal">
+            <i class="bi bi-eye"></i>
+          </button>
+
+          <button type="button" class="btn btn-link">
+            <i class="bi bi-pencil text-success"></i>
+          </button>
+
+          <button type="button" (click)="readyToRemove(company)" class="btn btn-link" data-bs-toggle="modal"
+                  data-bs-target="#removeCompanyModal">
+            <i class="bi bi-trash3 text-danger"></i>
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<nav *ngIf="totalPages > 1" aria-label="Company pagination" class="mt-3 d-flex justify-content-center">
+  <ul class="pagination">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <button class="page-link directions-btn" (click)="goToPage(currentPage - 1)">Previous</button>
+    </li>
+
+    <li
+      class="page-item"
+      *ngFor="let page of [].constructor(totalPages); let i = index"
+      [class.active]="i + 1 === currentPage">
+      <button class="page-link directions-btn" (click)="goToPage(i + 1)">
+        {{ i + 1 }}
+      </button>
+    </li>
+
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <button class="page-link directions-btn" (click)="goToPage(currentPage + 1)">Next</button>
+    </li>
+  </ul>
+</nav>
+
+
+<!-- Modal Create Company -->
+<div class="modal fade" id="addCompanyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <form [formGroup]="companyForm" (ngSubmit)="onSubmitCreate()">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            <i class="bi bi-collection me-2 icon-style"></i>
+            <span class="section-title">New Group</span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="section-number-title-section">General Data</label>
+
+                <div>
+                  <label class="section-number-title-light mt-2">Name</label>
+                  <input
+                    formControlName="name"
+                    type="text"
+                    class="form-control placeholder-input"
+                    [ngClass]="{
+                            'is-invalid': companyForm.get('name')?.touched && companyForm.get('name')?.invalid
+                            }"
+                    required
+                  />
+                  <div class="invalid-feedback"
+                       *ngIf="companyForm.get('name')?.touched && companyForm.get('name')?.invalid">
+                    <span class="error-text">Group Name is required.</span>
+                  </div>
+                </div>
+
+                <label class="section-number-title-section mt-4">Contact Info</label>
+
+                <div class="section-number-title-light mt-2">
+                  <label class="mb-1">Address</label>
+                  <input formControlName="address" type="text" class="form-control placeholder-input">
+                </div>
+
+                <div class="section-number-title-light mt-2">
+                  <label class="mb-1">Contact Name</label>
+                  <input
+                    formControlName="contact_name"
+                    type="text"
+                    class="form-control placeholder-input"
+                    [ngClass]="{
+                            'is-invalid': companyForm.get('contact_name')?.touched && companyForm.get('contact_name')?.invalid
+                            }"
+                  />
+                  <div class="invalid-feedback"
+                       *ngIf="companyForm.get('contact_name')?.touched && companyForm.get('contact_name')?.invalid">
+                    <span class="error-text">Contact Name is required.</span>
+                  </div>
+                </div>
+
+                <div class="section-number-title-light mt-2">
+                  <label class="mb-1">Contact Email</label>
+                  <input
+                    formControlName="contact_email"
+                    type="email"
+                    class="form-control placeholder-input"
+                    [ngClass]="{
+                            'is-invalid': companyForm.get('contact_email')?.touched && companyForm.get('contact_email')?.invalid
+                            }"
+                  />
+                  <div class="invalid-feedback"
+                       *ngIf="companyForm.get('contact_email')?.touched && companyForm.get('contact_email')?.errors as errors">
+                    <span *ngIf="errors['required']">Contact Email is required.</span>
+                    <span *ngIf="errors['email']">Invalid email format.</span>
+                  </div>
+                </div>
+
+                <div class="section-number-title-light mt-2">
+                  <label class="mb-1">Contact Phone</label>
+                  <input formControlName="contact_phone" type="text" class="form-control placeholder-input">
+                </div>
+
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="section-number-title-section">Accounts Info</label>
+
+                <div class="section-number-title-light mt-2">
+                  <label>Primary Name</label>
+                  <input formControlName="primary_name" type="text" class="form-control placeholder-input"/>
+                </div>
+
+                <div class="section-number-title-light mt-2">
+                  <label>Primary Email</label>
+                  <input
+                    formControlName="primary_email"
+                    type="email"
+                    class="form-control placeholder-input"
+                    [ngClass]="{ 'is-invalid': companyForm.get('primary_email')?.touched && companyForm.get('primary_email')?.invalid }"
+                  />
+                  <div class="invalid-feedback"
+                       *ngIf="companyForm.get('primary_email')?.touched && companyForm.get('primary_email')?.errors as errors">
+                    <span *ngIf="errors['email']">Invalid email format.</span>
+                  </div>
+                </div>
+
+                <div class="section-number-title-light mt-2">
+                  <label>Secondary Name</label>
+                  <input formControlName="secondary_name" type="text" class="form-control placeholder-input">
+                </div>
+
+                <div class="section-number-title-light mt-2">
+                  <label>Secondary Email</label>
+                  <input formControlName="secondary_email" type="text" class="form-control placeholder-input">
+                </div>
+
+                <div class="section-number-title-light col-md-12 mt-3 d-flex align-items-center">
+                  <input class="form-check-input me-2" type="checkbox" id="activeSwitch" formControlName="is_active">
+                  <label class="form-check-label" for="activeSwitch">Active?</label>
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <label class="section-number-title-section">Billing Info</label>
+
+                <div class="section-number-title-light mt-2">
+                  <label>Billing Address</label>
+                  <input formControlName="billing_address" type="text" class="form-control placeholder-input">
+                </div>
+
+                <div class="section-number-title-light mt-2">
+                  <label>Billing Contact Name</label>
+                  <input formControlName="billing_contact_name" type="text" class="form-control placeholder-input">
+                </div>
+
+                <div class="section-number-title-light mt-2">
+                  <label>Billing Phone</label>
+                  <input formControlName="billing_phone" type="text" class="form-control placeholder-input">
+                </div>
+
+                <div class="section-number-title-light mt-2">
+                  <label>Billing Email</label>
+                  <input formControlName="billing_email" type="text" class="form-control placeholder-input">
+                </div>
+              </div>
+
+            </div>
+
+            <div class="col-md-12">
+              <label class="section-number-title-section mb-4">Benefits</label>
+
+              <div formArrayName="benefits">
+                <div class="row">
+                  <div class="col-md-4 mb-1" *ngFor="let benefit of benefits; let i = index">
+                    <div class="d-flex justify-content-between align-items-center">
+
+                      <!-- Checkbox con nombre -->
+                      <div class="form-check">
+                        <input
+                          type="checkbox"
+                          class="form-check-input"
+                          [formControlName]="i"
+                          (change)="toggleBenefit(benefit.id, benefit.name, getCheckedValue($event))"
+                          [id]="'benefitCheck' + i"/>
+                        <label class="form-check-label section-number-title-light ms-1" [for]="'benefitCheck' + i">
+                          {{ benefit.name }}
+                        </label>
+                      </div>
+
+                      <!-- Input visible solo si está activado -->
+                      <input
+                        *ngIf="companyForm.get('benefits')?.value[i]"
+                        type="number"
+                        class="form-control form-control-sm placeholder-input"
+                        style="max-width: 80px;"
+                        [value]="benefit.price"
+                        (input)="updateBenefitPrice(benefit.id, getInputValue($event))"
+                        placeholder="$"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit"
+                  class="btn btn-primary custom-btn d-flex align-items-center"
+                  [disabled]="companyForm.invalid || isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
+                  aria-hidden="true"></span>
+            {{ isLoading ? 'Saving...' : 'Save Group' }}
+          </button>
+
+          <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Show Company -->
+<div class="modal fade" id="showCompanyModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+          <i class="bi bi-collection me-2 icon-style"></i>
+          <span class="section-title">
+                    <ng-container *ngIf="companyDetail?.name; else loading">
+                        {{ companyDetail.name }}
+                    </ng-container>
+                    <ng-template #loading>
+                        <span class="skeleton-loader" style="width: 150px; height: 20px; display: inline-block;"></span>
+                    </ng-template>
+                </span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body Content -->
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+
+            <!-- General Data -->
+            <div class="col-md-4 mb-3">
+              <label class="section-number-title-section">General Data</label>
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-collection"></i>
+                  Name:
+                </strong>
+
+                <ng-container *ngIf="companyDetail?.name; else loading">
+                  <span class="title-info-data">{{ companyDetail.name }}</span>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-envelope"></i>
+                  Contact Email:
+                </strong>
+                <ng-container *ngIf="companyDetail; else loading">
+                                    <span class="title-info-data">
+                                        {{ companyDetail.contact_email !== null && companyDetail.contact_email !== undefined ? companyDetail.contact_email : 'N/A' }}
+                                    </span>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 140px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-telephone"></i>
+                  Contact Phone:
+                </strong>
+                <ng-container *ngIf="companyDetail; else loading">
+                                    <span class="title-info-data">
+                                        {{ companyDetail.contact_phone !== null && companyDetail.contact_phone !== undefined ? companyDetail.contact_phone : 'N/A' }}
+                                    </span>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 100px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-telephone"></i>
+                  Address:
+                </strong>
+                <ng-container *ngIf="companyDetail; else loading">
+                                    <span class="title-info-data">
+                                        {{ companyDetail.address !== null && companyDetail.address !== undefined ? companyDetail.address : 'N/A' }}
+                                    </span>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 100px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-geo"></i>
+                  Group:
+                </strong>
+                <ng-container *ngIf="companyDetail; else loading">
+                                    <span class="title-info-data">
+                                        {{ companyDetail.group.name !== null && companyDetail.group.name !== undefined ? companyDetail.group.name : 'N/A' }}
+                                    </span>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-geo"></i>
+                  DTC Plan ID:
+                </strong>
+                <ng-container *ngIf="companyDetail; else loading">
+                                    <span class="title-info-data">
+                                        {{ companyDetail.dtc_plan_id !== null && companyDetail.dtc_plan_id !== undefined ? companyDetail.dtc_plan_id : 'N/A' }}
+                                    </span>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-1 d-flex align-items-center">
+                <strong class="title-info me-2 d-flex align-items-center">
+                  <i class="bi bi-check-circle me-1"></i>
+                  Status:
+                </strong>
+
+                <ng-container *ngIf="companyDetail !== null && companyDetail !== undefined; else loading">
+                  <div class="form-check form-switch mb-0">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      [checked]="companyDetail.is_active"
+                      id="switchCheckChecked-{{ companyDetail.id }}"
+                      (change)="onToggleActive($event, companyDetail, true)"/>
+                  </div>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 100px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+            </div>
+
+            <div class="mt-1">
+              <strong class="title-info">
+                <i class="bi bi-geo"></i>
+                Active Members:
+              </strong>
+              <ng-container *ngIf="companyDetail; else loading">
+                                    <span class="title-info-data">
+                                        {{ companyDetail.dtc_plan_id !== null && companyDetail.dtc_plan_id !== undefined ? companyDetail.dtc_plan_id : 'N/A' }}
+                                    </span>
+              </ng-container>
+
+              <ng-template #loading>
+                <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
+              </ng-template>
+            </div>
+
+            <div class="mt-1">
+              <strong class="title-info">
+                <i class="bi bi-geo"></i>
+                Inactive Members:
+              </strong>
+              <ng-container *ngIf="companyDetail; else loading">
+                                    <span class="title-info-data">
+                                        {{ companyDetail.dtc_plan_id !== null && companyDetail.dtc_plan_id !== undefined ? companyDetail.dtc_plan_id : 'N/A' }}
+                                    </span>
+              </ng-container>
+
+              <ng-template #loading>
+                <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
+              </ng-template>
+            </div>
+
+            <!-- Accounts Info -->
+            <div class="col-md-4 mb-3">
+              <label class="section-number-title-section mb-2">Accounts Info</label>
+
+              <ng-container *ngIf="companyDetail?.admin_accounts !== undefined; else loadingAccounts">
+                <div *ngIf="companyDetail?.admin_accounts?.length > 0; else noAccounts">
+                  <ul class="list-unstyled">
+                    <li *ngFor="let account of companyDetail.admin_accounts" class="d-flex align-items-center mb-3">
+                      <div class="rounded-circle d-flex justify-content-center align-items-center"
+                           style="width: 32px; height: 32px; background-color: #007bff; color: white; font-size: 20px;">
+                        <i class="bi bi-person"></i>
+                      </div>
+
+                      <div class="ms-3">
+                        <div class="account-text">{{ account.name }}</div>
+                        <div class="account-text">{{ account.email }}</div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                <ng-template #noAccounts>
+                  <p class="no-accounts mt-2">
+                    <i class="bi bi-person-x"></i>
+                    No accounts available.
+                  </p>
+                </ng-template>
+              </ng-container>
+
+              <ng-template #loadingAccounts>
+                <span class="skeleton-loader" style="width: 200px; height: 15px; display: inline-block;"></span>
+              </ng-template>
+            </div>
+
+            <!-- Billing Info -->
+            <div class="col-md-4 mb-3">
+              <label class="section-number-title-section">Billing Info</label>
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-envelope"></i>
+                  Billing Email:
+                </strong>
+                <ng-container *ngIf="companyDetail !== undefined; else loading">
+                                    <span class="title-info-data">
+                                    {{ companyDetail.billing_email ? companyDetail.billing_email : 'N/A' }}
+                                    </span>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 140px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-telephone"></i>
+                  Billing Phone:
+                </strong>
+                <ng-container *ngIf="companyDetail !== undefined; else loading">
+                                    <span class="title-info-data">
+                                    {{ companyDetail.billing_phone ? companyDetail.billing_phone : 'N/A' }}
+                                    </span>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 100px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-1">
+                <strong class="title-info">
+                  <i class="bi bi-geo"></i>
+                  Billing Address:
+                </strong>
+
+                <ng-container *ngIf="companyDetail !== undefined; else loading">
+                                    <span class="title-info-data">
+                                    {{ companyDetail.billing_address ? companyDetail.billing_address : 'N/A' }}
+                                    </span>
+                </ng-container>
+
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+            </div>
+
+            <!--Members-->
+            <div class="row mt-3" *ngIf="companyDetail?.members.length > 0">
+              <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <!-- Título con ícono alineado a la izquierda -->
+                  <label class="section-number-title-section mb-0 d-flex align-items-center">
+                    <i class="bi bi-building me-2 icon-style"></i>
+                    Members
+                  </label>
+
+                  <!-- Input de búsqueda alineado a la derecha -->
+                  <div style="width: 50%;">
+                    <div class="input-group">
+                      <input type="text" class="form-control placeholder-input"
+                             placeholder="Example: Member A"
+                             [(ngModel)]="searchTermMember"
+                             (keyup.enter)="searchMembers()"
+                             aria-label="Search by Name"
+                             aria-describedby="button-addon2"/>
+
+                      <button class="btn btn-outline-secondary"
+                              type="button"
+                              id="button-addon2"
+                              (click)="searchMembers()">
+                        <i class="bi bi-search"></i>
+                        <span class="search-btn">Search</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <table class="table text-center mt-4">
+                  <thead>
+                  <tr>
+                    <th scope="col" class="text-start">
+                      <div class="d-flex align-items-center">
+                        <span class="section-number-title">Name</span>
+                      </div>
+                    </th>
+                    <th scope="col" class="text-start">
+                      <span class="section-number-title">Email</span>
+                    </th>
+                    <th scope="col" class="text-start">
+                      <span class="section-number-title">Phone</span>
+                    </th>
+                    <th scope="col">
+                      <span class="section-number-title">Status</span>
+                    </th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <tr *ngFor="let member of paginatedMembers">
+                    <th scope="row" class="text-start">
+                                                <span class="section-number-data">
+                                                    {{ member?.name ? member.name : 'Unknown' }}
+                                                </span>
+                    </th>
+                    <td class="text-start">
+                                                <span class="section-number-data">
+                                                    {{ member?.contact_email ? member.contact_email : 'N/A' }}
+                                                </span>
+                    </td>
+                    <td class="text-start">
+                                                <span class="section-number-data">
+                                                    {{ member?.contact_phone ? member?.contact_phone : 'N/A' }}
+                                                </span>
+                    </td>
+                    <td>
+                      <div class="form-check form-switch d-flex justify-content-center">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          [checked]="member.is_active"
+                          id="switchCompany-{{ member.id }}"
+                          (change)="onToggleCompanyMemberStatus($event, member)"/>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+
+                <nav *ngIf="filteredMembers && filteredMembers.length > membersPerPage" class="mt-4">
+                  <ul class="pagination justify-content-center">
+                    <li class="page-item" [class.disabled]="currentMembersPage === 1">
+                      <a class="page-link nav-btn" (click)="changeMemberPage(currentMembersPage - 1)">Prev</a>
+                    </li>
+
+                    <li class="page-item"
+                        *ngFor="let page of [].constructor(Math.ceil((filteredMembers?.length || 0) / membersPerPage)); let i = index"
+                        [class.active]="currentMembersPage === i + 1">
+                      <a class="page-link nav-btn" (click)="changeMemberPage(i + 1)">{{ i + 1 }}</a>
+                    </li>
+
+                    <li class="page-item"
+                        [class.disabled]="currentMembersPage === Math.ceil((filteredMembers?.length || 0) / membersPerPage)">
+                      <a class="page-link nav-btn" (click)="changeMemberPage(currentMembersPage + 1)">Next</a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+
+            <!-- Benefits -->
+            <div class="row mt-3">
+              <div class="col-md-12">
+                <label class="section-number-title-section mb-2">Benefits</label>
+                <div *ngIf="companyDetail?.benefits?.length > 0">
+                  <div class="row">
+                    <div class="col-md-4 mb-3" *ngFor="let b of companyDetail.benefits">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="title-info-data">{{ b.name }}</span>
+                        <div class="form-check form-switch">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            role="switch"
+                            [checked]="b.enabled"
+                            id="switchCheckChecked-{{ b.id }}"
+                            (change)="onToggleBenefit($event, b)"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Remove Company -->
+<div class="modal fade" id="removeCompanyModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+          <i class="bi bi-collection me-2 icon-style"></i>
+          <span class="section-title">Remove Company</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body text-center d-flex flex-column align-items-center justify-content-center">
+        <i class="bi bi-exclamation-octagon" style="font-size: 48px; color: #dc3545;"></i>
+        <p class="want-delete mt-3">
+          Are you sure you want to delete company <strong>{{ companyToRemove?.name }}</strong>?
+        </p>
+      </div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger">
+          <i class="bi bi-trash"></i>
+          Remove
+        </button>
+        <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
