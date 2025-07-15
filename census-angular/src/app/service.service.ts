@@ -79,6 +79,14 @@ export class ServiceService {
     );
   }
 
+  updateGroupBenefits(groupId: number, benefits: { id: number; enabled: boolean }[]): Observable<any> {
+    return this.http.patch<any>(
+      `${this.server}/groups/${groupId}/benefits`,
+      { benefits },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getTotalEnrolled() {
     return this.http.get(
       `${this.server}/dashboard/total_enrolled_last_six_month`,
@@ -89,6 +97,13 @@ export class ServiceService {
   getMembersByState() {
     return this.http.get(`${this.server}/dashboard/members_by_state`,
       {headers: this.getAuthHeaders()}
+    );
+  }
+
+  removeAdminFromGroup(groupId: number, accountId: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.server}/groups/${groupId}/admins/${accountId}`,
+      { headers: this.getAuthHeaders() }
     );
   }
 
@@ -103,6 +118,14 @@ export class ServiceService {
       headers: this.getAuthHeaders(),
       params
     });
+  }
+
+  updateGroup(group: any): Observable<any> {
+    return this.http.put<any>(
+      `${this.server}/groups/${group.id}`,
+      { group: group },
+      { headers: this.getAuthHeaders() }
+    );
   }
 
   getGroupDetails(groupId: string): Observable<any> {
