@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { ServiceService } from '../service.service';
-import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
-import { MessagesComponent } from '../messages/messages.component';
-import { group } from 'node:console';
+import {Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+import {MessagesComponent} from '../messages/messages.component';
 import {CompanyService} from "./service/company.service";
 
 declare var bootstrap: any;
@@ -38,6 +42,8 @@ export class CompanyComponent implements OnInit {
   public searchTerm: string = '';
   public sort: string = 'name';
   public direction: string = 'asc';
+  public selectedTag: string = '';
+  public tags: any[] = [];
 
   public searchTermCompanies: string = '';
 
@@ -63,10 +69,11 @@ export class CompanyComponent implements OnInit {
     this.initModalCreate();
     this.loadBenefits();
     this.getCompanies(this.currentPage);
+    this.getTags();
   }
 
   getCompanies(page: number) {
-    this.service.getCompanies(page, this.searchTerm, this.sort, this.direction).subscribe(
+    this.service.getCompanies(page, this.searchTerm, this.sort, this.direction, this.selectedTag).subscribe(
       (data: any) => {
         this.companies = data.companies;
         this.totalPages = data.total_pages;
@@ -76,6 +83,27 @@ export class CompanyComponent implements OnInit {
         console.error('Error fetching companies', error);
       }
     );
+  }
+
+  getTags() {
+    this.service.getTags().subscribe(
+      (data: any) => {
+        this.tags = data.tags;
+      },
+      (error: any) => {
+        console.error('Error fetching tags', error);
+      }
+    );
+  }
+
+  onTagChange(tagId: string) {
+    this.selectedTag = tagId;
+    this.getCompanies(1);
+  }
+
+  clearTagFilter() {
+    this.selectedTag = '';
+    this.getCompanies(1);
   }
 
   toggleSortDirection() {
@@ -341,59 +369,4 @@ export class CompanyComponent implements OnInit {
       }
     );
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

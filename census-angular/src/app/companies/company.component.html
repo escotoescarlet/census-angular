@@ -35,7 +35,27 @@
         New Company
       </button>
     </div>
+  </div>
+  <!-- Fila de tags para filtrar -->
+  <div class="row justify-content-center mt-3">
+    <div class="col-11">
+      <div class="d-flex align-items-center flex-wrap gap-2">
+        <span class="me-2">Filter by Tag:</span>
 
+        <!-- Selector de tags -->
+        <select class="form-select form-select-sm" style="width: auto;"
+                [(ngModel)]="selectedTag" (change)="onTagChange(selectedTag)">
+          <option value="">All Tags</option>
+          <option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</option>
+        </select>
+
+        <!-- Botón para limpiar filtro (opcional) -->
+        <button *ngIf="selectedTag" class="btn btn-sm btn-outline-secondary ms-2"
+                (click)="clearTagFilter()">
+          Clear
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -72,9 +92,14 @@
       <tbody>
       <tr *ngFor="let company of companies">
         <th scope="row" class="text-start">
-                <span class="section-number-data">
-                    {{ company.name }}
-                </span>
+          <span class="section-number-data">
+            {{ company.name }}
+          </span>
+          <div *ngIf="company.tags?.length" class="mt-1">
+            <span *ngFor="let tag of company.tags" class="badge bg-secondary me-1">
+              {{ tag }}
+            </span>
+          </div>
         </th>
         <td class="text-start">
                 <span class="section-number-data">
