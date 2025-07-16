@@ -343,6 +343,8 @@ export class CompanyComponent implements OnInit {
     const data = {
       company: {
         ...this.companyForm.value,
+        email:this.companyForm.value.contact_email,
+        phone:this.companyForm.value.contact_phone,
         group_id: this.companyForm.get('not_group')?.value ? null : this.companyForm.get('group_id')?.value,
         tag_ids: this.selectedTagIds,
         benefits: this.selectedBenefits,
@@ -368,6 +370,7 @@ export class CompanyComponent implements OnInit {
         this.showErrorMsg(err);
         this.companyForm.reset();
         this.closeModalAddCompany();
+        this.getCompanies(this.currentPage);
         this.isLoading = false;
       }
     );
