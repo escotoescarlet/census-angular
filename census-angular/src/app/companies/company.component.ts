@@ -66,6 +66,26 @@ export class CompanyComponent implements OnInit {
 
   public companyToRemove: any;
 
+  public companyDetailEdit: any = {
+    id: null,
+    name: '',
+    description: '',
+    is_active: false,
+    contact_name: '',
+    contact_email: '',
+    contact_phone: '',
+    billing_email: '',
+    billing_phone: '',
+    billing_address: '',
+    address: '',
+    dct_plan_id: '',
+    group_id: null,
+    not_group: false,
+    tag_ids: [],
+    benefits: [],
+    admin_accounts: []
+  };
+
   constructor(private fb: FormBuilder, private service: CompanyService, private groupServices: ServiceService) {
   }
 
@@ -388,4 +408,55 @@ export class CompanyComponent implements OnInit {
     }
   }
 
+  prepareEditCompany(selected: any) {
+    const companyId = selected.id;
+
+    this.service.getCompanyDetails(companyId).subscribe({
+      next: (response: any) => {
+        this.companyDetailEdit = response;
+        this.currentMembersPage = 1;
+        this.filteredMembers = this.companyDetailEdit.companies || [];
+        this.updatePaginatedMembers();
+      },
+      error: (error: any) => {
+        this.showErrorMsg(error);
+      }
+    });
+  }
+
+  removeCompanyAdminAccount(account: any): void {
+    if (this.companyDetailEdit.id !== null) {
+      this.service.removeAdminFromCompany(this.companyDetailEdit.id, account.account_id).subscribe(
+        (data: any) => {
+          this.companyDetailEdit.admin_accounts = this.companyDetailEdit.admin_accounts.filter(
+            (acc: any) => acc.account_id !== account.account_id
+          );
+        }, (error: any) => {
+          this.showErrorMsg(error);
+        }
+      );
+    }
+  }
+
+
+  onSaveCompanyChanges(): void {
+    this.service.updateCompany(this.companyDetailEdit).subscribe({
+      next: (data: any) => {
+        this.showSuccessMsg(data.message);
+        this.closeModalEditCompany();
+        this.getCompanies(this.currentPage);
+      },
+      error: (err: any) => {
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  closeModalEditCompany() {
+    const modalElement = document.getElementById('editCompanyModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
 }

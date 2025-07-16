@@ -79,4 +79,19 @@ export class CompanyService {
     });
   }
 
+  updateCompany(company: any): Observable<any> {
+    return this.http.put<any>(
+      `${this.server}/companies/${company.id}`,
+      { company: company },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  removeAdminFromCompany(companyId: number, accountId: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.server}/companies/${companyId}/admins/${accountId}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
 }
