@@ -11,6 +11,8 @@ import {
 } from '@angular/forms';
 import {MessagesComponent} from '../messages/messages.component';
 import {CompanyService} from "./service/company.service";
+import {ServiceService} from "../service.service";
+import {NgSelectModule} from "@ng-select/ng-select";
 
 declare var bootstrap: any;
 
@@ -21,7 +23,8 @@ declare var bootstrap: any;
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    MessagesComponent
+    MessagesComponent,
+    NgSelectModule
   ],
   templateUrl: './company.component.html',
   styleUrl: './company.component.css'
@@ -45,14 +48,15 @@ export class CompanyComponent implements OnInit {
   public selectedTag: string = '';
   public tags: any[] = [];
 
-  public searchTermCompanies: string = '';
-
   public companyForm!: FormGroup;
   public benefits: any[] = [];
   public selectedBenefits: string[] = [];
   public benefitPrices: { [key: string]: number } = {};
   public companyDetail: any;
   public activeBenefits: any[] = [];
+  public selectedTagIds: number[] = [];
+  public groups: any[] = [];
+
 
   public searchTermMember: string = '';
   public membersPerPage = 10;
@@ -62,13 +66,14 @@ export class CompanyComponent implements OnInit {
 
   public companyToRemove: any;
 
-  constructor(private fb: FormBuilder, private service: CompanyService) {
+  constructor(private fb: FormBuilder, private service: CompanyService, private groupServices: ServiceService) {
   }
 
   ngOnInit(): void {
     this.initModalCreate();
     this.loadBenefits();
     this.getCompanies(this.currentPage);
+    this.getGroups()
     this.getTags();
   }
 
@@ -78,6 +83,17 @@ export class CompanyComponent implements OnInit {
         this.companies = data.companies;
         this.totalPages = data.total_pages;
         this.currentPage = data.current_page;
+      },
+      (error: any) => {
+        console.error('Error fetching companies', error);
+      }
+    );
+  }
+
+  getGroups() {
+    this.groupServices.getGroups().subscribe(
+      (data: any) => {
+        this.groups = data.groups;
       },
       (error: any) => {
         console.error('Error fetching companies', error);
@@ -119,8 +135,8 @@ export class CompanyComponent implements OnInit {
       next: (response: any) => {
         company.is_active = response.company.is_active;
 
-        if(fromModal) {
-          let companyFounded : any = this.searchCompany(company.id);
+        if (fromModal) {
+          let companyFounded: any = this.searchCompany(company.id);
           companyFounded.is_active = response.company.is_active;
         }
       },
@@ -131,7 +147,19 @@ export class CompanyComponent implements OnInit {
     });
   }
 
-  searchCompany(id: number) : any {
+  toggleGroupSelection() {
+    const notGroupChecked = this.companyForm.get('not_group')?.value;
+    const groupIdControl = this.companyForm.get('group_id');
+
+    if (notGroupChecked) {
+      groupIdControl?.disable();
+      groupIdControl?.setValue('');
+    } else {
+      groupIdControl?.enable();
+    }
+  }
+
+  searchCompany(id: number): any {
     return this.companies.find(group => group.id == id);
   }
 
@@ -171,21 +199,6 @@ export class CompanyComponent implements OnInit {
 
   }
 
-  searchCompanies(): void {
-    const term = this.searchTermCompanies.trim().toLowerCase();
-
-    if (term) {
-      this.filteredMembers = this.companyDetail.companies.filter((company: any) =>
-        company.name?.toLowerCase().includes(term)
-      );
-    } else {
-      this.filteredMembers = this.companyDetail.companies;
-    }
-
-    this.currentMembersPage = 1;
-    this.updatePaginatedMembers();
-  }
-
   searchMembers(): void {
     const term = this.searchTermMember.trim().toLowerCase();
 
@@ -199,23 +212,6 @@ export class CompanyComponent implements OnInit {
 
     this.currentMembersPage = 1;
     this.updatePaginatedMembers();
-  }
-
-  onToggleCompanyStatus(event: any, company: any): void {
-    const isChecked = event.target.checked;
-
-    const previousStatus = company.is_active;
-    company.is_active = isChecked;
-
-    this.service.toggleCompanyActive(company.id, isChecked).subscribe({
-      next: (response: any) => {
-        company.is_active = response.company?.is_active ?? isChecked;
-      },
-      error: (err) => {
-        console.error('Error updating company status:', err);
-        company.is_active = previousStatus; // Revert on error
-      }
-    });
   }
 
   onToggleCompanyMemberStatus(event: any, member: any): void {
@@ -238,6 +234,11 @@ export class CompanyComponent implements OnInit {
   initModalCreate() {
     this.companyForm = this.fb.group({
       name: ['', Validators.required],
+
+      dct_plan_id: [''],
+      not_group: [false],
+      group_id: [null],
+
       address: [''],
 
       contact_name: ['', Validators.required],
@@ -249,8 +250,8 @@ export class CompanyComponent implements OnInit {
       secondary_name: [''],
       secondary_email: ['', Validators.email],
 
-      billing_address: [''],
-      billing_contact_name: [''],
+      address_billing: [''],
+      contact_billing: [''],
       billing_phone: [''],
       billing_email: ['', Validators.email],
 
@@ -306,8 +307,8 @@ export class CompanyComponent implements OnInit {
     return (event.target as HTMLInputElement).value;
   }
 
-  closeModalAddGroup() {
-    const modalElement = document.getElementById('addGroupModal');
+  closeModalAddCompany() {
+    const modalElement = document.getElementById('addCompanyModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
@@ -340,8 +341,10 @@ export class CompanyComponent implements OnInit {
     this.isLoading = true;
 
     const data = {
-      group: {
+      company: {
         ...this.companyForm.value,
+        group_id: this.companyForm.get('not_group')?.value ? null : this.companyForm.get('group_id')?.value,
+        tag_ids: this.selectedTagIds,
         benefits: this.selectedBenefits,
         benefit_prices: this.benefitPrices
       }
@@ -356,7 +359,7 @@ export class CompanyComponent implements OnInit {
         this.benefitPrices = {};
         this.showSuccessMsg(data.message);
         this.initModalCreate();
-        this.closeModalAddGroup();
+        this.closeModalAddCompany();
         this.getCompanies(this.currentPage);
         this.isLoading = false;
       },
@@ -364,9 +367,22 @@ export class CompanyComponent implements OnInit {
         console.error('Error creating group', err);
         this.showErrorMsg(err);
         this.companyForm.reset();
-        this.closeModalAddGroup();
+        this.closeModalAddCompany();
         this.isLoading = false;
       }
     );
   }
+
+  isTagSelected(tagId: number): boolean {
+    return this.selectedTagIds.includes(tagId);
+  }
+
+  toggleTagSelection(tagId: number): void {
+    if (this.isTagSelected(tagId)) {
+      this.selectedTagIds = this.selectedTagIds.filter(id => id !== tagId);
+    } else {
+      this.selectedTagIds = [...this.selectedTagIds, tagId];
+    }
+  }
+
 }

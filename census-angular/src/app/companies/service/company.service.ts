@@ -68,7 +68,7 @@ export class CompanyService {
   }
 
   createCompany(companyData: any) {
-    return this.http.post(`${this.server}/compnaies`, companyData, {
+    return this.http.post(`${this.server}/companies`, companyData, {
       headers: this.getAuthHeaders()
     });
   }

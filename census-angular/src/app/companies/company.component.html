@@ -179,7 +179,7 @@
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             <i class="bi bi-collection me-2 icon-style"></i>
-            <span class="section-title">New Group</span>
+            <span class="section-title">New Company</span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -204,6 +204,58 @@
                   <div class="invalid-feedback"
                        *ngIf="companyForm.get('name')?.touched && companyForm.get('name')?.invalid">
                     <span class="error-text">Group Name is required.</span>
+                  </div>
+                </div>
+
+                <!-- Campo para DTC Plan ID -->
+                <div class="section-number-title-light mt-2">
+                  <label class="mb-1">DTC Plan ID</label>
+                  <input
+                    formControlName="dct_plan_id"
+                    type="text"
+                    class="form-control placeholder-input">
+                </div>
+
+                <!-- Checkbox y Dropdown para Grupo -->
+                <div class="section-number-title-light mt-3">
+                  <label class="mb-1">Group</label>
+                  <select
+                    formControlName="group_id"
+                    class="form-select">
+                    <option value="">Select a group</option>
+                    <option *ngFor="let group of groups" [value]="group.id">
+                      {{ group.name }}
+                    </option>
+                  </select>
+
+                  <div class="form-check mb-2">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      id="notGroupCheckbox"
+                      formControlName="not_group"
+                      (change)="toggleGroupSelection()">
+                    <label class="form-check-label" for="notGroupCheckbox">
+                      I don't have a group
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Selector de Tags -->
+                <div class="section-number-title-light mt-3">
+                  <label class="mb-1">Tags</label>
+                  <div class="tags-container d-flex flex-wrap gap-2">
+                    <span *ngFor="let tag of tags"
+                          class="tag-chip badge rounded-pill"
+                          [ngClass]="{
+                            'bg-primary text-white': isTagSelected(tag.id),
+                            'bg-light text-dark border': !isTagSelected(tag.id)
+                          }"
+                          style="cursor: pointer; padding: 0.5rem 1rem; font-size: 0.9rem;"
+                          (click)="toggleTagSelection(tag.id)">
+                      {{ tag.name }}
+                      <span *ngIf="isTagSelected(tag.id)" class="ms-1">✓</span>
+                    </span>
                   </div>
                 </div>
 
@@ -297,12 +349,12 @@
 
                 <div class="section-number-title-light mt-2">
                   <label>Billing Address</label>
-                  <input formControlName="billing_address" type="text" class="form-control placeholder-input">
+                  <input formControlName="address_billing" type="text" class="form-control placeholder-input">
                 </div>
 
                 <div class="section-number-title-light mt-2">
                   <label>Billing Contact Name</label>
-                  <input formControlName="billing_contact_name" type="text" class="form-control placeholder-input">
+                  <input formControlName="contact_billing" type="text" class="form-control placeholder-input">
                 </div>
 
                 <div class="section-number-title-light mt-2">
@@ -363,7 +415,7 @@
                   [disabled]="companyForm.invalid || isLoading">
             <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
                   aria-hidden="true"></span>
-            {{ isLoading ? 'Saving...' : 'Save Group' }}
+            {{ isLoading ? 'Saving...' : 'Save Company' }}
           </button>
 
           <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
@@ -548,6 +600,24 @@
 
                 <ng-template #loading>
                   <span class="skeleton-loader" style="width: 160px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-3">
+                <strong class="title-info">
+                  <i class="bi bi-tags"></i>
+                  Tags:
+                </strong>
+                <ng-container *ngIf="companyDetail?.tags?.length; else noTags">
+                  <div class="mt-2">
+                    <span *ngFor="let tag of companyDetail.tags" class="badge bg-secondary me-2 mb-2">
+                      {{ tag.name }}
+                    </span>
+                  </div>
+                </ng-container>
+
+                <ng-template #noTags>
+                  <span class="title-info-data">N/A</span>
                 </ng-template>
               </div>
             </div>
