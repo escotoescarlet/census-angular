@@ -41,16 +41,23 @@ export class CompanyService {
     );
   }
 
-  getCompanies(page: number = 1, searchTerm: string = '', sort: string = '', direction: string = '') {
+  getCompanies(page: number = 1, searchTerm: string = '', sort: string = '', direction: string = '',selectedTag: string = '') {
     const params: any = { page };
 
     if (searchTerm.trim()) params.q = searchTerm.trim();
     if (sort) params.sort = sort;
     if (direction) params.direction = direction;
+    if (selectedTag) params.tag_id = selectedTag;
 
     return this.http.get(`${this.server}/companies`, {
       headers: this.getAuthHeaders(),
       params
+    });
+  }
+
+  getTags() {
+    return this.http.get(`${this.server}/tags`, {
+      headers: this.getAuthHeaders(),
     });
   }
 
