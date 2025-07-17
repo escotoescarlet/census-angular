@@ -94,4 +94,10 @@ export class CompanyService {
     );
   }
 
+  deleteCompany(companyId: number): Observable<any> {
+    return this.http.delete(`${this.server}/companies/${companyId}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
 }

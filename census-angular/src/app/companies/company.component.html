@@ -840,7 +840,7 @@
                         <input class="form-check-input" type="checkbox" role="switch"
                                [checked]="b.enabled"
                                id="switchCheckCompanyBenefit-{{ b.id }}"
-                               (change)="onToggleBenefit($event, b)" />
+                               disabled/>
                       </div>
                     </div>
                   </div>
@@ -981,7 +981,7 @@
 
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-danger">
+        <button type="button" class="btn btn-danger" (click)="deleteCompany()">
           <i class="bi bi-trash"></i>
           Remove
         </button>

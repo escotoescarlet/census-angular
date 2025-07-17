@@ -543,4 +543,28 @@ export class CompanyComponent implements OnInit {
       modalInstance.hide();
     }
   }
+
+  deleteCompany(): void {
+    if (!this.companyToRemove || !this.companyToRemove.id) return;
+
+    this.service.deleteCompany(this.companyToRemove.id).subscribe({
+      next: (response: any) => {
+        this.showSuccessMsg(response.message || 'Company removed successfully');
+        this.closeRemoveCompanyModal();
+        this.getCompanies(this.currentPage); // actualiza la lista
+      },
+      error: (error) => {
+        console.error('Error deleting company', error);
+        this.showErrorMsg(error);
+      }
+    });
+  }
+
+  closeRemoveCompanyModal() {
+    const modalElement = document.getElementById('removeCompanyModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
 }
