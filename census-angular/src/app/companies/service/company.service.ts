@@ -68,13 +68,34 @@ export class CompanyService {
   }
 
   createCompany(companyData: any) {
-    return this.http.post(`${this.server}/compnaies`, companyData, {
+    return this.http.post(`${this.server}/companies`, companyData, {
       headers: this.getAuthHeaders()
     });
   }
 
   getBenefits(): Observable<any[]> {
     return this.http.get<any[]>(`${this.server}/benefits`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  updateCompany(id:number,company: any): Observable<any> {
+    return this.http.put<any>(
+      `${this.server}/companies/${id}`,
+      { company: company },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  removeAdminFromCompany(companyId: number, accountId: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.server}/companies/${companyId}/admins/${accountId}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  deleteCompany(companyId: number): Observable<any> {
+    return this.http.delete(`${this.server}/companies/${companyId}`, {
       headers: this.getAuthHeaders()
     });
   }
