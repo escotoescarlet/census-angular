@@ -50,7 +50,7 @@ export class CompanyComponent implements OnInit {
 
   public companyForm!: FormGroup;
   public benefits: any[] = [];
-  public selectedBenefits: string[] = [];
+  public selectedBenefits: any[] = [];
   public benefitPrices: { [key: string]: number } = {};
   public companyDetail: any;
   public activeBenefits: any[] = [];
@@ -74,12 +74,14 @@ export class CompanyComponent implements OnInit {
     contact_name: '',
     contact_email: '',
     contact_phone: '',
+    contact_billing: '',
     billing_email: '',
     billing_phone: '',
     billing_address: '',
     address: '',
-    dct_plan_id: '',
+    dtc_plan_id: '',
     group_id: null,
+    group: {},
     not_group: false,
     tag_ids: [],
     benefits: [],
@@ -179,6 +181,12 @@ export class CompanyComponent implements OnInit {
     }
   }
 
+  toggleEditCompanyGroupSelection() {
+    if (this.companyDetailEdit.not_group) {
+      this.companyDetailEdit.group_id = null;
+    }
+  }
+
   searchCompany(id: number): any {
     return this.companies.find(group => group.id == id);
   }
@@ -213,10 +221,6 @@ export class CompanyComponent implements OnInit {
   changeMemberPage(page: number): void {
     this.currentMembersPage = page;
     this.updatePaginatedMembers();
-  }
-
-  onToggleBenefit(event: any, b: any) {
-
   }
 
   searchMembers(): void {
@@ -303,12 +307,21 @@ export class CompanyComponent implements OnInit {
   }
 
   toggleBenefit(id: number, name: string, checked: boolean) {
+    const existingIndex = this.selectedBenefits.findIndex((b: any) => b.id === id);
     if (checked) {
-      this.selectedBenefits.push(name);
-      this.benefitPrices[id] = this.benefits.find(b => b.id === id)?.price || 0;
+      const price = this.benefitPrices[id] ?? this.benefits.find(b => b.id === id)?.price ?? 0;
+      if (existingIndex === -1) {
+        this.selectedBenefits.push({id, name, price, enabled: true});
+      } else {
+        this.selectedBenefits[existingIndex].enabled = true;
+        this.selectedBenefits[existingIndex].price = price;
+      }
     } else {
-      this.selectedBenefits = this.selectedBenefits.filter(b => b !== name);
-      delete this.benefitPrices[id];
+      if (existingIndex !== -1) {
+        this.selectedBenefits[existingIndex].enabled = false;
+      } else {
+        this.selectedBenefits.push({id, name, price: 0, enabled: false});
+      }
     }
   }
 
@@ -316,6 +329,11 @@ export class CompanyComponent implements OnInit {
     const price = parseFloat(value);
     if (!isNaN(price)) {
       this.benefitPrices[id] = price;
+
+      const existingBenefit = this.selectedBenefits.find((b: any) => b.id === id);
+      if (existingBenefit) {
+        existingBenefit.price = price;
+      }
     }
   }
 
@@ -363,11 +381,16 @@ export class CompanyComponent implements OnInit {
     const data = {
       company: {
         ...this.companyForm.value,
-        email:this.companyForm.value.contact_email,
-        phone:this.companyForm.value.contact_phone,
+        email: this.companyForm.value.contact_email,
+        phone: this.companyForm.value.contact_phone,
         group_id: this.companyForm.get('not_group')?.value ? null : this.companyForm.get('group_id')?.value,
         tag_ids: this.selectedTagIds,
-        benefits: this.selectedBenefits,
+        benefits: this.selectedBenefits.map(b => ({
+          id: b.id,
+          name: b.name,
+          price: b.price,
+          enabled: b.enabled
+        })),
         benefit_prices: this.benefitPrices
       }
     };
@@ -414,8 +437,10 @@ export class CompanyComponent implements OnInit {
     this.service.getCompanyDetails(companyId).subscribe({
       next: (response: any) => {
         this.companyDetailEdit = response;
+        this.companyDetailEdit.group_id = this.companyDetailEdit.group.id;
         this.currentMembersPage = 1;
         this.filteredMembers = this.companyDetailEdit.companies || [];
+        this.selectedTagIds = this.companyDetailEdit.tags.map((tag: any) => tag.id);
         this.updatePaginatedMembers();
       },
       error: (error: any) => {
@@ -438,9 +463,29 @@ export class CompanyComponent implements OnInit {
     }
   }
 
-
   onSaveCompanyChanges(): void {
-    this.service.updateCompany(this.companyDetailEdit).subscribe({
+    const data = {
+      name: this.companyDetailEdit.name,
+      address: this.companyDetailEdit.address,
+      dct_plan_id: this.companyDetailEdit.dtc_plan_id,
+      not_group: this.companyDetailEdit.not_group,
+      is_active: this.companyDetailEdit.is_active,
+      contact_phone: this.companyDetailEdit.contact_phone,
+      group_id: this.companyDetailEdit.group_id,
+      email: this.companyDetailEdit.email,
+      phone: this.companyDetailEdit.phone,
+      contact_name: this.companyDetailEdit.contact_name,
+      contact_email: this.companyDetailEdit.contact_email,
+      address_billing: this.companyDetailEdit.billing_address,
+      contact_billing: this.companyDetailEdit.contact_billing,
+      billing_phone: this.companyDetailEdit.billing_phone,
+      billing_email: this.companyDetailEdit.billing_email,
+      benefits: this.companyDetailEdit.benefits,
+      benefit_prices: this.benefitPrices,
+      tag_ids: this.selectedTagIds,
+    }
+
+    this.service.updateCompany(this.companyDetailEdit.id, data).subscribe({
       next: (data: any) => {
         this.showSuccessMsg(data.message);
         this.closeModalEditCompany();
@@ -450,6 +495,45 @@ export class CompanyComponent implements OnInit {
         this.showErrorMsg(err);
       }
     });
+  }
+
+  isEditCompanyBenefitChecked(id: number): boolean {
+    return this.companyDetailEdit.benefits?.some((b: any) => b.id === id && b.enabled === true);
+  }
+
+  getEditCompanyBenefitPrice(id: number): number | null {
+    const benefit = this.companyDetailEdit.benefits?.find((b: any) => b.id === id && b.enabled === true);
+    return benefit ? benefit.price : null;
+  }
+
+  onEditCompanyBenefitToggle(id: number, name: string, checked: boolean): void {
+    const benefit = this.companyDetailEdit.benefits.find((b: any) => b.id === id);
+
+    if (checked) {
+      if (benefit) {
+        benefit.enabled = true;
+        this.benefitPrices[id] = this.companyDetailEdit.benefits.find((b: any) => b.id === id)?.price || 0;
+      } else {
+        this.companyDetailEdit.benefits.push({id, name, price: 0, enabled: true});
+        delete this.benefitPrices[id];
+      }
+    } else {
+      if (benefit) {
+        benefit.enabled = false;
+      }
+    }
+  }
+
+  onEditCompanyBenefitPriceChange(id: number, value: string): void {
+    const price = parseFloat(value);
+    if (!isNaN(price)) {
+      this.benefitPrices[id] = price;
+
+      const existingBenefit = this.companyDetailEdit.benefits.find((b: any) => b.id === id);
+      if (existingBenefit) {
+        existingBenefit.price = price;
+      }
+    }
   }
 
   closeModalEditCompany() {

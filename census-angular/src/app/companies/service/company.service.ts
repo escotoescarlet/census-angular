@@ -79,9 +79,9 @@ export class CompanyService {
     });
   }
 
-  updateCompany(company: any): Observable<any> {
+  updateCompany(id:number,company: any): Observable<any> {
     return this.http.put<any>(
-      `${this.server}/companies/${company.id}`,
+      `${this.server}/companies/${id}`,
       { company: company },
       { headers: this.getAuthHeaders() }
     );
