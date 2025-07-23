@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ServiceService } from '../service.service';
 import { CommonModule } from '@angular/common';
 import { MessagesComponent } from '../messages/messages.component';
+import { NotificationStateService } from '../shared/notification-state.service';
 
 @Component({
   selector: 'app-notifications',
@@ -30,8 +31,9 @@ export class NotificationsComponent implements OnInit {
   public notifications: any[] = [];
   public selectedNotif: any;
 
-  constructor(private service: ServiceService) {
-  }
+  constructor(private service: ServiceService,
+    private notificationStateService: NotificationStateService
+  ) {}
 
   ngOnInit(): void {
     this.getAllNotifications();
@@ -136,6 +138,7 @@ export class NotificationsComponent implements OnInit {
     this.service.markAllAsRead().subscribe(
       (next: any) => {
         this.showSuccessMsg(next.message);
+        this.notificationStateService.setUnreadCount(0);
       }, (err: any) => {
         this.showErrorMsg(err);
       }
@@ -155,7 +158,14 @@ export class NotificationsComponent implements OnInit {
           .map(n => n.id);
 
         if (unreadIds.length > 0) {
-          this.service.markNotificationsAsRead(unreadIds).subscribe();
+          this.service.markNotificationsAsRead(unreadIds).subscribe(() => {
+            
+            this.service.getCounterUnreadNotifications().subscribe(
+              (res: any) => {
+                this.notificationStateService.setUnreadCount(res.unread_count);
+              },(err) => this.showErrorMsg(err)
+            );
+          });
         }
       },
       (err) => this.showErrorMsg(err)

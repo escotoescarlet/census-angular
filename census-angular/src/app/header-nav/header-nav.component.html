@@ -17,8 +17,8 @@
           <a class="nav-link dropdown-toggle position-relative" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-bell fs-4 icon-header-style"></i>
             <!-- Badge -->
-            <span *ngIf="unreadNotif > 0" class="position-absolute start-100 translate-middle badge rounded-pill bg-danger">
-              {{ unreadNotif }}
+            <span *ngIf="unreadNotifCount > 0" class="position-absolute start-100 translate-middle badge rounded-pill bg-danger">
+              {{ unreadNotifCount }}
               <span class="visually-hidden">unread messages</span>
             </span>
           </a>

@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { StorageService } from '../storage.service';
 import { ServiceService } from '../service.service';
 import { MessagesComponent } from '../messages/messages.component';
+import { NotificationStateService } from '../shared/notification-state.service';
 
 @Component({
   selector: 'app-header-nav',
@@ -25,14 +26,19 @@ export class HeaderNavComponent implements OnInit {
   public showMsg: boolean = false;
 
   public latestNotifications: any[] = [];
-  public unreadNotif: number = 0;
+  public unreadNotifCount: number = 0;
 
   constructor(private router: Router,
+    private notificationStateService: NotificationStateService,
     private service: ServiceService,
     private storageService: StorageService) { 
   }
 
   ngOnInit(): void {
+    this.notificationStateService.unreadCount$.subscribe(count => {
+     this.unreadNotifCount = count;
+   });
+
     this.getLastetsNotifications();
     this.getUnreadNotifications();
   }
@@ -55,7 +61,7 @@ export class HeaderNavComponent implements OnInit {
   getUnreadNotifications() {
     this.service.getCounterUnreadNotifications().subscribe(
       (next: any) => {
-        this.unreadNotif = next.unread_count;
+        this.unreadNotifCount = next.unread_count;
       }, (err: any) => {
         this.showErrorMsg(err);
       }
