@@ -1,1 +1,88 @@
-<p>notifications works!</p>
+<app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
+
+<div class="row justify-content-center">
+  <div class="col-md-11 d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-bell me-2 icon-style"></i>
+      <span class="section-title">Notifications</span>
+    </div>
+
+    <button type="button" class="btn custom-btn" (click)="markAllAsRead()">
+      <i class="bi bi-plus-circle"></i>
+      Mark all as read
+    </button>
+  </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <ul class="responsive-list" aria-labelledby="notifDropdown">
+            <li *ngFor="let notif of notifications">
+              <div class="row notif-item">
+                <div class="col-12">
+                  <div class="row">
+                    <div class="col-6">
+                      <p class="title-account-style mb-2">{{ notif.account ? notif.account.name : 'Unknown Account' }}</p>
+                    </div>
+                    <div class="col-6">
+                      <p class="text-date-notif mb-2">{{ notif.created_at | date:'short' }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <p class="text-notif mb-1">{{ notif.params }}</p>
+                </div>
+
+                <div class="divider mb-0"></div>
+              </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-12">
+        <nav class="d-flex justify-content-center mt-3">
+            <ul class="pagination">
+            <!-- Previous -->
+            <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link directions-btn" (click)="goToPage(currentPage - 1)">Previous</button>
+            </li>
+
+            <!-- First page -->
+            <li class="page-item" [class.active]="currentPage === 1">
+                <button class="page-link directions-btn" (click)="goToPage(1)">1</button>
+            </li>
+
+            <!-- Left Ellipsis -->
+            <li class="page-item disabled" *ngIf="showLeftDots">
+                <span class="page-link directions-btn">...</span>
+            </li>
+
+            <!-- Pages in range -->
+            <li class="page-item"
+                *ngFor="let page of pagesInRange"
+                [class.active]="page === currentPage">
+                    <button class="page-link directions-btn" (click)="goToPage(page)">
+                        {{ page }}
+                    </button>
+            </li>
+
+            <!-- Right Ellipsis -->
+            <li class="page-item disabled" *ngIf="showRightDots">
+                <span class="page-link directions-btn">...</span>
+            </li>
+
+            <!-- Last page -->
+            <li class="page-item" *ngIf="totalPages > 1" [class.active]="currentPage === totalPages">
+                <button class="page-link directions-btn" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+            </li>
+
+            <!-- Next -->
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <button class="page-link directions-btn" (click)="goToPage(currentPage + 1)">Next</button>
+            </li>
+            </ul>
+        </nav>
+    </div>
+
+</div>

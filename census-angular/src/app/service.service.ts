@@ -94,6 +94,50 @@ export class ServiceService {
     );
   }
 
+  getLastetsNotifications() {
+    return this.http.get(
+      `${this.server}/notifications`,
+      {headers: this.getAuthHeaders()}
+    );
+  }
+
+  getAllNotifications() {
+    return this.http.get(
+      `${this.server}/notifications/all`,
+      {headers: this.getAuthHeaders()}
+    );
+  }
+
+  getCounterUnreadNotifications() {
+    return this.http.get(
+      `${this.server}/notifications/count_unread`,
+      {headers: this.getAuthHeaders()}
+    );
+  }
+
+  markAllAsRead() {
+    return this.http.post(
+      `${this.server}/notifications/mark_all_as_read`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  getAllPageNotifications(page: number = 1) {
+    return this.http.get(
+      `${this.server}/notifications/all?page=${page}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  markNotificationsAsRead(ids: number[]) {
+    return this.http.post(
+      `${this.server}/notifications/mark_as_read`,
+      { ids },
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getMembersByState() {
     return this.http.get(`${this.server}/dashboard/members_by_state`,
       {headers: this.getAuthHeaders()}

@@ -1,0 +1,91 @@
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../../assets/webfonts/opensans_bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans Normal';
+    src: url('../../assets/webfonts/opensans_regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans Light';
+    src: url('../../assets/webfonts/opensans_light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.notif-item {
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* ← Esto es clave */
+  position: relative;
+  cursor: pointer;
+}
+
+.icon-style {
+    color: rgb(163, 174, 208);
+    font-size: 24px;
+}
+
+.text-notif {
+  font-size: 12px;
+  font-family: 'OpenSans Normal';
+  color: #70778C;
+}
+
+.text-date-notif {
+  font-size: 12px;
+  font-family: 'OpenSans Normal';
+  color: #70778C;
+  text-align: right; /* ← Alinea el texto a la derecha */
+}
+
+.title-account-style {
+  font-size: 12px;
+  font-family: 'OpenSans Normal';
+  color: #70778C;
+}
+
+.divider {
+  height: 1px;
+  background-color: #e0e0e0; /* o el color que prefieras */
+  margin: 0.5rem 0;
+  width: 100%;
+}
+
+.see-more {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  color: #007bff; /* opcional: color Bootstrap link */
+}
+
+ul {
+  list-style-type: none;
+}
+
+.directions-btn {
+  font-family: 'OpenSans Normal';
+  font-size: 12px;
+}
+
+.section-title {
+  color: rgb(163, 174, 208);
+  font-family: 'OpenSans';
+  font-size: 24px;
+}
+
+.custom-btn {
+  background: #006BD1;
+  color: #fff;
+  border: 1px solid white;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  height: 42px;
+  font-family: "OpenSans";
+}
