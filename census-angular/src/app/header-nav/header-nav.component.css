@@ -42,3 +42,62 @@
     color: rgb(163, 174, 208);
     font-family: 'OpenSans Light';
 }
+
+.drop-custom-item {
+    cursor: pointer;
+}
+
+ul.responsive-list {
+  min-width: 400px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.notif-item {
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+  cursor: pointer;
+}
+
+.text-notif {
+  font-size: 12px;
+  font-family: 'OpenSans Normal';
+  color: #70778C;
+}
+
+.text-date-notif {
+  font-size: 12px;
+  font-family: 'OpenSans Normal';
+  color: #70778C;
+  text-align: right;
+}
+
+.title-account-style {
+  font-size: 12px;
+  font-family: 'OpenSans Normal';
+  color: #70778C;
+}
+
+.divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 0.5rem 0;
+  width: 100%;
+}
+
+.see-more {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  color: #007bff;
+}
+
+.no-notifications-available {
+  font-size: 12px;
+  font-family: 'OpenSans Normal';
+  color: #70778C;
+}
