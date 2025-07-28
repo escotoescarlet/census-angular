@@ -138,6 +138,32 @@ export class ServiceService {
     );
   }
 
+  getAllAccounts(page: number = 1, searchTerm: string = '') {
+    let params: any = {
+      page,
+      q: searchTerm
+    };
+
+    return this.http.get(
+      `${this.server}/accounts`,
+      { headers: this.getAuthHeaders(), params }
+    );
+  }
+
+  getAccountDetails(accountId: number) {
+    return this.http.get(
+      `${this.server}/accounts/${accountId}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  getAccountPermissions(accountId: number, page: number = 1, perPage: number = 10) {
+    return this.http.get(
+      `${this.server}/accounts/${accountId}/permissions?page=${page}&per_page=${perPage}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getMembersByState() {
     return this.http.get(`${this.server}/dashboard/members_by_state`,
       {headers: this.getAuthHeaders()}
