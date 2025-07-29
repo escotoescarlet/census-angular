@@ -167,7 +167,7 @@ export class AccountComponent implements OnInit {
   }
 
   getAccounts(page: number = 1) {
-    this.service.getAllAccounts(page).subscribe(
+    this.service.getAllAccounts(page, this.searchTerm, this.sort, this.direction).subscribe(
       (next: any) => {
         this.accounts = next.accounts;
         this.totalPages = next.total_pages;
@@ -180,7 +180,7 @@ export class AccountComponent implements OnInit {
   }
 
   searchAccounts(page: number = 1) {
-    this.service.getAllAccounts(page, this.searchTerm).subscribe(
+    this.service.getAllAccounts(page, this.searchTerm, this.sort, this.direction).subscribe(
       (next: any) => {
         this.accounts = next.accounts;
         this.totalPages = next.total_pages;

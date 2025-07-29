@@ -162,16 +162,18 @@ export class ServiceService {
     );
   }
 
-  getAllAccounts(page: number = 1, searchTerm: string = '') {
+  getAllAccounts(page: number = 1, searchTerm: string = '', sortBy: string = 'name', direction: string = 'asc') {
     let params: any = {
       page,
-      q: searchTerm
+      q: searchTerm,
+      sort_by: sortBy,
+      direction: direction
     };
 
-    return this.http.get(
-      `${this.server}/accounts`,
-      { headers: this.getAuthHeaders(), params }
-    );
+    return this.http.get(`${this.server}/accounts`, {
+      headers: this.getAuthHeaders(),
+      params
+    });
   }
 
   getAccountDetails(accountId: number) {
