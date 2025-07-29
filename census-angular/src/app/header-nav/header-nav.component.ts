@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ProfileComponent } from '../profile/profile.component';
-import { AccountsComponent } from '../accounts/accounts.component';
 import { Router, RouterModule } from '@angular/router';
 import { StorageService } from '../storage.service';
 import { ServiceService } from '../service.service';

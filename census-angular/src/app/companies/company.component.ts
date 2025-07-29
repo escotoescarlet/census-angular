@@ -57,7 +57,6 @@ export class CompanyComponent implements OnInit {
   public selectedTagIds: number[] = [];
   public groups: any[] = [];
 
-
   public searchTermMember: string = '';
   public membersPerPage = 10;
   public currentMembersPage = 1;
