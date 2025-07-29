@@ -154,6 +154,18 @@ export class AccountComponent implements OnInit {
     this.checkSuperAdminChk = !this.checkSuperAdminChk;
   }
 
+  activeDesactivateSuperadmin() {
+    this.service.toggleAdmin(this.accountDetails.id).subscribe({
+      next: (res) => {
+        this.showSuccessMsg(res.message);
+        this.closeModalShowAccount();
+      },
+      error: (err) => {
+        this.showErrorMsg(err.error?.error || 'An error occurred');
+      }
+    });
+  }
+
   getAccounts(page: number = 1) {
     this.service.getAllAccounts(page).subscribe(
       (next: any) => {
@@ -205,10 +217,6 @@ export class AccountComponent implements OnInit {
 
   }
 
-  onToggleActiveSuperadmin(event: any, account: any) {
-
-  }
-
   validateStrictEmail(control: AbstractControl): ValidationErrors | null {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     return emailRegex.test(control.value) ? null : { strictEmail: true };
@@ -252,8 +260,17 @@ export class AccountComponent implements OnInit {
     });
   }
 
+
   closeModalCreateAccount() {
     const modalElement = document.getElementById('addModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
+
+  closeModalShowAccount() {
+    const modalElement = document.getElementById('showAccountModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
@@ -329,12 +346,6 @@ export class AccountComponent implements OnInit {
     }
 
     return pages;
-  }
-
-  onToggleActive(event: Event, company: any, fromModal: boolean) {
-    const input = event.target as HTMLInputElement;
-    const newValue = input.checked;
-
   }
 
   showSuccessMsg(message: string) {

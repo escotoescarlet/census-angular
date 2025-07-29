@@ -392,10 +392,6 @@
   </div>
 </div>
 
-
-
-
-
 <!-- Modal Show Account -->
 <div class="modal fade" id="showAccountModal" tabindex="-1" aria-labelledby="showAccountModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -486,7 +482,7 @@
                                     role="switch"
                                     [checked]="accountDetails?.user?.admin"
                                     id="switchCheckChecked-{{ accountDetails.id }}"
-                                    (change)="onToggleActiveSuperadmin($event, accountDetails)" />
+                                    (change)="activeDesactivateSuperadmin()" />
                             </div>
                         </ng-container>
 
@@ -499,7 +495,7 @@
             </div>
 
           <!-- Permissions -->
-          <div class="row mt-4">
+          <div class="row mt-4" *ngIf="accountDetails && accountDetails?.user && !accountDetails?.user?.admin">
             <div class="col-md-12">
                 <label class="section-number-title-section mb-2">Permissions</label>
 

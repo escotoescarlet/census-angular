@@ -23,6 +23,7 @@ export class ServiceService {
 
     return new HttpHeaders({
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
       ...(token ? { 'Authorization': `Bearer ${token}` } : {})
     });
   }
@@ -126,6 +127,14 @@ export class ServiceService {
   getAllPageNotifications(page: number = 1) {
     return this.http.get(
       `${this.server}/notifications/all?page=${page}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  toggleAdmin(userId: number): Observable<any> {
+    return this.http.patch(
+      `${this.server}/accounts/${userId}/toggle_admin`, 
+      {},
       { headers: this.getAuthHeaders() }
     );
   }
