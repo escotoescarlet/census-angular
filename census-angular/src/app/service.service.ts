@@ -138,6 +138,21 @@ export class ServiceService {
     );
   }
 
+  createAccount(accountData: any) {
+    return this.http.post(
+      `${this.server}/accounts/create_with_owner`,
+      accountData,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  getCompaniesAndGroupsCodifiers() {
+    return this.http.get(
+      `${this.server}/accounts/companies_groups_data`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getAllAccounts(page: number = 1, searchTerm: string = '') {
     let params: any = {
       page,
