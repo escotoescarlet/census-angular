@@ -13,6 +13,7 @@ import {MessagesComponent} from '../messages/messages.component';
 import {NgSelectModule} from "@ng-select/ng-select";
 import {MembersService} from "./service/members.service";
 import {CompanyService} from "../companies/service/company.service";
+import {ServiceService} from "../service.service";
 
 declare var bootstrap: any;
 
@@ -47,7 +48,8 @@ export class MembersComponent implements OnInit {
   public direction: string = 'asc';
   public selectedTag: string = '';
   public tags: any[] = [];
-  public companies: any[] = [];
+  public groups: any[] = [];
+  public filteredCompanies: any[] = [];
 
   public memberForm!: FormGroup;
   public benefits: any[] = [];
@@ -82,14 +84,14 @@ export class MembersComponent implements OnInit {
     admin_accounts: []
   };
 
-  constructor(private fb: FormBuilder, private service: MembersService, private companyServices: CompanyService) {
+  constructor(private fb: FormBuilder, private service: MembersService, private companyServices: CompanyService, private groupServices: ServiceService) {
   }
 
   ngOnInit(): void {
     this.initModal(null);
     this.loadBenefits();
     this.getMembers(this.currentPage);
-    this.getCompanies()
+    this.getGroups()
     this.getTags();
   }
 
@@ -106,15 +108,29 @@ export class MembersComponent implements OnInit {
     );
   }
 
-  getCompanies() {
-    this.companyServices.getCompanies().subscribe(
+  getGroups() {
+    this.groupServices.getGroups().subscribe(
       (data: any) => {
-        this.companies = data.companies;
+        this.groups = data.groups;
       },
       (error: any) => {
         console.error('Error fetching companies', error);
       }
     );
+  }
+
+  onGroupChange() {
+    const selectedGroupId = this.memberForm.get('group_id')?.value;
+
+    this.memberForm.get('company_id')?.setValue('');
+
+    if (selectedGroupId) {
+      const selectedGroup = this.groups.find(group => group.id == selectedGroupId);
+
+      this.filteredCompanies = selectedGroup ? selectedGroup.companies : [];
+    } else {
+      this.filteredCompanies = [];
+    }
   }
 
   getTags() {
@@ -149,7 +165,7 @@ export class MembersComponent implements OnInit {
 
     this.service.toggleMemberActive(member.id, newValue).subscribe({
       next: (response: any) => {
-        member.is_active = response.company.is_active;
+        member.is_active = response.member.is_active;
 
         if (fromModal) {
           let memberFounded: any = this.searchMember(member.id);
@@ -192,66 +208,99 @@ export class MembersComponent implements OnInit {
   initModal(member: any) {
     const formData = member ? {
       id: member.id,
-      name: member.name,
-      dct_plan_id: member.dct_plan_id,
-      not_group: member.not_group,
-      group_id: member.group_id,
-      address: member.address,
-      contact_name: member.contact_name,
-      contact_email: member.contact_email,
-      contact_phone: member.contact_phone,
-      primary_name: member.primary_name,
-      primary_email: member.primary_email,
-      secondary_name: member.secondary_name,
-      secondary_email: member.secondary_email,
-      address_billing: member.address_billing,
-      contact_billing: member.contact_billing,
-      billing_phone: member.billing_phone,
-      billing_email: member.billing_email,
+      company_id: member.company_id,
+      group_id:member.group_id,
       is_active: member.is_active,
-      benefits: member.benefits
+      primary_external_id: member.primary_external_id,
+      first: member.first,
+      middle: member.middle,
+      last: member.last,
+      address: member.address,
+      address_line_2: member.address_line_2,
+      city: member.city,
+      state: member.state,
+      zipcode: member.zipcode,
+      email: member.email,
+      primary_phone: member.primary_phone,
+      secondary_phone: member.secondary_phone,
+      gender: member.gender,
+      dob: member.dob ? this.formatDateForInput(member.dob) : '',
+      language: member.language,
+      benefits: member.benefits || []
     } : {
       id: null,
-      name: '',
-      dct_plan_id: '',
-      not_group: false,
-      group_id: null,
-      address: '',
-      contact_name: '',
-      contact_email: '',
-      contact_phone: '',
-      primary_name: '',
-      primary_email: '',
-      secondary_name: '',
-      secondary_email: '',
-      address_billing: '',
-      contact_billing: '',
-      billing_phone: '',
-      billing_email: '',
+      company_id: null,
+      group_id:null,
       is_active: true,
+      primary_external_id: '',
+      first: '',
+      middle: '',
+      last: '',
+      address: '',
+      address_line_2: '',
+      city: '',
+      state: '',
+      zipcode: '',
+      email: '',
+      primary_phone: '',
+      secondary_phone: '',
+      gender: '',
+      dob: '',
+      language: '',
       benefits: []
     };
 
     this.memberForm = this.fb.group({
-      name: [formData.name, Validators.required],
-      dct_plan_id: [formData.dct_plan_id],
-      not_group: [formData.not_group],
-      group_id: [formData.group_id],
-      address: [formData.address],
-      contact_name: [formData.contact_name, Validators.required],
-      contact_email: [formData.contact_email, [Validators.required, Validators.email]],
-      contact_phone: [formData.contact_phone],
-      primary_name: [formData.primary_name],
-      primary_email: [formData.primary_email, [Validators.email]],
-      secondary_name: [formData.secondary_name],
-      secondary_email: [formData.secondary_email, Validators.email],
-      address_billing: [formData.address_billing],
-      contact_billing: [formData.contact_billing],
-      billing_phone: [formData.billing_phone],
-      billing_email: [formData.billing_email, Validators.email],
+      company_id: [formData.company_id, Validators.required],
+      group_id: [formData.group_id, Validators.required],
       is_active: [formData.is_active],
+      primary_external_id: [formData.primary_external_id],
+      first: [formData.first, Validators.required],
+      middle: [formData.middle],
+      last: [formData.last, Validators.required],
+      address: [formData.address],
+      address_line_2: [formData.address_line_2],
+      city: [formData.city],
+      state: [formData.state],
+      zipcode: [formData.zipcode],
+      email: [formData.email, [Validators.required, Validators.email]],
+      primary_phone: [formData.primary_phone],
+      secondary_phone: [formData.secondary_phone],
+      gender: [formData.gender],
+      dob: [formData.dob],
+      language: [formData.language],
       benefits: this.fb.array(formData.benefits)
     });
+  }
+
+  private formatDateForInput(dateString: string): string {
+    if (!dateString) return '';
+
+    // Si ya está en formato MM-DD-YYYY, retornar tal cual
+    if (/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
+      return dateString;
+    }
+
+    // Si está en formato YYYY-MM-DD, convertir a MM-DD-YYYY
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      const [year, month, day] = dateString.split('-');
+      return `${month}-${day}-${year}`;
+    }
+
+    // Si es un objeto Date o timestamp
+    try {
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        const year = date.getFullYear();
+        return `${month}-${day}-${year}`;
+      }
+    } catch (e) {
+      console.warn('Could not parse date:', dateString);
+    }
+
+    return dateString; // Si no coincide con ningún formato conocido
   }
 
   loadBenefits() {
@@ -339,16 +388,10 @@ export class MembersComponent implements OnInit {
     const data = {
       member: {
         ...this.memberForm.value,
-        email: this.memberForm.value.contact_email,
-        phone: this.memberForm.value.contact_phone,
-        tag_ids: this.selectedTagIds,
-        benefits: this.selectedBenefits.map(b => ({
-          id: b.id,
-          name: b.name,
-          price: b.price,
-          enabled: b.enabled
-        })),
-        benefit_prices: this.benefitPrices
+        dob: this.formatDateForInput(this.memberForm.value.dob),
+        benefits: this.selectedBenefits.map(b =>
+          b.id,
+        ),
       }
     };
 

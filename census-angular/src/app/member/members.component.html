@@ -157,14 +157,13 @@
 
 
 <!-- Modal Create Member -->
-<!--
-<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <form [formGroup]="memberForm" (ngSubmit)="onSubmitCreate()">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">
-            <i class="bi bi-building me-2 icon-style"></i>
+          <h5 class="modal-title" id="addMemberModalLabel">
+            <i class="bi bi-person-plus me-2 icon-style"></i>
             <span class="section-title">New Member</span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -173,52 +172,106 @@
         <div class="modal-body">
           <div class="container">
             <div class="row">
-              &lt;!&ndash; General Data &ndash;&gt;
+              <!-- General Data -->
               <div class="col-md-4 mb-3">
                 <label class="section-number-title-section">General Data</label>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-building"></i> Name:</label>
-                  <input type="text" formControlName="name" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': memberForm.get('name')?.touched && memberForm.get('name')?.invalid }" required />
-                  <div class="invalid-feedback" *ngIf="memberForm.get('name')?.touched && memberForm.get('name')?.invalid">
-                    <span class="error-text">Group Name is required.</span>
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> First Name:</label>
+                  <input type="text" formControlName="first" class="form-control mt-1 placeholder-input"
+                         [ngClass]="{ 'is-invalid': memberForm.get('first')?.touched && memberForm.get('first')?.invalid }"/>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('first')?.touched && memberForm.get('first')?.invalid">
+                    <span class="error-text">First name is required.</span>
                   </div>
                 </div>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-credit-card-2-front"></i> DTC Plan ID:</label>
-                  <input type="text" formControlName="dct_plan_id" class="form-control mt-1 placeholder-input" />
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> Middle Name:</label>
+                  <input type="text" formControlName="middle" class="form-control mt-1 placeholder-input"/>
                 </div>
 
-                &lt;!&ndash; Checkbox y Dropdown para Grupo &ndash;&gt;
-                <div class="section-number-title-light mt-3">
-                  <label class="mb-1">Group</label>
-                  <select
-                    formControlName="group_id"
-                    class="form-select">
-                    <option value="">Select a group</option>
-                    <option *ngFor="let group of groups" [value]="group.id">
-                      {{ group.name }}
-                    </option>
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> Last Name:</label>
+                  <input type="text" formControlName="last" class="form-control mt-1 placeholder-input"
+                         [ngClass]="{ 'is-invalid': memberForm.get('last')?.touched && memberForm.get('last')?.invalid }"/>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('last')?.touched && memberForm.get('last')?.invalid">
+                    <span class="error-text">Last name is required.</span>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Address:</label>
+                  <input type="text" formControlName="address" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Address Line 2:</label>
+                  <input type="text" formControlName="address_line_2" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> City:</label>
+                  <input type="text" formControlName="city" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> State:</label>
+                  <input type="text" formControlName="state" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Zipcode:</label>
+                  <input type="text" formControlName="zipcode" class="form-control mt-1 placeholder-input"/>
+                </div>
+              </div>
+
+              <!-- Contact Info -->
+              <div class="col-md-4 mb-3">
+                <label class="section-number-title-section">Contact Info</label>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-telephone"></i> Phone:</label>
+                  <input type="text" formControlName="primary_phone" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Email:</label>
+                  <input type="email" formControlName="email" class="form-control mt-1 placeholder-input"
+                         [ngClass]="{ 'is-invalid': memberForm.get('email')?.touched && memberForm.get('email')?.invalid }"/>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('email')?.touched && memberForm.get('email')?.invalid">
+                    <span class="error-text">Valid email is required.</span>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-hash"></i> External ID:</label>
+                  <input type="text" formControlName="primary_external_id" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-gender-ambiguous"></i> Gender:</label>
+                  <select formControlName="gender" class="form-select">
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
                   </select>
-
-                  <div class="form-check mb-2">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="notGroupCheckbox"
-                      formControlName="not_group"
-                      (change)="toggleGroupSelection()">
-                    <label class="form-check-label" for="notGroupCheckbox">
-                      I don't have a group
-                    </label>
-                  </div>
                 </div>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-geo"></i> Address:</label>
-                  <input type="text" formControlName="address" class="form-control mt-1 placeholder-input" />
+                  <label class="title-info d-block"><i class="bi bi-calendar-event"></i> Date of birth:</label>
+                  <input type="date" formControlName="dob" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-translate"></i> Language:</label>
+                  <select formControlName="language" class="form-select">
+                    <option value="">Select language</option>
+                    <option value="english">English</option>
+                    <option value="spanish">Spanish</option>
+                  </select>
                 </div>
 
                 <div class="mt-3 d-flex align-items-center">
@@ -228,105 +281,47 @@
                   </label>
                   <div class="form-check form-switch mb-0">
                     <input class="form-check-input" type="checkbox" role="switch"
-                           id="activeSwitch" formControlName="is_active" />
+                           id="activeSwitch" formControlName="is_active"/>
                   </div>
                 </div>
               </div>
 
-              &lt;!&ndash; Contact Info &ndash;&gt;
+              <!-- Ownership -->
               <div class="col-md-4 mb-3">
-                <label class="section-number-title-section">Contact Info</label>
+                <label class="section-number-title-section">Ownership</label>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person"></i> Contact Name:</label>
-                  <input type="text" formControlName="contact_name" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': memberForm.get('contact_name')?.touched && memberForm.get('contact_name')?.invalid }" />
+                  <label class="title-info d-block"><i class="bi bi-people"></i> Group:</label>
+                  <select formControlName="group_id" class="form-select" (change)="onGroupChange()">
+                    <option value="">Select a group</option>
+                    <option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</option>
+                  </select>
                 </div>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Contact Email:</label>
-                  <input type="email" formControlName="contact_email" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': memberForm.get('contact_email')?.touched && memberForm.get('contact_email')?.invalid }" />
+                  <label class="title-info d-block"><i class="bi bi-building"></i> Company:</label>
+                  <select formControlName="company_id" class="form-select"
+                          [disabled]="!memberForm.get('group_id')?.value"
+                          [ngClass]="{
+            'is-invalid': memberForm.get('company_id')?.touched && memberForm.get('company_id')?.invalid,
+            'is-disabled': !memberForm.get('group_id')?.value
+          }">
+                    <option value="">Select a company</option>
+                    <option *ngFor="let company of filteredCompanies" [value]="company.id">{{ company.name }}</option>
+                  </select>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('company_id')?.touched && memberForm.get('company_id')?.invalid">
+                    <span class="error-text">Company is required.</span>
+                  </div>
+                  <div *ngIf="!memberForm.get('group_id')?.value" class="text-muted small mt-1">
+                    Please select a group first
+                  </div>
                 </div>
 
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-telephone"></i> Contact Phone:</label>
-                  <input type="text" formControlName="contact_phone" class="form-control mt-1 placeholder-input" />
-                </div>
-              </div>
-
-              &lt;!&ndash; Billing Info &ndash;&gt;
-              <div class="col-md-4 mb-3">
-                <label class="section-number-title-section">Billing Info</label>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-geo"></i> Billing Address:</label>
-                  <input type="text" formControlName="address_billing" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person"></i> Billing Contact Name:</label>
-                  <input type="text" formControlName="contact_billing" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Billing Email:</label>
-                  <input type="email" formControlName="billing_email" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-telephone"></i> Billing Phone:</label>
-                  <input type="text" formControlName="billing_phone" class="form-control mt-1 placeholder-input" />
-                </div>
               </div>
             </div>
 
-            &lt;!&ndash; Accounts Info &ndash;&gt;
-            <div class="row mt-3">
-              <div class="col-md-6 mb-3">
-                <label class="section-number-title-section">Accounts Info</label>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person"></i> Primary Name:</label>
-                  <input type="text" formControlName="primary_name" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Primary Email:</label>
-                  <input type="email" formControlName="primary_email" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person"></i> Secondary Name:</label>
-                  <input type="text" formControlName="secondary_name" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Secondary Email:</label>
-                  <input type="email" formControlName="secondary_email" class="form-control mt-1 placeholder-input" />
-                </div>
-              </div>
-
-              &lt;!&ndash; Tags &ndash;&gt;
-              <div class="col-md-6 mb-3">
-                <label class="section-number-title-section">Tags</label>
-                <div class="tags-container d-flex flex-wrap gap-2 mt-2">
-                  <span *ngFor="let tag of tags"
-                        class="tag-chip badge rounded-pill"
-                        [ngClass]="{
-                          'bg-primary text-white': isTagSelected(tag.id),
-                          'bg-light text-dark border': !isTagSelected(tag.id)
-                        }"
-                        style="cursor: pointer; padding: 0.5rem 1rem; font-size: 0.9rem;"
-                        (click)="toggleTagSelection(tag.id)">
-                    {{ tag.name }}
-                    <span *ngIf="isTagSelected(tag.id)" class="ms-1">✓</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            &lt;!&ndash; Benefits &ndash;&gt;
+            <!-- Benefits -->
             <div class="row mt-4">
               <div class="col-md-12">
                 <label class="section-number-title-section mb-2">Benefits</label>
@@ -337,23 +332,17 @@
                         <div class="form-check">
                           <input type="checkbox" class="form-check-input" [formControlName]="i"
                                  [id]="'benefitCheck' + i"
-                                 (change)="toggleBenefit(benefit.id, benefit.name, getCheckedValue($event))" />
+                                 (change)="toggleBenefit(benefit.id, benefit.name, getCheckedValue($event))"/>
                           <label class="form-check-label ms-1 title-info-data" [for]="'benefitCheck' + i">
                             {{ benefit.name }}
                           </label>
                         </div>
-                        <input *ngIf="memberForm.get('benefits')?.value[i]"
-                               type="number" class="form-control form-control-sm placeholder-input"
-                               style="max-width: 80px;" [value]="benefit.price"
-                               (input)="updateBenefitPrice(benefit.id, getInputValue($event))"
-                               placeholder="$" />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -371,7 +360,6 @@
     </div>
   </div>
 </div>
--->
 
 <!-- Modal Edit Member -->
 <!--
@@ -639,7 +627,7 @@
                   <span class="title-info-data d-block">{{ memberDetail.address_line_2 || '' }}</span>
                   <span class="title-info-data d-block">{{ memberDetail.city || '' }}
                     <span *ngIf="memberDetail.city && memberDetail.state">, </span>
-                      {{ memberDetail.state || '' }}
+                    {{ memberDetail.state || '' }}
                     <span *ngIf="memberDetail.zipcode">&nbsp;{{ memberDetail.zipcode }}</span>
                   </span>
                 </ng-container>
