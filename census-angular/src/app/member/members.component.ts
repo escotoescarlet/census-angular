@@ -13,6 +13,7 @@ import {MessagesComponent} from '../messages/messages.component';
 import {NgSelectModule} from "@ng-select/ng-select";
 import {MembersService} from "./service/members.service";
 import {CompanyService} from "../companies/service/company.service";
+import {ServiceService} from "../service.service";
 
 declare var bootstrap: any;
 
@@ -47,7 +48,8 @@ export class MembersComponent implements OnInit {
   public direction: string = 'asc';
   public selectedTag: string = '';
   public tags: any[] = [];
-  public companies: any[] = [];
+  public groups: any[] = [];
+  public filteredCompanies: any[] = [];
 
   public memberForm!: FormGroup;
   public benefits: any[] = [];
@@ -59,6 +61,9 @@ export class MembersComponent implements OnInit {
   public selectedTagIds: number[] = [];
 
   public memberToRemove: any;
+
+  private addMemberModal: any;
+  private editMemberModal: any;
 
   public memberDetailEdit: any = {
     id: null,
@@ -82,15 +87,38 @@ export class MembersComponent implements OnInit {
     admin_accounts: []
   };
 
-  constructor(private fb: FormBuilder, private service: MembersService, private companyServices: CompanyService) {
+  constructor(private fb: FormBuilder, private service: MembersService, private companyServices: CompanyService, private groupServices: ServiceService) {
   }
 
   ngOnInit(): void {
     this.initModal(null);
     this.loadBenefits();
     this.getMembers(this.currentPage);
-    this.getCompanies()
+    this.getGroups()
     this.getTags();
+    this.initModalListeners();
+  }
+
+  private initModalListeners() {
+    const addModalElement = document.getElementById('addMemberModal');
+    if (addModalElement) {
+      this.addMemberModal = new bootstrap.Modal(addModalElement);
+      addModalElement.addEventListener('hidden.bs.modal', () => {
+        this.initModal(null);
+        this.isLoading = false;
+        this.selectedBenefits = [];
+      });
+    }
+
+    const editModalElement = document.getElementById('editMemberModal');
+    if (editModalElement) {
+      this.editMemberModal = new bootstrap.Modal(editModalElement);
+      editModalElement.addEventListener('hidden.bs.modal', () => {
+        this.initModal(null);
+        this.isLoading = false;
+        this.selectedBenefits = [];
+      });
+    }
   }
 
   getMembers(page: number) {
@@ -106,15 +134,29 @@ export class MembersComponent implements OnInit {
     );
   }
 
-  getCompanies() {
-    this.companyServices.getCompanies().subscribe(
+  getGroups() {
+    this.groupServices.getGroups().subscribe(
       (data: any) => {
-        this.companies = data.companies;
+        this.groups = data.groups;
       },
       (error: any) => {
         console.error('Error fetching companies', error);
       }
     );
+  }
+
+  onGroupChange() {
+    const selectedGroupId = this.memberForm.get('group_id')?.value;
+
+    this.memberForm.get('company_id')?.setValue('');
+
+    if (selectedGroupId) {
+      const selectedGroup = this.groups.find(group => group.id == selectedGroupId);
+
+      this.filteredCompanies = selectedGroup ? selectedGroup.companies : [];
+    } else {
+      this.filteredCompanies = [];
+    }
   }
 
   getTags() {
@@ -149,7 +191,7 @@ export class MembersComponent implements OnInit {
 
     this.service.toggleMemberActive(member.id, newValue).subscribe({
       next: (response: any) => {
-        member.is_active = response.company.is_active;
+        member.is_active = response.member.is_active;
 
         if (fromModal) {
           let memberFounded: any = this.searchMember(member.id);
@@ -192,66 +234,97 @@ export class MembersComponent implements OnInit {
   initModal(member: any) {
     const formData = member ? {
       id: member.id,
-      name: member.name,
-      dct_plan_id: member.dct_plan_id,
-      not_group: member.not_group,
+      company_id: member.company_id,
       group_id: member.group_id,
-      address: member.address,
-      contact_name: member.contact_name,
-      contact_email: member.contact_email,
-      contact_phone: member.contact_phone,
-      primary_name: member.primary_name,
-      primary_email: member.primary_email,
-      secondary_name: member.secondary_name,
-      secondary_email: member.secondary_email,
-      address_billing: member.address_billing,
-      contact_billing: member.contact_billing,
-      billing_phone: member.billing_phone,
-      billing_email: member.billing_email,
       is_active: member.is_active,
-      benefits: member.benefits
+      primary_external_id: member.primary_external_id,
+      first: member.first,
+      middle: member.middle,
+      last: member.last,
+      address: member.address,
+      address_line_2: member.address_line_2,
+      city: member.city,
+      state: member.state,
+      zipcode: member.zipcode,
+      email: member.email,
+      primary_phone: member.primary_phone,
+      secondary_phone: member.secondary_phone,
+      gender: member.gender,
+      dob: member.dob ? this.formatDateForInput(member.dob) : '',
+      language: member.language,
+      benefits: member.benefits || []
     } : {
       id: null,
-      name: '',
-      dct_plan_id: '',
-      not_group: false,
+      company_id: null,
       group_id: null,
-      address: '',
-      contact_name: '',
-      contact_email: '',
-      contact_phone: '',
-      primary_name: '',
-      primary_email: '',
-      secondary_name: '',
-      secondary_email: '',
-      address_billing: '',
-      contact_billing: '',
-      billing_phone: '',
-      billing_email: '',
       is_active: true,
+      primary_external_id: '',
+      first: '',
+      middle: '',
+      last: '',
+      address: '',
+      address_line_2: '',
+      city: '',
+      state: '',
+      zipcode: '',
+      email: '',
+      primary_phone: '',
+      secondary_phone: '',
+      gender: '',
+      dob: '',
+      language: '',
       benefits: []
     };
 
     this.memberForm = this.fb.group({
-      name: [formData.name, Validators.required],
-      dct_plan_id: [formData.dct_plan_id],
-      not_group: [formData.not_group],
-      group_id: [formData.group_id],
-      address: [formData.address],
-      contact_name: [formData.contact_name, Validators.required],
-      contact_email: [formData.contact_email, [Validators.required, Validators.email]],
-      contact_phone: [formData.contact_phone],
-      primary_name: [formData.primary_name],
-      primary_email: [formData.primary_email, [Validators.email]],
-      secondary_name: [formData.secondary_name],
-      secondary_email: [formData.secondary_email, Validators.email],
-      address_billing: [formData.address_billing],
-      contact_billing: [formData.contact_billing],
-      billing_phone: [formData.billing_phone],
-      billing_email: [formData.billing_email, Validators.email],
+      id: [formData.id],
+      company_id: [formData.company_id, Validators.required],
+      group_id: [formData.group_id, Validators.required],
       is_active: [formData.is_active],
+      primary_external_id: [formData.primary_external_id],
+      first: [formData.first, Validators.required],
+      middle: [formData.middle],
+      last: [formData.last, Validators.required],
+      address: [formData.address],
+      address_line_2: [formData.address_line_2],
+      city: [formData.city],
+      state: [formData.state],
+      zipcode: [formData.zipcode],
+      email: [formData.email, [Validators.required, Validators.email]],
+      primary_phone: [formData.primary_phone],
+      secondary_phone: [formData.secondary_phone],
+      gender: [formData.gender],
+      dob: [formData.dob],
+      language: [formData.language],
       benefits: this.fb.array(formData.benefits)
     });
+  }
+
+  private formatDateForInput(dateString: string): string {
+    if (!dateString) return '';
+
+    if (/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
+      return dateString;
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      const [year, month, day] = dateString.split('-');
+      return `${month}-${day}-${year}`;
+    }
+
+    try {
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        const year = date.getFullYear();
+        return `${month}-${day}-${year}`;
+      }
+    } catch (e) {
+      console.warn('Could not parse date:', dateString);
+    }
+
+    return dateString;
   }
 
   loadBenefits() {
@@ -294,7 +367,6 @@ export class MembersComponent implements OnInit {
     }
   }
 
-
   getCheckedValue(event: Event): boolean {
     return (event.target as HTMLInputElement).checked;
   }
@@ -308,6 +380,7 @@ export class MembersComponent implements OnInit {
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
+      this.initModal(null)
     }
   }
 
@@ -339,22 +412,16 @@ export class MembersComponent implements OnInit {
     const data = {
       member: {
         ...this.memberForm.value,
-        email: this.memberForm.value.contact_email,
-        phone: this.memberForm.value.contact_phone,
-        tag_ids: this.selectedTagIds,
-        benefits: this.selectedBenefits.map(b => ({
-          id: b.id,
-          name: b.name,
-          price: b.price,
-          enabled: b.enabled
-        })),
-        benefit_prices: this.benefitPrices
+        dob: this.formatDateForInput(this.memberForm.value.dob),
+        benefits: this.selectedBenefits.map(b =>
+          b.id,
+        ),
       }
     };
 
     this.service.createMember(data).subscribe(
       (data: any) => {
-        console.log('Group created', data);
+        console.log('Member created', data);
 
         this.memberForm.reset();
         this.selectedBenefits = [];
@@ -366,26 +433,15 @@ export class MembersComponent implements OnInit {
         this.isLoading = false;
       },
       (err: any) => {
-        console.error('Error creating group', err);
+        console.error('Error creating member', err);
         this.showErrorMsg(err);
         this.memberForm.reset();
         this.closeModalAddMember();
+        this.selectedBenefits = [];
         this.getMembers(this.currentPage);
         this.isLoading = false;
       }
     );
-  }
-
-  isTagSelected(tagId: number): boolean {
-    return this.selectedTagIds.includes(tagId);
-  }
-
-  toggleTagSelection(tagId: number): void {
-    if (this.isTagSelected(tagId)) {
-      this.selectedTagIds = this.selectedTagIds.filter(id => id !== tagId);
-    } else {
-      this.selectedTagIds = [...this.selectedTagIds, tagId];
-    }
   }
 
   prepareEditMember(selected: any) {
@@ -394,10 +450,40 @@ export class MembersComponent implements OnInit {
     this.service.getMemberDetails(memberId).subscribe({
       next: (response: any) => {
         this.initModal(response)
-        this.selectedTagIds = this.memberDetail.tags.map((tag: any) => tag.id);
+        this.selectedBenefits = response.benefits;
+
+        if (response.group) {
+          this.memberForm.get('group_id')?.setValue(response.group.id);
+          this.onGroupChange();
+          setTimeout(() => {
+            this.memberForm.get('company_id')?.setValue(response.company_id);
+          }, 100);
+        }
       },
       error: (error: any) => {
         this.showErrorMsg(error);
+      }
+    });
+  }
+
+  onSaveMemberChanges(): void {
+
+    const data = {
+      ...this.memberForm.value,
+      dob: this.formatDateForInput(this.memberForm.value.dob),
+      benefits: this.selectedBenefits.map(b =>
+        b.id,
+      ),
+    };
+
+    this.service.updateMember(data.id, data).subscribe({
+      next: (data: any) => {
+        this.showSuccessMsg(data.message);
+        this.closeModalEditMember();
+        this.getMembers(this.currentPage);
+      },
+      error: (err: any) => {
+        this.showErrorMsg(err);
       }
     });
   }
@@ -407,6 +493,7 @@ export class MembersComponent implements OnInit {
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
+      this.initModal(null)
     }
   }
 
@@ -415,12 +502,12 @@ export class MembersComponent implements OnInit {
 
     this.service.deleteMember(this.memberToRemove.id).subscribe({
       next: (response: any) => {
-        this.showSuccessMsg(response.message || 'Company removed successfully');
+        this.showSuccessMsg(response.message || 'Member removed successfully');
         this.closeRemoveMemberModal();
-        this.getMembers(this.currentPage); // actualiza la lista
+        this.getMembers(this.currentPage);
       },
       error: (error) => {
-        console.error('Error deleting company', error);
+        console.error('Error deleting member', error);
         this.showErrorMsg(error);
       }
     });

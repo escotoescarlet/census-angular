@@ -157,14 +157,13 @@
 
 
 <!-- Modal Create Member -->
-<!--
-<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <form [formGroup]="memberForm" (ngSubmit)="onSubmitCreate()">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">
-            <i class="bi bi-building me-2 icon-style"></i>
+          <h5 class="modal-title" id="addMemberModalLabel">
+            <i class="bi bi-person-plus me-2 icon-style"></i>
             <span class="section-title">New Member</span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -173,52 +172,106 @@
         <div class="modal-body">
           <div class="container">
             <div class="row">
-              &lt;!&ndash; General Data &ndash;&gt;
+              <!-- General Data -->
               <div class="col-md-4 mb-3">
                 <label class="section-number-title-section">General Data</label>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-building"></i> Name:</label>
-                  <input type="text" formControlName="name" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': memberForm.get('name')?.touched && memberForm.get('name')?.invalid }" required />
-                  <div class="invalid-feedback" *ngIf="memberForm.get('name')?.touched && memberForm.get('name')?.invalid">
-                    <span class="error-text">Group Name is required.</span>
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> First Name:</label>
+                  <input type="text" formControlName="first" class="form-control mt-1 placeholder-input"
+                         [ngClass]="{ 'is-invalid': memberForm.get('first')?.touched && memberForm.get('first')?.invalid }"/>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('first')?.touched && memberForm.get('first')?.invalid">
+                    <span class="error-text">First name is required.</span>
                   </div>
                 </div>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-credit-card-2-front"></i> DTC Plan ID:</label>
-                  <input type="text" formControlName="dct_plan_id" class="form-control mt-1 placeholder-input" />
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> Middle Name:</label>
+                  <input type="text" formControlName="middle" class="form-control mt-1 placeholder-input"/>
                 </div>
 
-                &lt;!&ndash; Checkbox y Dropdown para Grupo &ndash;&gt;
-                <div class="section-number-title-light mt-3">
-                  <label class="mb-1">Group</label>
-                  <select
-                    formControlName="group_id"
-                    class="form-select">
-                    <option value="">Select a group</option>
-                    <option *ngFor="let group of groups" [value]="group.id">
-                      {{ group.name }}
-                    </option>
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> Last Name:</label>
+                  <input type="text" formControlName="last" class="form-control mt-1 placeholder-input"
+                         [ngClass]="{ 'is-invalid': memberForm.get('last')?.touched && memberForm.get('last')?.invalid }"/>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('last')?.touched && memberForm.get('last')?.invalid">
+                    <span class="error-text">Last name is required.</span>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Address:</label>
+                  <input type="text" formControlName="address" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Address Line 2:</label>
+                  <input type="text" formControlName="address_line_2" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> City:</label>
+                  <input type="text" formControlName="city" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> State:</label>
+                  <input type="text" formControlName="state" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Zipcode:</label>
+                  <input type="text" formControlName="zipcode" class="form-control mt-1 placeholder-input"/>
+                </div>
+              </div>
+
+              <!-- Contact Info -->
+              <div class="col-md-4 mb-3">
+                <label class="section-number-title-section">Contact Info</label>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-telephone"></i> Phone:</label>
+                  <input type="text" formControlName="primary_phone" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Email:</label>
+                  <input type="email" formControlName="email" class="form-control mt-1 placeholder-input"
+                         [ngClass]="{ 'is-invalid': memberForm.get('email')?.touched && memberForm.get('email')?.invalid }"/>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('email')?.touched && memberForm.get('email')?.invalid">
+                    <span class="error-text">Valid email is required.</span>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-hash"></i> External ID:</label>
+                  <input type="text" formControlName="primary_external_id" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-gender-ambiguous"></i> Gender:</label>
+                  <select formControlName="gender" class="form-select">
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
                   </select>
-
-                  <div class="form-check mb-2">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="notGroupCheckbox"
-                      formControlName="not_group"
-                      (change)="toggleGroupSelection()">
-                    <label class="form-check-label" for="notGroupCheckbox">
-                      I don't have a group
-                    </label>
-                  </div>
                 </div>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-geo"></i> Address:</label>
-                  <input type="text" formControlName="address" class="form-control mt-1 placeholder-input" />
+                  <label class="title-info d-block"><i class="bi bi-calendar-event"></i> Date of birth:</label>
+                  <input type="date" formControlName="dob" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-translate"></i> Language:</label>
+                  <select formControlName="language" class="form-select">
+                    <option value="">Select language</option>
+                    <option value="english">English</option>
+                    <option value="spanish">Spanish</option>
+                  </select>
                 </div>
 
                 <div class="mt-3 d-flex align-items-center">
@@ -228,105 +281,47 @@
                   </label>
                   <div class="form-check form-switch mb-0">
                     <input class="form-check-input" type="checkbox" role="switch"
-                           id="activeSwitch" formControlName="is_active" />
+                           id="activeSwitch" formControlName="is_active"/>
                   </div>
                 </div>
               </div>
 
-              &lt;!&ndash; Contact Info &ndash;&gt;
+              <!-- Ownership -->
               <div class="col-md-4 mb-3">
-                <label class="section-number-title-section">Contact Info</label>
+                <label class="section-number-title-section">Ownership</label>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person"></i> Contact Name:</label>
-                  <input type="text" formControlName="contact_name" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': memberForm.get('contact_name')?.touched && memberForm.get('contact_name')?.invalid }" />
+                  <label class="title-info d-block"><i class="bi bi-people"></i> Group:</label>
+                  <select formControlName="group_id" class="form-select" (change)="onGroupChange()">
+                    <option value="">Select a group</option>
+                    <option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</option>
+                  </select>
                 </div>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Contact Email:</label>
-                  <input type="email" formControlName="contact_email" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': memberForm.get('contact_email')?.touched && memberForm.get('contact_email')?.invalid }" />
+                  <label class="title-info d-block"><i class="bi bi-building"></i> Company:</label>
+                  <select formControlName="company_id" class="form-select"
+                          [disabled]="!memberForm.get('group_id')?.value"
+                          [ngClass]="{
+            'is-invalid': memberForm.get('company_id')?.touched && memberForm.get('company_id')?.invalid,
+            'is-disabled': !memberForm.get('group_id')?.value
+          }">
+                    <option value="">Select a company</option>
+                    <option *ngFor="let company of filteredCompanies" [value]="company.id">{{ company.name }}</option>
+                  </select>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('company_id')?.touched && memberForm.get('company_id')?.invalid">
+                    <span class="error-text">Company is required.</span>
+                  </div>
+                  <div *ngIf="!memberForm.get('group_id')?.value" class="text-muted small mt-1">
+                    Please select a group first
+                  </div>
                 </div>
 
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-telephone"></i> Contact Phone:</label>
-                  <input type="text" formControlName="contact_phone" class="form-control mt-1 placeholder-input" />
-                </div>
-              </div>
-
-              &lt;!&ndash; Billing Info &ndash;&gt;
-              <div class="col-md-4 mb-3">
-                <label class="section-number-title-section">Billing Info</label>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-geo"></i> Billing Address:</label>
-                  <input type="text" formControlName="address_billing" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person"></i> Billing Contact Name:</label>
-                  <input type="text" formControlName="contact_billing" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Billing Email:</label>
-                  <input type="email" formControlName="billing_email" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-telephone"></i> Billing Phone:</label>
-                  <input type="text" formControlName="billing_phone" class="form-control mt-1 placeholder-input" />
-                </div>
               </div>
             </div>
 
-            &lt;!&ndash; Accounts Info &ndash;&gt;
-            <div class="row mt-3">
-              <div class="col-md-6 mb-3">
-                <label class="section-number-title-section">Accounts Info</label>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person"></i> Primary Name:</label>
-                  <input type="text" formControlName="primary_name" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Primary Email:</label>
-                  <input type="email" formControlName="primary_email" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person"></i> Secondary Name:</label>
-                  <input type="text" formControlName="secondary_name" class="form-control mt-1 placeholder-input" />
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Secondary Email:</label>
-                  <input type="email" formControlName="secondary_email" class="form-control mt-1 placeholder-input" />
-                </div>
-              </div>
-
-              &lt;!&ndash; Tags &ndash;&gt;
-              <div class="col-md-6 mb-3">
-                <label class="section-number-title-section">Tags</label>
-                <div class="tags-container d-flex flex-wrap gap-2 mt-2">
-                  <span *ngFor="let tag of tags"
-                        class="tag-chip badge rounded-pill"
-                        [ngClass]="{
-                          'bg-primary text-white': isTagSelected(tag.id),
-                          'bg-light text-dark border': !isTagSelected(tag.id)
-                        }"
-                        style="cursor: pointer; padding: 0.5rem 1rem; font-size: 0.9rem;"
-                        (click)="toggleTagSelection(tag.id)">
-                    {{ tag.name }}
-                    <span *ngIf="isTagSelected(tag.id)" class="ms-1">✓</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            &lt;!&ndash; Benefits &ndash;&gt;
+            <!-- Benefits -->
             <div class="row mt-4">
               <div class="col-md-12">
                 <label class="section-number-title-section mb-2">Benefits</label>
@@ -337,23 +332,17 @@
                         <div class="form-check">
                           <input type="checkbox" class="form-check-input" [formControlName]="i"
                                  [id]="'benefitCheck' + i"
-                                 (change)="toggleBenefit(benefit.id, benefit.name, getCheckedValue($event))" />
+                                 (change)="toggleBenefit(benefit.id, benefit.name, getCheckedValue($event))"/>
                           <label class="form-check-label ms-1 title-info-data" [for]="'benefitCheck' + i">
                             {{ benefit.name }}
                           </label>
                         </div>
-                        <input *ngIf="memberForm.get('benefits')?.value[i]"
-                               type="number" class="form-control form-control-sm placeholder-input"
-                               style="max-width: 80px;" [value]="benefit.price"
-                               (input)="updateBenefitPrice(benefit.id, getInputValue($event))"
-                               placeholder="$" />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -371,239 +360,213 @@
     </div>
   </div>
 </div>
--->
 
 <!-- Modal Edit Member -->
-<!--
 <div class="modal fade" id="editMemberModal" tabindex="-1" aria-labelledby="editMemberModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editMemberModalLabel">
-          <i class="bi bi-building me-2 icon-style"></i>
-          <span class="section-title">Edit Member</span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+      <form [formGroup]="memberForm" (ngSubmit)="onSaveMemberChanges()">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addMemberModalLabel">
+            <i class="bi bi-person-plus me-2 icon-style"></i>
+            <span class="section-title">New Member</span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
 
-      <div class="modal-body">
-        <div class="container">
-          <div class="row">
-            &lt;!&ndash; General Data &ndash;&gt;
-            <div class="col-md-4 mb-3">
-              <label class="section-number-title-section">General Data</label>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <!-- General Data -->
+              <div class="col-md-4 mb-3">
+                <label class="section-number-title-section">General Data</label>
 
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-building"></i> Name:</label>
-                <input type="text" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.name" />
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> First Name:</label>
+                  <input type="text" formControlName="first" class="form-control mt-1 placeholder-input"
+                         [ngClass]="{ 'is-invalid': memberForm.get('first')?.touched && memberForm.get('first')?.invalid }"/>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('first')?.touched && memberForm.get('first')?.invalid">
+                    <span class="error-text">First name is required.</span>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> Middle Name:</label>
+                  <input type="text" formControlName="middle" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> Last Name:</label>
+                  <input type="text" formControlName="last" class="form-control mt-1 placeholder-input"
+                         [ngClass]="{ 'is-invalid': memberForm.get('last')?.touched && memberForm.get('last')?.invalid }"/>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('last')?.touched && memberForm.get('last')?.invalid">
+                    <span class="error-text">Last name is required.</span>
+                  </div>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Address:</label>
+                  <input type="text" formControlName="address" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Address Line 2:</label>
+                  <input type="text" formControlName="address_line_2" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> City:</label>
+                  <input type="text" formControlName="city" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> State:</label>
+                  <input type="text" formControlName="state" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Zipcode:</label>
+                  <input type="text" formControlName="zipcode" class="form-control mt-1 placeholder-input"/>
+                </div>
               </div>
 
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-geo"></i> Address:</label>
-                <input type="text" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.address" />
-              </div>
+              <!-- Contact Info -->
+              <div class="col-md-4 mb-3">
+                <label class="section-number-title-section">Contact Info</label>
 
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-credit-card-2-front"></i> DTC Plan ID:</label>
-                <input type="text" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.dtc_plan_id" />
-              </div>
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-telephone"></i> Phone:</label>
+                  <input type="text" formControlName="primary_phone" class="form-control mt-1 placeholder-input"/>
+                </div>
 
-              &lt;!&ndash; Checkbox y Dropdown para Grupo &ndash;&gt;
-              <div class="section-number-title-light mt-3">
-                <label class="mb-1">Group</label>
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-envelope"></i> Email:</label>
+                  <input type="email" formControlName="email" class="form-control mt-1 placeholder-input"
+                         [ngClass]="{ 'is-invalid': memberForm.get('email')?.touched && memberForm.get('email')?.invalid }"/>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('email')?.touched && memberForm.get('email')?.invalid">
+                    <span class="error-text">Valid email is required.</span>
+                  </div>
+                </div>
 
-                <select
-                  [(ngModel)]="memberDetailEdit.group_id"
-                  name="group_id"
-                  class="form-select"
-                  [disabled]="memberDetailEdit.not_group">
-                  <option [ngValue]="">Select a group</option>
-                  <option *ngFor="let group of groups" [ngValue]="group.id">
-                    {{ group.name }}
-                  </option>
-                </select>
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-hash"></i> External ID:</label>
+                  <input type="text" formControlName="primary_external_id" class="form-control mt-1 placeholder-input"/>
+                </div>
 
-                <div class="form-check mb-2">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="notGroupCheckbox"
-                    [(ngModel)]="memberDetailEdit.not_group"
-                    name="not_group"
-                    (change)="toggleEditMemberGroupSelection()">
-                  <label class="form-check-label" for="notGroupCheckbox">
-                    I don't have a group
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-gender-ambiguous"></i> Gender:</label>
+                  <select formControlName="gender" class="form-select">
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-calendar-event"></i> Date of birth:</label>
+                  <input type="date" formControlName="dob" class="form-control mt-1 placeholder-input"/>
+                </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-translate"></i> Language:</label>
+                  <select formControlName="language" class="form-select">
+                    <option value="">Select language</option>
+                    <option value="english">English</option>
+                    <option value="spanish">Spanish</option>
+                  </select>
+                </div>
+
+                <div class="mt-3 d-flex align-items-center">
+                  <label class="title-info me-2 d-flex align-items-center">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Status:
                   </label>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch"
+                           id="activeSwitch" formControlName="is_active"/>
+                  </div>
                 </div>
               </div>
 
+              <!-- Ownership -->
+              <div class="col-md-4 mb-3">
+                <label class="section-number-title-section">Ownership</label>
 
-              <div class="mt-3 d-flex align-items-center">
-                <label class="title-info me-2 d-flex align-items-center">
-                  <i class="bi bi-check-circle me-1"></i>
-                  Status:
-                </label>
-                <div class="form-check form-switch mb-0">
-                  <input class="form-check-input" type="checkbox" role="switch"
-                         [checked]="memberDetailEdit.is_active"
-                         id="switchActiveMember-{{ memberDetailEdit.id }}"
-                         (change)="onToggleActive($event, memberDetailEdit,false)" />
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-people"></i> Group:</label>
+                  <select formControlName="group_id" class="form-select" (change)="onGroupChange()">
+                    <option value="">Select a group</option>
+                    <option *ngFor="let group of groups" [value]="group.id">{{ group.name }}</option>
+                  </select>
                 </div>
+
+                <div class="mt-3">
+                  <label class="title-info d-block"><i class="bi bi-building"></i> Company:</label>
+                  <select formControlName="company_id" class="form-select"
+                          [disabled]="!memberForm.get('group_id')?.value"
+                          [ngClass]="{
+            'is-invalid': memberForm.get('company_id')?.touched && memberForm.get('company_id')?.invalid,
+            'is-disabled': !memberForm.get('group_id')?.value
+          }">
+                    <option value="">Select a company</option>
+                    <option *ngFor="let company of filteredCompanies" [value]="company.id">{{ company.name }}</option>
+                  </select>
+                  <div class="invalid-feedback"
+                       *ngIf="memberForm.get('company_id')?.touched && memberForm.get('company_id')?.invalid">
+                    <span class="error-text">Company is required.</span>
+                  </div>
+                  <div *ngIf="!memberForm.get('group_id')?.value" class="text-muted small mt-1">
+                    Please select a group first
+                  </div>
+                </div>
+
               </div>
             </div>
 
-            &lt;!&ndash; Contact Info &ndash;&gt;
-            <div class="col-md-4 mb-3">
-              <label class="section-number-title-section">Contact Info</label>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-person"></i> Contact Name:</label>
-                <input type="text" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.contact_name" />
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-envelope"></i> Contact Email:</label>
-                <input type="email" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.contact_email" />
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-telephone"></i> Contact Phone:</label>
-                <input type="text" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.contact_phone" />
-              </div>
-            </div>
-
-            &lt;!&ndash; Billing Info &ndash;&gt;
-            <div class="col-md-4 mb-3">
-              <label class="section-number-title-section">Billing Info</label>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-geo"></i> Billing Address:</label>
-                <input type="text" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.billing_address" />
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-person"></i> Billing Contact Name:</label>
-                <input type="text" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.contact_billing" />
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-envelope"></i> Billing Email:</label>
-                <input type="email" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.billing_email" />
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-telephone"></i> Billing Phone:</label>
-                <input type="text" class="form-control mt-1 placeholder-input" [(ngModel)]="memberDetailEdit.billing_phone" />
-              </div>
-            </div>
-          </div>
-
-          &lt;!&ndash; Accounts Info &ndash;&gt;
-          <div class="row mt-3">
-            <div class="col-md-6">
-              <label class="section-number-title-section mb-2">Accounts Info</label>
-
-              <ng-container *ngIf="memberDetailEdit?.admin_accounts !== undefined; else loadingAccounts">
-                <div *ngIf="memberDetailEdit?.admin_accounts && memberDetailEdit.admin_accounts.length > 0; else noAccounts">
-                  <ul class="list-unstyled">
-                    <li *ngFor="let account of memberDetailEdit.admin_accounts" class="d-flex align-items-center justify-content-between mb-3">
-                      <div class="d-flex align-items-center">
-                        <div class="rounded-circle d-flex justify-content-center align-items-center"
-                             style="width: 32px; height: 32px; background-color: #007bff; color: white; font-size: 20px;">
-                          <i class="bi bi-person"></i>
-                        </div>
-                        <div class="ms-3">
-                          <div class="account-text">{{ account.name }}</div>
-                          <div class="account-text">{{ account.email }}</div>
+            <!-- Benefits -->
+            <div class="row mt-4">
+              <div class="col-md-12">
+                <label class="section-number-title-section mb-2">Benefits</label>
+                <div formArrayName="benefits">
+                  <div class="row">
+                    <div class="col-md-4 mb-3" *ngFor="let benefit of benefits; let i = index">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                          <input type="checkbox" class="form-check-input" [formControlName]="i"
+                                 [id]="'benefitCheck' + i"
+                                 (change)="toggleBenefit(benefit.id, benefit.name, getCheckedValue($event))"/>
+                          <label class="form-check-label ms-1 title-info-data" [for]="'benefitCheck' + i">
+                            {{ benefit.name }}
+                          </label>
                         </div>
                       </div>
-                      <div>
-                        <i class="bi bi-trash text-danger icon-right-space" (click)="removeMemberAdminAccount(account)"></i>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-                <ng-template #noAccounts>
-                  <p class="no-accounts mt-2">
-                    <i class="bi bi-person-x"></i>
-                    No accounts available.
-                  </p>
-                </ng-template>
-              </ng-container>
-
-              <ng-template #loadingAccounts>
-                <span class="skeleton-loader" style="width: 200px; height: 15px; display: inline-block;"></span>
-              </ng-template>
-            </div>
-
-            &lt;!&ndash; Tags &ndash;&gt;
-            <div class="col-md-6">
-              <label class="section-number-title-section">Tags</label>
-              <div class="tags-container d-flex flex-wrap gap-2 mt-2">
-                <span *ngFor="let tag of tags"
-                      class="tag-chip badge rounded-pill"
-                      [ngClass]="{
-                        'bg-primary text-white': isTagSelected(tag.id),
-                        'bg-light text-dark border': !isTagSelected(tag.id)
-                      }"
-                      style="cursor: pointer; padding: 0.5rem 1rem; font-size: 0.9rem;"
-                      (click)="toggleTagSelection(tag.id)">
-                  {{ tag.name }}
-                  <span *ngIf="isTagSelected(tag.id)" class="ms-1">✓</span>
-                </span>
-              </div>
-            </div>
-          </div>
-
-          &lt;!&ndash; Benefits &ndash;&gt;
-          <div class="row mt-4">
-            <div class="col-md-12">
-              <label class="section-number-title-section mb-2">Benefits</label>
-              <div class="row">
-                <div
-                  class="col-md-4 mb-3"
-                  *ngFor="let benefit of benefits; let i = index">
-
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="form-check">
-                      <input
-                        type="checkbox"
-                        class="form-check-input"
-                        [id]="'benefitCheck' + i"
-                        [checked]="isEditMemberBenefitChecked(benefit.id)"
-                        (change)="onEditMemberBenefitToggle(benefit.id, benefit.name, getCheckedValue($event))" />
-                      <label class="form-check-label ms-1 title-info-data" [for]="'benefitCheck' + i">
-                        {{ benefit.name }}
-                      </label>
                     </div>
-
-                    <input
-                      *ngIf="isEditMemberBenefitChecked(benefit.id)"
-                      type="number"
-                      class="form-control form-control-sm placeholder-input"
-                      style="max-width: 80px;"
-                      [value]="getEditMemberBenefitPrice(benefit.id)"
-                      (input)="onEditMemberBenefitPriceChange(benefit.id, getInputValue($event))"
-                      placeholder="$" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn custom-btn" (click)="onSaveMemberChanges()">Update Member</button>
-        <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
-      </div>
+        <div class="modal-footer">
+          <button type="submit"
+                  class="btn btn-primary custom-btn d-flex align-items-center"
+                  [disabled]="memberForm.invalid || isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
+                  aria-hidden="true"></span>
+            {{ isLoading ? 'Saving...' : 'Save Member' }}
+          </button>
+          <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
--->
 
 <!-- Modal Show Member -->
-<!--
 <div class="modal fade" id="showMemberModal" tabindex="-1" aria-labelledby="showMemberModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
@@ -618,14 +581,15 @@
       <div class="modal-body">
         <div class="container">
           <div class="row">
-            &lt;!&ndash; General Data &ndash;&gt;
+            <!-- General Data -->
             <div class="col-md-4 mb-3">
               <label class="section-number-title-section">General Data</label>
 
               <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-building"></i> Name:</label>
-                <ng-container *ngIf="memberDetail?.name; else loading">
-                  <span class="title-info-data">{{ memberDetail.name }}</span>
+                <label class="title-info d-block"><i class="bi bi-person-badge"></i> Name:</label>
+                <ng-container *ngIf="memberDetail?.first; else loading">
+                  <span
+                    class="title-info-data">{{ memberDetail.first }} {{ memberDetail.middle }} {{ memberDetail.last }}</span>
                 </ng-container>
                 <ng-template #loading>
                   <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
@@ -633,9 +597,15 @@
               </div>
 
               <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-geo"></i> Address:</label>
+                <label class="title-info d-block"><i class="bi bi-geo-alt"></i> Address:</label>
                 <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.address || 'N/A' }}</span>
+                  <span class="title-info-data d-block">{{ memberDetail.address || 'N/A' }}</span>
+                  <span class="title-info-data d-block">{{ memberDetail.address_line_2 || '' }}</span>
+                  <span class="title-info-data d-block">{{ memberDetail.city || '' }}
+                    <span *ngIf="memberDetail.city && memberDetail.state">, </span>
+                    {{ memberDetail.state || '' }}
+                    <span *ngIf="memberDetail.zipcode">&nbsp;{{ memberDetail.zipcode }}</span>
+                  </span>
                 </ng-container>
                 <ng-template #loading>
                   <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
@@ -643,9 +613,9 @@
               </div>
 
               <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-credit-card-2-front"></i> DTC Plan ID:</label>
+                <label class="title-info d-block"><i class="bi bi-telephone"></i> Phone:</label>
                 <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.dtc_plan_id || 'N/A' }}</span>
+                  <span class="title-info-data">{{ memberDetail.primary_phone || 'N/A' }}</span>
                 </ng-container>
                 <ng-template #loading>
                   <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
@@ -653,14 +623,28 @@
               </div>
 
               <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-credit-card-2-front"></i> Group:</label>
+                <label class="title-info d-block"><i class="bi bi-envelope"></i> Email:</label>
                 <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.group.name || 'N/A' }}</span>
+                  <span class="title-info-data">{{ memberDetail.email || 'N/A' }}</span>
                 </ng-container>
                 <ng-template #loading>
                   <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
                 </ng-template>
               </div>
+
+              <div class="mt-3">
+                <label class="title-info d-block"><i class="bi bi-hash"></i> External ID:</label>
+                <ng-container *ngIf="memberDetail; else loading">
+                  <span class="title-info-data">{{ memberDetail.primary_external_id || 'N/A' }}</span>
+                </ng-container>
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label class="section-number-title-section"></label>
 
               <div class="mt-3 d-flex align-items-center">
                 <label class="title-info me-2 d-flex align-items-center">
@@ -672,151 +656,76 @@
                     <input class="form-check-input" type="checkbox" role="switch"
                            [checked]="memberDetail.is_active"
                            id="switchActivemember-{{ memberDetail.id }}"
-                           (change)="onToggleActive($event, memberDetail, true)" />
+                           (change)="onToggleActive($event, memberDetail, true)"/>
                   </div>
                 </ng-container>
                 <ng-template #loading>
                   <span class="skeleton-loader" style="width: 100px; height: 15px; display: inline-block;"></span>
                 </ng-template>
               </div>
-            </div>
-
-            &lt;!&ndash; Contact Info &ndash;&gt;
-            <div class="col-md-4 mb-3">
-              <label class="section-number-title-section">Contact Info</label>
 
               <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-person"></i> Contact Name:</label>
+                <label class="title-info d-block"><i class="bi bi-gender-ambiguous"></i> Gender:</label>
                 <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.contact_name || 'N/A' }}</span>
-                </ng-container>
-                <ng-template #loading>
-                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
-                </ng-template>
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-envelope"></i> Contact Email:</label>
-                <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.contact_email || 'N/A' }}</span>
-                </ng-container>
-                <ng-template #loading>
-                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
-                </ng-template>
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-telephone"></i> Contact Phone:</label>
-                <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.contact_phone || 'N/A' }}</span>
-                </ng-container>
-                <ng-template #loading>
-                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
-                </ng-template>
-              </div>
-            </div>
-
-            &lt;!&ndash; Billing Info &ndash;&gt;
-            <div class="col-md-4 mb-3">
-              <label class="section-number-title-section">Billing Info</label>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-geo"></i> Billing Address:</label>
-                <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.billing_address || 'N/A' }}</span>
-                </ng-container>
-                <ng-template #loading>
-                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
-                </ng-template>
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-person"></i> Billing Contact Name:</label>
-                <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.contact_billing || 'N/A' }}</span>
-                </ng-container>
-                <ng-template #loading>
-                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
-                </ng-template>
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-envelope"></i> Billing Email:</label>
-                <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.billing_email || 'N/A' }}</span>
-                </ng-container>
-                <ng-template #loading>
-                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
-                </ng-template>
-              </div>
-
-              <div class="mt-3">
-                <label class="title-info d-block"><i class="bi bi-telephone"></i> Billing Phone:</label>
-                <ng-container *ngIf="memberDetail; else loading">
-                  <span class="title-info-data">{{ memberDetail.billing_phone || 'N/A' }}</span>
-                </ng-container>
-                <ng-template #loading>
-                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
-                </ng-template>
-              </div>
-            </div>
-          </div>
-
-          &lt;!&ndash; Accounts Info &ndash;&gt;
-          <div class="row mt-3">
-            <div class="col-md-6">
-              <label class="section-number-title-section mb-2">Accounts Info</label>
-
-              <ng-container *ngIf="memberDetail?.admin_accounts !== undefined; else loadingAccounts">
-                <div *ngIf="memberDetail?.admin_accounts && memberDetail.admin_accounts.length > 0; else noAccounts">
-                  <ul class="list-unstyled">
-                    <li *ngFor="let account of memberDetail.admin_accounts" class="d-flex align-items-center mb-3">
-                      <div class="d-flex align-items-center">
-                        <div class="rounded-circle d-flex justify-content-center align-items-center"
-                             style="width: 32px; height: 32px; background-color: #007bff; color: white; font-size: 20px;">
-                          <i class="bi bi-person"></i>
-                        </div>
-                        <div class="ms-3">
-                          <div class="account-text">{{ account.name }}</div>
-                          <div class="account-text">{{ account.email }}</div>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-                <ng-template #noAccounts>
-                  <p class="no-accounts mt-2">
-                    <i class="bi bi-person-x"></i>
-                    No accounts available.
-                  </p>
-                </ng-template>
-              </ng-container>
-
-              <ng-template #loadingAccounts>
-                <span class="skeleton-loader" style="width: 200px; height: 15px; display: inline-block;"></span>
-              </ng-template>
-            </div>
-
-            &lt;!&ndash; Tags &ndash;&gt;
-            <div class="col-md-6">
-              <label class="section-number-title-section">Tags</label>
-              <ng-container *ngIf="memberDetail?.tags?.length; else noTags">
-                <div class="tags-container d-flex flex-wrap gap-2 mt-2">
-                  <span *ngFor="let tag of memberDetail.tags" class="tag-chip badge bg-primary rounded-pill text-white" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
-                    {{ tag.name }}
+                  <span class="title-info-data">
+                    {{ memberDetail.gender ? (memberDetail.gender.charAt(0).toUpperCase() + memberDetail.gender.slice(1)) : 'N/A' }}
                   </span>
-                </div>
-              </ng-container>
-              <ng-template #noTags>
-                <p class="no-accounts mt-2">
-                  <i class="bi bi-tag"></i>
-                  No tags available.
-                </p>
-              </ng-template>
+                </ng-container>
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-3">
+                <label class="title-info d-block"><i class="bi bi-calendar-event"></i> Date of birth:</label>
+                <ng-container *ngIf="memberDetail; else loading">
+                  <span class="title-info-data">{{ memberDetail.dob || 'N/A' }}</span>
+                </ng-container>
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-3">
+                <label class="title-info d-block"><i class="bi bi-translate"></i> Language:</label>
+                <ng-container *ngIf="memberDetail; else loading">
+                  <span class="title-info-data">
+                   {{ memberDetail.language ? (memberDetail.language.charAt(0).toUpperCase() + memberDetail.language.slice(1)) : 'N/A' }}
+                  </span>
+                </ng-container>
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+            </div>
+
+            <!-- Billing Info -->
+            <div class="col-md-4 mb-3">
+              <label class="section-number-title-section">Ownership</label>
+
+              <div class="mt-3">
+                <label class="title-info d-block"><i class="bi bi-people"></i> Group:</label>
+                <ng-container *ngIf="memberDetail; else loading">
+                  <span class="title-info-data">{{ memberDetail.group.name || 'N/A' }}</span>
+                </ng-container>
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
+
+              <div class="mt-3">
+                <label class="title-info d-block"><i class="bi bi-building"></i> Company:</label>
+                <ng-container *ngIf="memberDetail; else loading">
+                  <span class="title-info-data">{{ memberDetail.company.name || 'N/A' }}</span>
+                </ng-container>
+                <ng-template #loading>
+                  <span class="skeleton-loader" style="width: 120px; height: 15px; display: inline-block;"></span>
+                </ng-template>
+              </div>
             </div>
           </div>
 
-          &lt;!&ndash; Benefits &ndash;&gt;
+          <!-- Benefits -->
           <div class="row mt-4">
             <div class="col-md-12">
               <label class="section-number-title-section mb-2">Benefits</label>
@@ -837,108 +746,6 @@
               </div>
             </div>
           </div>
-
-          &lt;!&ndash; Members &ndash;&gt;
-          <div class="row mt-3" *ngIf="memberDetail?.members.length > 0">
-            <div class="col-md-12">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <label class="section-number-title-section mb-0 d-flex align-items-center">
-                  <i class="bi bi-people me-2 icon-style"></i>
-                  Members
-                </label>
-
-                <div style="width: 50%;">
-                  <div class="input-group">
-                    <input type="text" class="form-control placeholder-input"
-                           placeholder="Example: Member A"
-                           [(ngModel)]="searchTermMember"
-                           (keyup.enter)="searchMembers()"
-                           aria-label="Search by Name"
-                           aria-describedby="button-addon2"/>
-
-                    <button class="btn btn-outline-secondary"
-                            type="button"
-                            id="button-addon2"
-                            (click)="searchMembers()">
-                      <i class="bi bi-search"></i>
-                      <span class="search-btn">Search</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <table class="table text-center mt-4">
-                <thead>
-                <tr>
-                  <th scope="col" class="text-start">
-                    <div class="d-flex align-items-center">
-                      <span class="section-number-title">Name</span>
-                    </div>
-                  </th>
-                  <th scope="col" class="text-start">
-                    <span class="section-number-title">Email</span>
-                  </th>
-                  <th scope="col" class="text-start">
-                    <span class="section-number-title">Phone</span>
-                  </th>
-                  <th scope="col">
-                    <span class="section-number-title">Status</span>
-                  </th>
-                </tr>
-                </thead>
-
-                <tbody>
-                <tr *ngFor="let member of paginatedMembers">
-                  <th scope="row" class="text-start">
-                    <span class="section-number-data">
-                      {{ member?.name || 'Unknown' }}
-                    </span>
-                  </th>
-                  <td class="text-start">
-                    <span class="section-number-data">
-                      {{ member?.contact_email || 'N/A' }}
-                    </span>
-                  </td>
-                  <td class="text-start">
-                    <span class="section-number-data">
-                      {{ member?.contact_phone || 'N/A' }}
-                    </span>
-                  </td>
-                  <td>
-                    <div class="form-check form-switch d-flex justify-content-center">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        [checked]="member.is_active"
-                        id="switchMember-{{ member.id }}"
-                        (change)="onToggleMemberStatus($event, member)"/>
-                    </div>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-
-              <nav *ngIf="filteredMembers && filteredMembers.length > membersPerPage" class="mt-4">
-                <ul class="pagination justify-content-center">
-                  <li class="page-item" [class.disabled]="currentMembersPage === 1">
-                    <a class="page-link nav-btn" (click)="changeMemberPage(currentMembersPage - 1)">Prev</a>
-                  </li>
-
-                  <li class="page-item"
-                      *ngFor="let page of [].constructor(Math.ceil((filteredMembers?.length || 0) / membersPerPage)); let i = index"
-                      [class.active]="currentMembersPage === i + 1">
-                    <a class="page-link nav-btn" (click)="changeMemberPage(i + 1)">{{ i + 1 }}</a>
-                  </li>
-
-                  <li class="page-item"
-                      [class.disabled]="currentMembersPage === Math.ceil((filteredMembers?.length || 0) / membersPerPage)">
-                    <a class="page-link nav-btn" (click)="changeMemberPage(currentMembersPage + 1)">Next</a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -948,7 +755,6 @@
     </div>
   </div>
 </div>
--->
 
 <!-- Modal Remove Member -->
 <div class="modal fade" id="removeMemberModal" tabindex="-1">
