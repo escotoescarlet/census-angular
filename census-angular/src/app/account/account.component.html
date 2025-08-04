@@ -152,6 +152,36 @@
   </ul>
 </nav>
 
+<!-- Modal Remove Account -->
+<div class="modal fade" id="removeCompanyModal" tabindex="-1" aria-labelledby="removeCompanyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="removeCompanyModalLabel">
+          <i class="bi bi-people me-2 icon-style"></i>
+          <span class="section-title">Remove Account</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body text-center d-flex flex-column align-items-center justify-content-center">
+        <i class="bi bi-exclamation-octagon" style="font-size: 48px; color: #dc3545;"></i>
+        <p class="want-delete mt-3">
+            Are you sure you want to delete account <strong>{{ accountToRemove?.name }}</strong>?
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="removeAccount()">
+            <i class="bi bi-trash"></i>
+            Remove
+        </button>
+
+        <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal Add Account -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
@@ -256,7 +286,7 @@
                             <input
                                 type="text"
                                 class="form-control placeholder-input"
-                                placeholder="Example: Company A or Group A"
+                                placeholder="Example: Company A or Group A or use DCT Plan ID value"
                                 [(ngModel)]="companyGroupTerm"
                                 [ngModelOptions]="{ standalone: true }"
                                 (keyup.enter)="searchCompanyGroups()"
@@ -375,11 +405,11 @@
             </div>
 
             <div class="row mt-3" *ngIf="companyGroupList.length > 0 && filteredCompanyGroupList.length === 0">
-                <div class="col-md-12 text-center">
-                    <span>No results found for "{{ companyGroupTerm }}"</span>
+                <div class="col-md-12 text-center d-flex flex-column align-items-center mt-4">
+                    <i class="bi bi-search fs-1 mb-2 icon-style"></i>
+                    <span class="no-results-text">No results found for "{{ companyGroupTerm }}"</span>
                 </div>
             </div>
-
           </div>
         </div>
 
@@ -617,6 +647,10 @@
     </div>
   </div>
 </div>
+
+
+
+
 
 
 

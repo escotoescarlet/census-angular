@@ -176,6 +176,12 @@ export class ServiceService {
     });
   }
 
+  deleteAccount(id: number) {
+    return this.http.delete(`${this.server}/accounts/${id}`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   getAccountDetails(accountId: number) {
     return this.http.get(
       `${this.server}/accounts/${accountId}`,

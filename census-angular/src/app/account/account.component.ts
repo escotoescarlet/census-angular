@@ -52,6 +52,7 @@ export class AccountComponent implements OnInit {
   public currentCGroupPage: number = 1;
   public itemsPerPage: number = 10;
   public totalCGroupPages: number = 0;
+  public accountToRemove: any;
   public permissionsMap: {
     [key: number]: {
       read: boolean;
@@ -121,7 +122,8 @@ export class AccountComponent implements OnInit {
   filterCompanyGroups(page: number = 1) {
     const term = this.companyGroupTerm.trim().toLowerCase();
     const filtered = this.companyGroupList.filter((item) =>
-      item.name.toLowerCase().includes(term)
+      item.name.toLowerCase().includes(term) || 
+      item.dct?.toLowerCase().includes(term)
     );
 
     this.totalCGroupPages = Math.ceil(filtered.length / this.itemsPerPage);
@@ -214,7 +216,19 @@ export class AccountComponent implements OnInit {
   }
 
   readyToRemove(account: any) {
+    this.accountToRemove = account;
+  }
 
+  removeAccount() {
+    this.service.deleteAccount(this.accountToRemove.id).subscribe(
+      (next: any) => {
+        this.getAccounts(this.currentPage);
+        this.showSuccessMsg(next.message);
+        this.closeRemoveAccount();
+      }, (error: any) => {
+        this.showErrorMsg(error);
+      }
+    );
   }
 
   validateStrictEmail(control: AbstractControl): ValidationErrors | null {
@@ -263,6 +277,14 @@ export class AccountComponent implements OnInit {
 
   closeModalCreateAccount() {
     const modalElement = document.getElementById('addModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
+
+  closeRemoveAccount() {
+    const modalElement = document.getElementById('removeCompanyModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
