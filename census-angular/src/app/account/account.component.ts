@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { ServiceService } from '../service.service';
 import { CommonModule } from '@angular/common';
 import { MessagesComponent } from '../messages/messages.component';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { CompanyService } from '../companies/service/company.service';
+import { AccountService } from './service/account.service';
 
 declare var bootstrap: any;
 
@@ -77,7 +77,7 @@ export class AccountComponent implements OnInit {
     };
   } = {};
 
-  constructor(private service: ServiceService,
+  constructor(private service: AccountService,
     private fb: FormBuilder,
     private compService: CompanyService
   ) {}

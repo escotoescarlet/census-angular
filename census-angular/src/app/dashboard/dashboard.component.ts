@@ -25,6 +25,7 @@ import {
   Filler
 } from 'chart.js';
 import { CommonModule } from '@angular/common';
+import { DashboardService } from './service/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -104,7 +105,7 @@ export class DashboardComponent implements OnInit {
     "VIRGIN ISLANDS": "VI"
   };
 
-  constructor(private service: ServiceService) {
+  constructor(private service: DashboardService) {
     Chart.register(
       BarElement,
       LineController,
