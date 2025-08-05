@@ -5,7 +5,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { MessagesComponent } from '../messages/messages.component';
-import { group } from 'node:console';
+import { GroupService } from './service/group.service';
 
 declare var bootstrap: any;
 
@@ -90,7 +90,7 @@ export class GroupComponent implements OnInit {
     admin_accounts: []
   };
 
-  constructor(private fb: FormBuilder, private service: ServiceService) {
+  constructor(private fb: FormBuilder, private service: GroupService) {
   }
 
   ngOnInit(): void {

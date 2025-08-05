@@ -3,6 +3,7 @@ import { ServiceService } from '../service.service';
 import { CommonModule } from '@angular/common';
 import { MessagesComponent } from '../messages/messages.component';
 import { NotificationStateService } from '../shared/notification-state.service';
+import { NotificationService } from './service/notification.service';
 
 @Component({
   selector: 'app-notifications',
@@ -31,7 +32,7 @@ export class NotificationsComponent implements OnInit {
   public notifications: any[] = [];
   public selectedNotif: any;
 
-  constructor(private service: ServiceService,
+  constructor(private service: NotificationService,
     private notificationStateService: NotificationStateService
   ) {}
 
