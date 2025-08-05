@@ -37,14 +37,28 @@ export class AccountComponent implements OnInit {
 
   public accountDetails: any;
   public permissions: any[] = [];
+  public permissionsUpdate: any[] = [];
+  public languages: any[] = [
+    { value: 'EN', label: 'English' },
+    { value: 'ES', label: 'Spanish' }
+  ];
+
   public paginationShow: any = {
     current: 1,
     total: 0,
     count: 0
   };
+  public paginationShowUpdate: any = {
+    current: 1,
+    total: 0,
+    count: 0
+  };
   public loadingPermissions: boolean = false;
+  public loadingPermissionsUpdate: boolean = false;
   public currentPageShow: number = 1;
+  public currentPageShowUpdate: number = 1;
   public createForm!: FormGroup;
+  public accountToUpdate: any;
 
   public companyGroupTerm: string = '';
   public companyGroupList: any[] = [];
@@ -52,6 +66,7 @@ export class AccountComponent implements OnInit {
   public currentCGroupPage: number = 1;
   public itemsPerPage: number = 10;
   public totalCGroupPages: number = 0;
+  public accountToRemove: any;
   public permissionsMap: {
     [key: number]: {
       read: boolean;
@@ -121,7 +136,8 @@ export class AccountComponent implements OnInit {
   filterCompanyGroups(page: number = 1) {
     const term = this.companyGroupTerm.trim().toLowerCase();
     const filtered = this.companyGroupList.filter((item) =>
-      item.name.toLowerCase().includes(term)
+      item.name.toLowerCase().includes(term) || 
+      item.dct?.toLowerCase().includes(term)
     );
 
     this.totalCGroupPages = Math.ceil(filtered.length / this.itemsPerPage);
@@ -154,8 +170,20 @@ export class AccountComponent implements OnInit {
     this.checkSuperAdminChk = !this.checkSuperAdminChk;
   }
 
+  activeDesactivateSuperadmin(account: any) {
+    this.service.toggleAdmin(account.id).subscribe({
+      next: (res) => {
+        this.showSuccessMsg(res.message);
+        this.closeModalShowAccount();
+      },
+      error: (err) => {
+        this.showErrorMsg(err.error?.error || 'An error occurred');
+      }
+    });
+  }
+
   getAccounts(page: number = 1) {
-    this.service.getAllAccounts(page).subscribe(
+    this.service.getAllAccounts(page, this.searchTerm, this.sort, this.direction).subscribe(
       (next: any) => {
         this.accounts = next.accounts;
         this.totalPages = next.total_pages;
@@ -168,7 +196,7 @@ export class AccountComponent implements OnInit {
   }
 
   searchAccounts(page: number = 1) {
-    this.service.getAllAccounts(page, this.searchTerm).subscribe(
+    this.service.getAllAccounts(page, this.searchTerm, this.sort, this.direction).subscribe(
       (next: any) => {
         this.accounts = next.accounts;
         this.totalPages = next.total_pages;
@@ -201,12 +229,26 @@ export class AccountComponent implements OnInit {
     }
   }
 
-  readyToRemove(account: any) {
-
+  goToPageShowUpdate(page: number) {
+    if (page >= 1 && page <= this.paginationShowUpdate.total) {
+      this.loadAccountPermissionsUpdate(this.accountToUpdate.id, page)
+    }
   }
 
-  onToggleActiveSuperadmin(event: any, account: any) {
+  readyToRemove(account: any) {
+    this.accountToRemove = account;
+  }
 
+  removeAccount() {
+    this.service.deleteAccount(this.accountToRemove.id).subscribe(
+      (next: any) => {
+        this.getAccounts(this.currentPage);
+        this.showSuccessMsg(next.message);
+        this.closeRemoveAccount();
+      }, (error: any) => {
+        this.showErrorMsg(error);
+      }
+    );
   }
 
   validateStrictEmail(control: AbstractControl): ValidationErrors | null {
@@ -252,8 +294,33 @@ export class AccountComponent implements OnInit {
     });
   }
 
+
   closeModalCreateAccount() {
     const modalElement = document.getElementById('addModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
+
+  closeRemoveAccount() {
+    const modalElement = document.getElementById('removeCompanyModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
+
+  closeModalShowAccount() {
+    const modalElement = document.getElementById('showAccountModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
+
+  closeModalUpdateAccount() {
+    const modalElement = document.getElementById('updateAccountModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
@@ -269,10 +336,6 @@ export class AccountComponent implements OnInit {
         this.showErrorMsg(err);
       }
     );
-  }
-
-  getCompaniesAndGroups() {
-
   }
 
   openAddAccountModal() {
@@ -301,8 +364,115 @@ export class AccountComponent implements OnInit {
     });
   }
 
-  prepareEditCompany(account: any) {
+  loadAccountPermissionsUpdate(accountId: number, page: number = 1) {
+    this.service.getAccountPermissions(accountId, page).subscribe((res: any) => {
+      this.permissionsUpdate = res.permissions;
+      this.paginationShowUpdate = {
+        current: res.current_page,
+        total: res.total_pages,
+        count: res.total_count
+      };
+      this.currentPageShowUpdate = res.current_page;
+      this.loadingPermissionsUpdate = false;
+    });
+  }
 
+  isValidEmail(email: string): boolean {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }
+
+  prepareEditAccount(account: any) {
+    this.accountToUpdate = account;
+
+    this.loadAccountPermissionsUpdate(this.accountToUpdate.id, this.currentPageShow);
+    this.service.getAccountDetails(this.accountToUpdate.id).subscribe(
+      (next: any) => {
+        this.accountToUpdate = next;
+        this.accountToUpdate.user.preferred_language =
+          this.accountToUpdate.user.preferred_language 
+            ? this.accountToUpdate.user.preferred_language
+            : this.languages[0].value;
+      }, (err: any) => {
+        this.showErrorMsg(err);
+      }
+    );
+  }
+
+  onPermissionChangeUpdate(permission: any, type: 'read' | 'rw' | 'admin' | 'superadmin', event: any): void {
+    const newValue = event.target.checked;
+    permission[type] = newValue;
+
+    const payload = {
+      account_id: this.accountToUpdate.id,
+      group_id: permission.group_id || null,
+      company_id: permission.company_id || null,
+      permission: {
+        read: permission.read,
+        rw: permission.rw,
+        admin: permission.admin,
+        superadmin: permission.superadmin
+      }
+    };
+
+    this.service.updatePermission(payload).subscribe({
+      next: (data: any) => {
+        this.showSuccessMsg(data.message);
+      },
+      error: (err: any) => {
+        console.log('err', err);
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  onPermissionChange(permission: any, type: 'read' | 'rw' | 'admin' | 'superadmin', event: any): void {
+    const newValue = event.target.checked;
+    permission[type] = newValue;
+
+    const payload = {
+      account_id: this.accountToUpdate.id,
+      group_id: permission.group_id || null,
+      company_id: permission.company_id || null,
+      permission: {
+        read: permission.read,
+        rw: permission.rw,
+        admin: permission.admin,
+        superadmin: permission.superadmin
+      }
+    };
+
+    this.service.updatePermission(payload).subscribe({
+      next: (data: any) => {
+        this.getAccounts(this.currentPage);
+        this.showSuccessMsg(data.message);
+        this.closeModalUpdateAccount();
+      },
+      error: (err: any) => {
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  sendWelcomeEmail(account: any) {
+    this.service.sendWelcomeEmail(account).subscribe({
+      next: (data: any) => {
+        this.showSuccessMsg(data.message);
+      }, error: (err: any) => {
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  saveAccountChanges(): void {
+    this.service.updateAccount(this.accountToUpdate).subscribe({
+      next: () => {
+        this.showSuccessMsg('Account updated successfully');
+      },
+      error: (err) => {
+        this.showErrorMsg(err);
+      }
+    });
   }
 
   getDisplayedPages(): number[] {
@@ -331,10 +501,17 @@ export class AccountComponent implements OnInit {
     return pages;
   }
 
-  onToggleActive(event: Event, company: any, fromModal: boolean) {
-    const input = event.target as HTMLInputElement;
-    const newValue = input.checked;
+  getDisplayedCurrentPagesUpdate(): number[] {
+    const pages: number[] = [];
 
+    const start = Math.max(2, this.paginationShowUpdate.current - 2);
+    const end = Math.min(this.paginationShowUpdate.total - 1, this.paginationShowUpdate.current + 2);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 
   showSuccessMsg(message: string) {

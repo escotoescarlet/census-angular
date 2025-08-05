@@ -23,6 +23,7 @@ export class ServiceService {
 
     return new HttpHeaders({
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
       ...(token ? { 'Authorization': `Bearer ${token}` } : {})
     });
   }
@@ -41,6 +42,33 @@ export class ServiceService {
       `${environment.apiUrl}/auth`,
       body,
       { headers }
+    );
+  }
+
+  updatePermission(payload: any) {
+    return this.http.patch(
+      `${this.server}/permissions/bulk_update`,
+      payload,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  updateAccount(account: any): Observable<any> {
+    return this.http.patch(`${this.server}/accounts/${account.id}`, {
+      name: account.name,
+      billing_email: account.billing_email,
+      user_attributes: {
+        id: account.user.id,
+        email: account.user.email,
+        preferred_language: account.user.preferred_language
+      }
+    }, { headers: this.getAuthHeaders() });
+  }
+
+  sendWelcomeEmail(account: any) {
+    return this.http.patch(`${this.server}/accounts/${account.id}/send_welcome_email`,
+      {},
+      { headers: this.getAuthHeaders() }
     );
   }
 
@@ -130,6 +158,14 @@ export class ServiceService {
     );
   }
 
+  toggleAdmin(userId: number): Observable<any> {
+    return this.http.patch(
+      `${this.server}/accounts/${userId}/toggle_admin`, 
+      {},
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   markNotificationsAsRead(ids: number[]) {
     return this.http.post(
       `${this.server}/notifications/mark_as_read`,
@@ -153,15 +189,23 @@ export class ServiceService {
     );
   }
 
-  getAllAccounts(page: number = 1, searchTerm: string = '') {
+  getAllAccounts(page: number = 1, searchTerm: string = '', sortBy: string = 'name', direction: string = 'asc') {
     let params: any = {
       page,
-      q: searchTerm
+      q: searchTerm,
+      sort_by: sortBy,
+      direction: direction
     };
 
-    return this.http.get(
-      `${this.server}/accounts`,
-      { headers: this.getAuthHeaders(), params }
+    return this.http.get(`${this.server}/accounts`, {
+      headers: this.getAuthHeaders(),
+      params
+    });
+  }
+
+  deleteAccount(id: number) {
+    return this.http.delete(`${this.server}/accounts/${id}`,
+      { headers: this.getAuthHeaders() }
     );
   }
 
