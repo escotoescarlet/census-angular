@@ -8,6 +8,7 @@ import {LoginComponent} from './login/login.component';
 import {CompanyComponent} from "./companies/company.component";
 import {MembersComponent} from "./member/members.component";
 import { AccountComponent } from './account/account.component';
+import {LogsComponent} from "./logs/logs.component";
 
 export const routes: Routes = [
     { path: 'login', component: LoginComponent },
@@ -16,6 +17,7 @@ export const routes: Routes = [
         { path: 'groups', component: GroupComponent },
         { path: 'companies', component: CompanyComponent },
         { path: 'members', component: MembersComponent },
+        { path: 'logs', component: LogsComponent },
         { path: 'profile', component: ProfileComponent },
         { path: 'accounts', component: AccountComponent },
         { path: 'notifications', component: NotificationsComponent }

@@ -48,6 +48,12 @@ export class MembersService {
     });
   }
 
+  getMembersByCompany(companyId: String) {
+    return this.http.get(`${this.server}/members/by_company/${companyId}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+
   getTags() {
     return this.http.get(`${this.server}/tags`, {
       headers: this.getAuthHeaders(),
