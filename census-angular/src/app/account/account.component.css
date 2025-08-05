@@ -196,3 +196,8 @@
     color: #A7A9B7;
 }
 
+.error-message {
+    font-size: 12px;
+    font-family: 'OpenSans Normal';
+}
+

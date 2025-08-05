@@ -45,6 +45,33 @@ export class ServiceService {
     );
   }
 
+  updatePermission(payload: any) {
+    return this.http.patch(
+      `${this.server}/permissions/bulk_update`,
+      payload,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  updateAccount(account: any): Observable<any> {
+    return this.http.patch(`${this.server}/accounts/${account.id}`, {
+      name: account.name,
+      billing_email: account.billing_email,
+      user_attributes: {
+        id: account.user.id,
+        email: account.user.email,
+        preferred_language: account.user.preferred_language
+      }
+    }, { headers: this.getAuthHeaders() });
+  }
+
+  sendWelcomeEmail(account: any) {
+    return this.http.patch(`${this.server}/accounts/${account.id}/send_welcome_email`,
+      {},
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
   toggleGroupActive(groupId: number, isActive: boolean) {
     return this.http.patch(`${this.server}/groups/${groupId}/toggle_active`,
       { is_active: isActive },

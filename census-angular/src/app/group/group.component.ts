@@ -437,8 +437,6 @@ export class GroupComponent implements OnInit {
 
     this.service.createGroup(data).subscribe(
       (data: any) => {
-        console.log('Group created', data);
-
         this.groupForm.reset();
         this.selectedBenefits = [];
         this.benefitPrices = {};
@@ -449,7 +447,6 @@ export class GroupComponent implements OnInit {
         this.isLoading = false;
       },
       (err: any) => {
-        console.error('Error creating group', err);
         this.showErrorMsg(err);
         this.groupForm.reset();
         this.closeModalAddGroup();

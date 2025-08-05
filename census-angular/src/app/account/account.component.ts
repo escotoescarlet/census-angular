@@ -37,14 +37,28 @@ export class AccountComponent implements OnInit {
 
   public accountDetails: any;
   public permissions: any[] = [];
+  public permissionsUpdate: any[] = [];
+  public languages: any[] = [
+    { value: 'EN', label: 'English' },
+    { value: 'ES', label: 'Spanish' }
+  ];
+
   public paginationShow: any = {
     current: 1,
     total: 0,
     count: 0
   };
+  public paginationShowUpdate: any = {
+    current: 1,
+    total: 0,
+    count: 0
+  };
   public loadingPermissions: boolean = false;
+  public loadingPermissionsUpdate: boolean = false;
   public currentPageShow: number = 1;
+  public currentPageShowUpdate: number = 1;
   public createForm!: FormGroup;
+  public accountToUpdate: any;
 
   public companyGroupTerm: string = '';
   public companyGroupList: any[] = [];
@@ -156,8 +170,8 @@ export class AccountComponent implements OnInit {
     this.checkSuperAdminChk = !this.checkSuperAdminChk;
   }
 
-  activeDesactivateSuperadmin() {
-    this.service.toggleAdmin(this.accountDetails.id).subscribe({
+  activeDesactivateSuperadmin(account: any) {
+    this.service.toggleAdmin(account.id).subscribe({
       next: (res) => {
         this.showSuccessMsg(res.message);
         this.closeModalShowAccount();
@@ -212,6 +226,12 @@ export class AccountComponent implements OnInit {
   goToPageShow(page: number) {
     if (page >= 1 && page <= this.paginationShow.total) {
       this.loadAccountPermissions(this.accountDetails.id, page)
+    }
+  }
+
+  goToPageShowUpdate(page: number) {
+    if (page >= 1 && page <= this.paginationShowUpdate.total) {
+      this.loadAccountPermissionsUpdate(this.accountToUpdate.id, page)
     }
   }
 
@@ -299,6 +319,14 @@ export class AccountComponent implements OnInit {
     }
   }
 
+  closeModalUpdateAccount() {
+    const modalElement = document.getElementById('updateAccountModal');
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+  }
+
   showDetails(account: any) {
     this.loadAccountPermissions(account.id, this.currentPageShow);
     this.service.getAccountDetails(account.id).subscribe(
@@ -308,10 +336,6 @@ export class AccountComponent implements OnInit {
         this.showErrorMsg(err);
       }
     );
-  }
-
-  getCompaniesAndGroups() {
-
   }
 
   openAddAccountModal() {
@@ -340,8 +364,115 @@ export class AccountComponent implements OnInit {
     });
   }
 
-  prepareEditCompany(account: any) {
+  loadAccountPermissionsUpdate(accountId: number, page: number = 1) {
+    this.service.getAccountPermissions(accountId, page).subscribe((res: any) => {
+      this.permissionsUpdate = res.permissions;
+      this.paginationShowUpdate = {
+        current: res.current_page,
+        total: res.total_pages,
+        count: res.total_count
+      };
+      this.currentPageShowUpdate = res.current_page;
+      this.loadingPermissionsUpdate = false;
+    });
+  }
 
+  isValidEmail(email: string): boolean {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }
+
+  prepareEditAccount(account: any) {
+    this.accountToUpdate = account;
+
+    this.loadAccountPermissionsUpdate(this.accountToUpdate.id, this.currentPageShow);
+    this.service.getAccountDetails(this.accountToUpdate.id).subscribe(
+      (next: any) => {
+        this.accountToUpdate = next;
+        this.accountToUpdate.user.preferred_language =
+          this.accountToUpdate.user.preferred_language 
+            ? this.accountToUpdate.user.preferred_language
+            : this.languages[0].value;
+      }, (err: any) => {
+        this.showErrorMsg(err);
+      }
+    );
+  }
+
+  onPermissionChangeUpdate(permission: any, type: 'read' | 'rw' | 'admin' | 'superadmin', event: any): void {
+    const newValue = event.target.checked;
+    permission[type] = newValue;
+
+    const payload = {
+      account_id: this.accountToUpdate.id,
+      group_id: permission.group_id || null,
+      company_id: permission.company_id || null,
+      permission: {
+        read: permission.read,
+        rw: permission.rw,
+        admin: permission.admin,
+        superadmin: permission.superadmin
+      }
+    };
+
+    this.service.updatePermission(payload).subscribe({
+      next: (data: any) => {
+        this.showSuccessMsg(data.message);
+      },
+      error: (err: any) => {
+        console.log('err', err);
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  onPermissionChange(permission: any, type: 'read' | 'rw' | 'admin' | 'superadmin', event: any): void {
+    const newValue = event.target.checked;
+    permission[type] = newValue;
+
+    const payload = {
+      account_id: this.accountToUpdate.id,
+      group_id: permission.group_id || null,
+      company_id: permission.company_id || null,
+      permission: {
+        read: permission.read,
+        rw: permission.rw,
+        admin: permission.admin,
+        superadmin: permission.superadmin
+      }
+    };
+
+    this.service.updatePermission(payload).subscribe({
+      next: (data: any) => {
+        this.getAccounts(this.currentPage);
+        this.showSuccessMsg(data.message);
+        this.closeModalUpdateAccount();
+      },
+      error: (err: any) => {
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  sendWelcomeEmail(account: any) {
+    this.service.sendWelcomeEmail(account).subscribe({
+      next: (data: any) => {
+        this.showSuccessMsg(data.message);
+      }, error: (err: any) => {
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  saveAccountChanges(): void {
+    this.service.updateAccount(this.accountToUpdate).subscribe({
+      next: () => {
+        this.showSuccessMsg('Account updated successfully');
+      },
+      error: (err) => {
+        this.showErrorMsg(err);
+      }
+    });
   }
 
   getDisplayedPages(): number[] {
@@ -362,6 +493,19 @@ export class AccountComponent implements OnInit {
 
     const start = Math.max(2, this.paginationShow.current - 2);
     const end = Math.min(this.paginationShow.total - 1, this.paginationShow.current + 2);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
+
+  getDisplayedCurrentPagesUpdate(): number[] {
+    const pages: number[] = [];
+
+    const start = Math.max(2, this.paginationShowUpdate.current - 2);
+    const end = Math.min(this.paginationShowUpdate.total - 1, this.paginationShowUpdate.current + 2);
 
     for (let i = start; i <= end; i++) {
       pages.push(i);
