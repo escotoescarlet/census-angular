@@ -100,4 +100,10 @@ export class CompanyService {
     });
   }
 
+  getCompaniesByGroup(groupId: String) {
+    return this.http.get(`${this.server}/companies/by_group/${groupId}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+
 }
