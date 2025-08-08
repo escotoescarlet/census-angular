@@ -38,7 +38,7 @@
   </div>
   <!-- Fila de tags para filtrar -->
   <div class="row justify-content-center mt-3">
-    <div class="col-11">
+    <div class="col-11" style="padding-left: 0px;">
       <div class="d-flex align-items-center flex-wrap gap-2">
         <span class="me-2">Filter by Tag:</span>
 
@@ -68,10 +68,7 @@
           <div class="d-flex align-items-center">
             <span class="section-number-title">Name</span>
             <button type="button" class="btn btn-link p-0 ms-2" (click)="toggleSortDirection()">
-              <i class="bi" [ngClass]="{
-                            'bi-arrow-up': direction === 'asc',
-                            'bi-arrow-down': direction === 'desc'
-                        }"></i>
+              <i class="bi" [ngClass]="{'bi-arrow-up': direction === 'asc', 'bi-arrow-down': direction === 'desc'}"></i>
             </button>
           </div>
         </th>
@@ -102,14 +99,14 @@
           </div>
         </th>
         <td class="text-start">
-                <span class="section-number-data">
-                    {{ company.members_count }}
-                </span>
+          <span class="section-number-data">
+            {{ company.members_count }}
+          </span>
         </td>
         <td class="text-start">
-                <span class="section-number-data">
-                    {{ company.dct_plan_id }}
-                </span>
+          <span class="section-number-data">
+            {{ company.dct_plan_id }}
+          </span>
         </td>
         <td class="text-start">
           <div class="form-check form-switch d-flex align-items-center">
@@ -119,8 +116,7 @@
               role="switch"
               [checked]="company.is_active"
               id="switchCheckChecked-{{ company.id }}"
-              (change)="onToggleActive($event, company, false)"/>
-
+              (click)="onToggleActive($event, company, false)"/>
             <label
               class="form-check-label ms-2"
               [for]="'switchCheckChecked-' + company.id">

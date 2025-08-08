@@ -302,20 +302,22 @@
                   <label class="title-info d-block"><i class="bi bi-building"></i> Company:</label>
                   <select formControlName="company_id" class="form-select"
                           [disabled]="!memberForm.get('group_id')?.value"
-                          [ngClass]="{
-            'is-invalid': memberForm.get('company_id')?.touched && memberForm.get('company_id')?.invalid,
-            'is-disabled': !memberForm.get('group_id')?.value
-          }">
+                          [ngClass]="{'is-invalid': memberForm.get('company_id')?.touched && memberForm.get('company_id')?.invalid,
+                            'is-disabled': !memberForm.get('group_id')?.value
+                          }">
                     <option value="">Select a company</option>
                     <option *ngFor="let company of filteredCompanies" [value]="company.id">{{ company.name }}</option>
                   </select>
+
                   <div class="invalid-feedback"
                        *ngIf="memberForm.get('company_id')?.touched && memberForm.get('company_id')?.invalid">
                     <span class="error-text">Company is required.</span>
                   </div>
+
                   <div *ngIf="!memberForm.get('group_id')?.value" class="text-muted small mt-1">
                     Please select a group first
                   </div>
+
                 </div>
 
               </div>
@@ -654,9 +656,9 @@
                 <ng-container *ngIf="memberDetail; else loading">
                   <div class="form-check form-switch mb-0">
                     <input class="form-check-input" type="checkbox" role="switch"
-                           [checked]="memberDetail.is_active"
-                           id="switchActivemember-{{ memberDetail.id }}"
-                           (change)="onToggleActive($event, memberDetail, true)"/>
+                      [checked]="memberDetail.is_active"
+                      id="switchActivemember-{{ memberDetail.id }}"
+                      (change)="onToggleActive($event, memberDetail, true)"/>
                   </div>
                 </ng-container>
                 <ng-template #loading>

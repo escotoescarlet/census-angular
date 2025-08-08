@@ -13,7 +13,6 @@ import {MessagesComponent} from '../messages/messages.component';
 import {NgSelectModule} from "@ng-select/ng-select";
 import {MembersService} from "./service/members.service";
 import {CompanyService} from "../companies/service/company.service";
-import {ServiceService} from "../service.service";
 import { GroupService } from '../group/service/group.service';
 
 declare var bootstrap: any;
@@ -88,8 +87,10 @@ export class MembersComponent implements OnInit {
     admin_accounts: []
   };
 
-  constructor(private fb: FormBuilder, private service: MembersService, private companyServices: CompanyService, private groupServices: GroupService) {
-  }
+  constructor(private fb: FormBuilder, 
+    private service: MembersService, 
+    private companyServices: CompanyService, 
+    private groupServices: GroupService) {}
 
   ngOnInit(): void {
     this.initModal(null);
