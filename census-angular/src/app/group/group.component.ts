@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ServiceService } from '../service.service';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, NgModel, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { MessagesComponent } from '../messages/messages.component';

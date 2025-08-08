@@ -15,6 +15,7 @@ import {LogsService} from "./service/logs.service";
 import {CompanyService} from "../companies/service/company.service";
 import {ServiceService} from "../service.service";
 import {MembersService} from "../member/service/members.service";
+import { GroupService } from '../group/service/group.service';
 
 declare var bootstrap: any;
 
@@ -59,7 +60,7 @@ export class LogsComponent implements OnInit {
     private fb: FormBuilder,
     private service: LogsService,
     private companyServices: CompanyService,
-    private groupServices: ServiceService,
+    private groupServices: GroupService,
     private memberService: MembersService
   ) {}
 

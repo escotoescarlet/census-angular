@@ -6,6 +6,8 @@ import { StorageService } from '../storage.service';
 import { ServiceService } from '../service.service';
 import { MessagesComponent } from '../messages/messages.component';
 import { NotificationStateService } from '../shared/notification-state.service';
+import { NotificationService } from '../notifications/service/notification.service';
+import { DashboardService } from '../dashboard/service/dashboard.service';
 
 @Component({
   selector: 'app-header-nav',
@@ -29,7 +31,8 @@ export class HeaderNavComponent implements OnInit {
 
   constructor(private router: Router,
     private notificationStateService: NotificationStateService,
-    private service: ServiceService,
+    private service: NotificationService,
+    private dashboardService: DashboardService,
     private storageService: StorageService) { 
   }
 
@@ -48,7 +51,7 @@ export class HeaderNavComponent implements OnInit {
   }
 
   getLastetsNotifications() {
-    this.service.getLastetsNotifications().subscribe(
+    this.dashboardService.getLastetsNotifications().subscribe(
       (next: any) => {
         this.latestNotifications = next;
       }, (err: any) => {
