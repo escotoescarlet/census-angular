@@ -40,18 +40,18 @@
   <div class="row justify-content-center mt-3">
     <div class="col-11" style="padding-left: 0px;">
       <div class="d-flex align-items-center flex-wrap gap-2">
-        <span class="me-2">Filter by Tag:</span>
+        <span class="me-2 filter-title">Filter by Tag:</span>
 
         <!-- Selector de tags -->
-        <select class="form-select form-select-sm" style="width: auto;"
-                [(ngModel)]="selectedTag" (change)="onTagChange(selectedTag)">
+        <select class="form-select form-select-sm tag-input"
+          [(ngModel)]="selectedTag" (change)="onTagChange(selectedTag)">
           <option value="">All Tags</option>
           <option *ngFor="let tag of tags" [value]="tag.id">{{ tag.name }}</option>
         </select>
 
         <!-- Botón para limpiar filtro (opcional) -->
         <button *ngIf="selectedTag" class="btn btn-sm btn-outline-secondary ms-2"
-                (click)="clearTagFilter()">
+            (click)="clearTagFilter()">
           Clear
         </button>
       </div>
