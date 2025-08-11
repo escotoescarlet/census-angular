@@ -59,14 +59,14 @@ export class TagsComponent implements OnInit {
 
   ngOnInit(): void {
     this.initModal(null);
-    this.getTags();
+    this.getTags(1);
     this.initModalListeners();
   }
 
   private initModalListeners() {
     const addModalElement = document.getElementById('addTagModal');
     if (addModalElement) {
-      this.addTagModal = new bootstrap.Modal(addTagElement);
+      this.addTagModal = new bootstrap.Modal(addModalElement);
       addModalElement.addEventListener('hidden.bs.modal', () => {
         this.initModal(null);
         this.isLoading = false;
@@ -74,9 +74,9 @@ export class TagsComponent implements OnInit {
     }
 
     const editTagElement = document.getElementById('editTagModal');
-    if (editModalElement) {
-      this.editTagModal = new bootstrap.Modal(editModalElement);
-      editModalElement.addEventListener('hidden.bs.modal', () => {
+    if (editTagElement) {
+      this.editTagModal = new bootstrap.Modal(editTagElement);
+      editTagElement.addEventListener('hidden.bs.modal', () => {
         this.initModal(null);
         this.isLoading = false;
       });
@@ -98,7 +98,7 @@ export class TagsComponent implements OnInit {
 
   toggleSortDirection() {
     this.direction = this.direction === 'asc' ? 'desc' : 'asc';
-    this.getMembers(this.currentPage);
+    this.getTags(this.currentPage);
   }
 
   searchTag(id: number): any {
@@ -185,7 +185,7 @@ export class TagsComponent implements OnInit {
         console.error('Error creating member', err);
         this.showErrorMsg(err);
         this.tagForm.reset();
-        this.closeModalAddMember();
+        this.closeModalAddTag();
         this.getTags(this.currentPage);
         this.isLoading = false;
       }

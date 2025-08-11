@@ -154,7 +154,7 @@
                 <div class="mt-3">
                   <label class="title-info d-block"><i class="bi bi-person-badge"></i> First Name:</label>
                   <input type="text" formControlName="first" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': memberForm.get('name')?.touched && memberForm.get('name')?.invalid }"/>
+                         [ngClass]="{ 'is-invalid': tagForm.get('name')?.touched && tagForm.get('name')?.invalid }"/>
                   <div class="invalid-feedback"
                        *ngIf="tagForm.get('name')?.touched && tagForm.get('name')?.invalid">
                     <span class="error-text">First name is required.</span>
@@ -179,7 +179,7 @@
   </div>
 </div>
 
-<!-- Modal Edit Member -->
+<!-- Modal Edit Tag -->
 <div class="modal fade" id="editTagModal" tabindex="-1" aria-labelledby="editTagModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
@@ -200,18 +200,13 @@
                 <label class="section-number-title-section">General Data</label>
 
                 <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> First Name:</label>
+                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> Name:</label>
                   <input type="text" formControlName="first" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': memberForm.get('first')?.touched && memberForm.get('first')?.invalid }"/>
+                         [ngClass]="{ 'is-invalid': tagForm.get('name')?.touched && tagForm.get('name')?.invalid }"/>
                   <div class="invalid-feedback"
-                       *ngIf="memberForm.get('first')?.touched && memberForm.get('first')?.invalid">
-                    <span class="error-text">First name is required.</span>
+                       *ngIf="tagForm.get('name')?.touched && tagForm.get('name')?.invalid">
+                    <span class="error-text">Name is required.</span>
                   </div>
-                </div>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> Middle Name:</label>
-                  <input type="text" formControlName="middle" class="form-control mt-1 placeholder-input"/>
                 </div>
               </div>
             </div>
