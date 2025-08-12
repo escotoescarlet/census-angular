@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, NgModel, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -109,6 +109,25 @@ export class GroupComponent implements OnInit {
         console.error('Error fetching groups', error);
       }
     );
+  }
+
+  downloadGroupMembersCsv(groupId: number) {
+    this.service.downloadMembersCsv(groupId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        a.download = `group-${groupId}-members-${timestamp}.csv`;
+
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err: any) => {
+        console.error('Error downloading CSV:', err);
+      }
+    });
   }
 
   toggleSortDirection() {

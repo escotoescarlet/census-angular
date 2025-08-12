@@ -67,6 +67,14 @@ export class GroupService {
     );
   }
 
+  downloadMembersCsv(groupId: number) {
+    return this.http.get(`${this.server}/groups/export_members_by_group`, {
+      params: { group_id: groupId },
+      responseType: 'blob',
+      headers: this.getAuthHeaders()
+    });
+  }
+
   updateGroup(group: any): Observable<any> {
     return this.http.put<any>(
       `${this.server}/groups/${group.id}`,
