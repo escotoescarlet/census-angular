@@ -1,3 +1,5 @@
+<app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
     <a class="navbar-brand title-style" href="#">
@@ -15,17 +17,42 @@
           <a class="nav-link dropdown-toggle position-relative" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-bell fs-4 icon-header-style"></i>
             <!-- Badge -->
-            <span class="position-absolute start-100 translate-middle badge rounded-pill bg-danger">
-              3
+            <span *ngIf="unreadNotifCount > 0" class="position-absolute start-100 translate-middle badge rounded-pill bg-danger">
+              {{ unreadNotifCount }}
               <span class="visually-hidden">unread messages</span>
             </span>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notifDropdown">
-            <li><a class="dropdown-item" href="#">Notif 1</a></li>
-            <li><a class="dropdown-item" href="#">Notif 2</a></li>
-            <li><hr class="dropdown-divider"></li>
+          <ul class="dropdown-menu dropdown-menu-end responsive-list" aria-labelledby="notifDropdown">
+            <div *ngIf="latestNotifications.length > 0">
+              <li *ngFor="let notif of latestNotifications">
+                <div class="row notif-item" [routerLink]="['/main/notifications']">
+                  <div class="col-12">
+                    <div class="row">
+                      <div class="col-6">
+                        <p class="title-account-style mb-2">{{ notif.account ? notif.account.name : 'Unknown Account' }}</p>
+                      </div>
+                      <div class="col-6">
+                        <p class="text-date-notif mb-2">{{ notif.created_at | date:'short' }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <p class="text-notif mb-1">{{ notif.params }}</p>
+                  </div>
+
+                  <div class="divider"></div>
+                </div>
+              </li>
+            </div>
+
+            <div *ngIf="latestNotifications.length === 0" class="d-flex flex-column align-items-center justify-content-center" style="height: 200px;">
+              <i class="bi bi-bell-slash-fill mb-3" style="font-size: 2rem; color: #999;"></i>
+              <p class="no-notifications-available text-center mb-0">There are no pending notifications</p>
+            </div>
+
             <li>
-              <a class="dropdown-item see-more" [routerLink]="['/notifications']">
+              <a class="dropdown-item see-more" [routerLink]="['/main/notifications']">
                 See more
               </a>
             </li>
@@ -39,19 +66,25 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
             <li>
+              <a class="dropdown-item" [routerLink]="['/main/admin']">
+                <i class="bi bi-person-lines-fill icon-style"></i>
+                <span class="option-text-info">Admin</span>
+              </a>
+            </li>
+            <li>
               <a class="dropdown-item" [routerLink]="['/profile']">
                 <i class="bi bi-person-lines-fill icon-style"></i>
                 <span class="option-text-info">Profile</span>
               </a>
             </li>
             <li>
-              <a class="dropdown-item" [routerLink]="['/accounts']">
+              <a class="dropdown-item" [routerLink]="['/main/accounts']">
                 <i class="bi bi-people icon-style"></i>
                 <span class="option-text-info">Accounts</span>
               </a>
             </li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" (click)="logout()">Cerrar sesión</a></li>
+            <li><a class="dropdown-item drop-custom-item" (click)="logout()">Cerrar sesión</a></li>
           </ul>
         </li>
       </ul>

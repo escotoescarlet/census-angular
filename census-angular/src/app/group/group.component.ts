@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { ServiceService } from '../service.service';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, NgModel, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { MessagesComponent } from '../messages/messages.component';
-import { group } from 'node:console';
+import { GroupService } from './service/group.service';
 
 declare var bootstrap: any;
 
@@ -90,7 +89,7 @@ export class GroupComponent implements OnInit {
     admin_accounts: []
   };
 
-  constructor(private fb: FormBuilder, private service: ServiceService) {
+  constructor(private fb: FormBuilder, private service: GroupService) {
   }
 
   ngOnInit(): void {
@@ -110,6 +109,25 @@ export class GroupComponent implements OnInit {
         console.error('Error fetching groups', error);
       }
     );
+  }
+
+  downloadGroupMembersCsv(groupId: number) {
+    this.service.downloadMembersCsv(groupId).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        a.download = `group-${groupId}-members-${timestamp}.csv`;
+
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err: any) => {
+        console.error('Error downloading CSV:', err);
+      }
+    });
   }
 
   toggleSortDirection() {
@@ -286,7 +304,7 @@ export class GroupComponent implements OnInit {
     }
   }
 
-  onToggleCompanyStatus(event: any, company: any): void {
+  onToggleGroupCompanyStatus(event: any, company: any): void {
     const isChecked = event.target.checked;
 
     const previousStatus = company.is_active;
@@ -437,8 +455,6 @@ export class GroupComponent implements OnInit {
 
     this.service.createGroup(data).subscribe(
       (data: any) => {
-        console.log('Group created', data);
-        
         this.groupForm.reset();
         this.selectedBenefits = [];
         this.benefitPrices = {};
@@ -449,7 +465,6 @@ export class GroupComponent implements OnInit {
         this.isLoading = false;
       },
       (err: any) => {
-        console.error('Error creating group', err);
         this.showErrorMsg(err);
         this.groupForm.reset();
         this.closeModalAddGroup();
@@ -457,59 +472,4 @@ export class GroupComponent implements OnInit {
       }
     );
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

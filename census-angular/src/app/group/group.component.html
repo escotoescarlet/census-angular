@@ -86,8 +86,8 @@
                         role="switch"
                         [checked]="group.is_active"
                         id="switchCheckChecked-{{ group.id }}"
-                        (change)="onToggleActive($event, group, false)"/>
-
+                        (change)="onToggleActive($event, group, false)"
+                        title="Toggle active status"/>
                     <label
                     class="form-check-label ms-2"
                     [for]="'switchCheckChecked-' + group.id">
@@ -96,6 +96,10 @@
                 </div>
             </td>
             <td>
+                <button type="button" (click)="downloadGroupMembersCsv(group.id)" class="btn btn-link">
+                    <i class="bi bi-filetype-csv"></i>
+                </button>
+
                 <button type="button" (click)="showDetails(group)" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#showGroupModal">
                     <i class="bi bi-eye"></i>
                 </button>
@@ -120,8 +124,8 @@
       <button class="page-link directions-btn" (click)="goToPage(currentPage - 1)">Previous</button>
     </li>
 
-    <li 
-      class="page-item" 
+    <li
+      class="page-item"
       *ngFor="let page of [].constructor(totalPages); let i = index"
       [class.active]="i + 1 === currentPage">
         <button class="page-link directions-btn" (click)="goToPage(i + 1)">
@@ -134,7 +138,6 @@
     </li>
   </ul>
 </nav>
-
 
 <!-- Modal Create Group -->
 <div class="modal fade" id="addGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -157,9 +160,9 @@
 
                     <div>
                         <label class="section-number-title-light mt-2">Name</label>
-                        <input 
-                            formControlName="name" 
-                            type="text" 
+                        <input
+                            formControlName="name"
+                            type="text"
                             class="form-control placeholder-input"
                             [ngClass]="{
                             'is-invalid': groupForm.get('name')?.touched && groupForm.get('name')?.invalid
@@ -180,9 +183,9 @@
 
                     <div class="section-number-title-light mt-2">
                         <label class="mb-1">Contact Name</label>
-                        <input 
-                            formControlName="contact_name" 
-                            type="text" 
+                        <input
+                            formControlName="contact_name"
+                            type="text"
                             class="form-control placeholder-input"
                             [ngClass]="{
                             'is-invalid': groupForm.get('contact_name')?.touched && groupForm.get('contact_name')?.invalid
@@ -195,9 +198,9 @@
 
                     <div class="section-number-title-light mt-2">
                         <label class="mb-1">Contact Email</label>
-                        <input 
-                            formControlName="contact_email" 
-                            type="email" 
+                        <input
+                            formControlName="contact_email"
+                            type="email"
                             class="form-control placeholder-input"
                             [ngClass]="{
                             'is-invalid': groupForm.get('contact_email')?.touched && groupForm.get('contact_email')?.invalid
@@ -215,7 +218,7 @@
                     </div>
 
                 </div>
-              
+
                 <div class="col-md-4 mb-3">
                     <label class="section-number-title-section">Accounts Info</label>
 
@@ -278,7 +281,7 @@
                 </div>
 
             </div>
-            
+
             <div class="col-md-12">
                 <label class="section-number-title-section mb-4">Benefits</label>
 
@@ -286,7 +289,7 @@
                     <div class="row">
                     <div class="col-md-4 mb-1" *ngFor="let benefit of benefits; let i = index">
                         <div class="d-flex justify-content-between align-items-center">
-                        
+
                         <!-- Checkbox con nombre -->
                         <div class="form-check">
                             <input
@@ -337,7 +340,7 @@
 <div class="modal fade" id="showGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-        
+
             <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">
                 <i class="bi bi-collection me-2 icon-style"></i>
@@ -364,7 +367,7 @@
                             <div class="mt-1">
                                 <strong class="title-info">
                                     <i class="bi bi-collection"></i>
-                                    Name: 
+                                    Name:
                                 </strong>
 
                                 <ng-container *ngIf="groupDetail?.name; else loading">
@@ -379,7 +382,7 @@
                             <div class="mt-1">
                                 <strong class="title-info">
                                     <i class="bi bi-envelope"></i>
-                                    Contact Email: 
+                                    Contact Email:
                                 </strong>
                                 <ng-container *ngIf="groupDetail; else loading">
                                     <span class="title-info-data">
@@ -395,7 +398,7 @@
                             <div class="mt-1">
                                 <strong class="title-info">
                                     <i class="bi bi-telephone"></i>
-                                    Contact Phone: 
+                                    Contact Phone:
                                 </strong>
                                 <ng-container *ngIf="groupDetail; else loading">
                                     <span class="title-info-data">
@@ -411,7 +414,7 @@
                             <div class="mt-1">
                                 <strong class="title-info">
                                     <i class="bi bi-geo"></i>
-                                    Address: 
+                                    Address:
                                 </strong>
                                 <ng-container *ngIf="groupDetail; else loading">
                                     <span class="title-info-data">
@@ -456,11 +459,11 @@
                                 <div *ngIf="groupDetail?.admin_accounts?.length > 0; else noAccounts">
                                     <ul class="list-unstyled">
                                         <li *ngFor="let account of groupDetail.admin_accounts" class="d-flex align-items-center mb-3">
-                                        <div class="rounded-circle d-flex justify-content-center align-items-center" 
+                                        <div class="rounded-circle d-flex justify-content-center align-items-center"
                                             style="width: 32px; height: 32px; background-color: #007bff; color: white; font-size: 20px;">
                                             <i class="bi bi-person"></i>
                                         </div>
-                                        
+
                                         <div class="ms-3">
                                             <div class="account-text">{{ account.name }}</div>
                                             <div class="account-text">{{ account.email }}</div>
@@ -500,7 +503,7 @@
                                     <span class="skeleton-loader" style="width: 140px; height: 15px; display: inline-block;"></span>
                                 </ng-template>
                             </div>
-                            
+
                             <div class="mt-1">
                                 <strong class="title-info">
                                     <i class="bi bi-telephone"></i>
@@ -584,7 +587,7 @@
                                             </th>
                                         </tr>
                                     </thead>
-                                
+
                                     <tbody>
                                         <tr *ngFor="let company of paginatedCompanies">
                                             <th scope="row" class="text-start">
@@ -610,7 +613,7 @@
                                                         role="switch"
                                                         [checked]="company.is_active"
                                                         id="switchCompany-{{ company.id }}"
-                                                        (change)="onToggleCompanyStatus($event, company)"/>
+                                                        (change)="onToggleGroupCompanyStatus($event, company)"/>
                                                 </div>
                                             </td>
                                         </tr>
@@ -792,9 +795,9 @@
                     <div *ngIf="groupDetailEdit?.admin_accounts && groupDetailEdit.admin_accounts.length > 0; else noAccounts">
                         <ul class="list-unstyled">
                         <li *ngFor="let account of groupDetailEdit.admin_accounts" class="d-flex align-items-center justify-content-between mb-3">
-                            
+
                             <div class="d-flex align-items-center">
-                                <div class="rounded-circle d-flex justify-content-center align-items-center" 
+                                <div class="rounded-circle d-flex justify-content-center align-items-center"
                                     style="width: 32px; height: 32px; background-color: #007bff; color: white; font-size: 20px;">
                                     <i class="bi bi-person"></i>
                                 </div>
@@ -920,7 +923,7 @@
                         <input class="form-check-input" type="checkbox" role="switch"
                             [checked]="company.is_active"
                             id="switchCompany-{{ company.id }}"
-                            (change)="onToggleCompanyStatus($event, company)" />
+                            (change)="onToggleGroupCompanyStatus($event, company)" />
                       </div>
                     </td>
                   </tr>
