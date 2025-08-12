@@ -69,6 +69,13 @@
     font-size: 12px;
 }
 
+.download-options {
+    font-family: 'OpenSans Normal';
+    font-size: 14px;
+    color: #A7A9B7;
+    cursor: pointer;
+}
+
 .tag-input {
     color: #A7A9B7;
     font-family: 'OpenSans Light';
