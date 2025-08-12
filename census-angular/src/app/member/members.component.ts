@@ -14,6 +14,7 @@ import {NgSelectModule} from "@ng-select/ng-select";
 import {MembersService} from "./service/members.service";
 import {CompanyService} from "../companies/service/company.service";
 import { GroupService } from '../group/service/group.service';
+import {TagsService} from "../tags/service/tags.service";
 
 declare var bootstrap: any;
 
@@ -87,10 +88,11 @@ export class MembersComponent implements OnInit {
     admin_accounts: []
   };
 
-  constructor(private fb: FormBuilder, 
-    private service: MembersService, 
-    private companyServices: CompanyService, 
-    private groupServices: GroupService) {}
+  constructor(private fb: FormBuilder,
+    private service: MembersService,
+    private companyServices: CompanyService,
+    private groupServices: GroupService,
+    private tagServices: TagsService) {}
 
   ngOnInit(): void {
     this.initModal(null);
@@ -162,7 +164,7 @@ export class MembersComponent implements OnInit {
   }
 
   getTags() {
-    this.service.getTags().subscribe(
+    this.tagServices.getAllTags().subscribe(
       (data: any) => {
         this.tags = data.tags;
       },
@@ -521,5 +523,18 @@ export class MembersComponent implements OnInit {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
     }
+  }
+
+  getDisplayedPages(): number[] {
+    const pages: number[] = [];
+
+    const start = Math.max(2, this.currentPage - 2);
+    const end = Math.min(this.totalPages - 1, this.currentPage + 2);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 }

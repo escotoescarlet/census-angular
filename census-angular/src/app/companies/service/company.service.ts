@@ -55,12 +55,6 @@ export class CompanyService {
     });
   }
 
-  getTags() {
-    return this.http.get(`${this.server}/tags`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
-
   getCompanyDetails(companyId: string): Observable<any> {
     return this.http.get(`${this.server}/companies/${companyId}`,
       {headers: this.getAuthHeaders()}

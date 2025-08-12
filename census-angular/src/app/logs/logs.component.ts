@@ -219,4 +219,17 @@ export class LogsComponent implements OnInit {
     this.showMsg = true;
     setTimeout(() => this.showMsg = false, 5000);
   }
+
+  getDisplayedPages(): number[] {
+    const pages: number[] = [];
+
+    const start = Math.max(2, this.currentPage - 2);
+    const end = Math.min(this.totalPages - 1, this.currentPage + 2);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  }
 }

@@ -7,7 +7,7 @@ import {StorageService} from "../../storage.service";
 @Injectable({
   providedIn: 'root'
 })
-export class MembersService {
+export class TagsService {
 
   public server: string = environment.apiUrl;
 
@@ -27,14 +27,7 @@ export class MembersService {
     });
   }
 
-  toggleMemberActive(memberId: number, isActive: boolean) {
-    return this.http.patch(`${this.server}/members/${memberId}/toggle_active`,
-      { is_active: isActive },
-      { headers: this.getAuthHeaders() }
-    );
-  }
-
-  getMembers(page: number = 1, searchTerm: string = '', sort: string = '', direction: string = '',selectedTag: string = '') {
+  getTags(page: number = 1, searchTerm: string = '', sort: string = '', direction: string = '',selectedTag: string = '') {
     const params: any = { page };
 
     if (searchTerm.trim()) params.q = searchTerm.trim();
@@ -42,40 +35,40 @@ export class MembersService {
     if (direction) params.direction = direction;
     if (selectedTag) params.tag_id = selectedTag;
 
-    return this.http.get(`${this.server}/members`, {
+    return this.http.get(`${this.server}/tags`, {
       headers: this.getAuthHeaders(),
       params
     });
   }
 
-  getMembersByCompany(companyId: String) {
-    return this.http.get(`${this.server}/members/by_company/${companyId}`, {
+  getAllTags() {
+    return this.http.get(`${this.server}/tags`, {
       headers: this.getAuthHeaders(),
     });
   }
 
-  getMemberDetails(memberId: string): Observable<any> {
-    return this.http.get(`${this.server}/members/${memberId}`,
+  getTagDetail(tagId: string): Observable<any> {
+    return this.http.get(`${this.server}/tags/${tagId}`,
       {headers: this.getAuthHeaders()}
     );
   }
 
-  createMember(memberData: any) {
-    return this.http.post(`${this.server}/members`, memberData, {
+  createTag(tagData: any) {
+    return this.http.post(`${this.server}/tags`, tagData, {
       headers: this.getAuthHeaders()
     });
   }
 
-  updateMember(id:number,member: any): Observable<any> {
+  updateTag(id:number,tag: any): Observable<any> {
     return this.http.put<any>(
-      `${this.server}/members/${id}`,
-      { member: member },
+      `${this.server}/tags/${id}`,
+      { tag: tag },
       { headers: this.getAuthHeaders() }
     );
   }
 
-  deleteMember(memberId: number): Observable<any> {
-    return this.http.delete(`${this.server}/members/${memberId}`, {
+  deleteTag(memberId: number): Observable<any> {
+    return this.http.delete(`${this.server}/tags/${memberId}`, {
       headers: this.getAuthHeaders()
     });
   }

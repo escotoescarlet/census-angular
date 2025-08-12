@@ -1,7 +1,5 @@
 <app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
 
-<app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
-
 <!-- Título -->
 <div class="row justify-content-center">
   <div class="col-md-11 d-flex align-items-center">
@@ -9,26 +7,6 @@
     <span class="section-title">Logs</span>
   </div>
 </div>
-
-<!-- Búsqueda -->
-<!--<div class="row justify-content-center mt-2">
-  <div class="col-md-11">
-    <div class="input-group">
-      <input
-        type="text"
-        class="form-control placeholder-input"
-        placeholder="Example: Some text"
-        [(ngModel)]="searchTerm"
-        aria-label="Search"
-        aria-describedby="button-addon2"
-      />
-      <button class="btn btn-outline-secondary" type="button" id="button-addon2" (click)="loadLogs(1)">
-        <i class="bi bi-search"></i>
-        <span class="search-btn">Search</span>
-      </button>
-    </div>
-  </div>
-</div>-->
 
 <!-- Filtros -->
 <div class="row justify-content-center mt-3">
@@ -114,22 +92,48 @@
 
 <!-- Paginación -->
 <nav *ngIf="totalPages > 1" aria-label="Logs pagination" class="mt-3 d-flex justify-content-center">
-  <ul class="pagination justify-content-center flex-wrap gap-1">
+  <ul class="pagination">
+
+    <!-- Previous -->
     <li class="page-item" [class.disabled]="currentPage === 1">
       <button class="page-link directions-btn" (click)="goToPage(currentPage - 1)">Previous</button>
     </li>
 
-    <li
-      class="page-item"
-      *ngFor="let page of [].constructor(totalPages); let i = index"
-      [class.active]="i + 1 === currentPage">
-      <button class="page-link directions-btn" (click)="goToPage(i + 1)">
-        {{ i + 1 }}
+    <!-- First page -->
+    <li class="page-item" [class.active]="currentPage === 1">
+      <button class="page-link directions-btn" (click)="goToPage(1)">1</button>
+    </li>
+
+    <!-- Left ellipsis -->
+    <li class="page-item disabled" *ngIf="currentPage > 4">
+      <span class="page-link directions-btn">...</span>
+    </li>
+
+    <!-- Pages around current -->
+    <li class="page-item"
+        *ngFor="let page of getDisplayedPages()"
+        [class.active]="currentPage === page">
+      <button class="page-link directions-btn" (click)="goToPage(page)">
+        {{ page }}
       </button>
     </li>
 
+    <!-- Right ellipsis -->
+    <li class="page-item disabled" *ngIf="currentPage < totalPages - 3">
+      <span class="page-link directions-btn">...</span>
+    </li>
+
+    <!-- Last page -->
+    <li class="page-item" [class.active]="currentPage === totalPages" *ngIf="totalPages > 1">
+      <button class="page-link directions-btn" (click)="goToPage(totalPages)">
+        {{ totalPages }}
+      </button>
+    </li>
+
+    <!-- Next -->
     <li class="page-item" [class.disabled]="currentPage === totalPages">
       <button class="page-link directions-btn" (click)="goToPage(currentPage + 1)">Next</button>
     </li>
+
   </ul>
 </nav>
