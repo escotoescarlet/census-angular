@@ -10,7 +10,7 @@
 <div class="row justify-content-center mt-2">
   <div class="col-11 d-flex justify-content-between align-items-center">
 
-    <!-- Input de búsqueda al extremo izquierdo con ancho tipo col-6 -->
+    <!-- Input de búsqueda -->
     <div style="width: 50%;">
       <div class="input-group">
         <input
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <!-- Botón al extremo derecho -->
+    <!-- Botón Nuevo Tag -->
     <div>
       <button type="button" class="btn custom-btn" data-bs-toggle="modal" data-bs-target="#addTagModal">
         <i class="bi bi-plus-circle"></i>
@@ -48,9 +48,9 @@
             <span class="section-number-title">Name</span>
             <button type="button" class="btn btn-link p-0 ms-2" (click)="toggleSortDirection()">
               <i class="bi" [ngClass]="{
-                            'bi-arrow-up': direction === 'asc',
-                            'bi-arrow-down': direction === 'desc'
-                        }"></i>
+                      'bi-arrow-up': direction === 'asc',
+                      'bi-arrow-down': direction === 'desc'
+                  }"></i>
             </button>
           </div>
         </th>
@@ -62,18 +62,14 @@
       <tbody>
       <tr *ngFor="let tag of tags">
         <th scope="row" class="text-start">
-          <span class="section-number-data">
-            {{ tag.name }}
-          </span>
+          <span class="section-number-data">{{ tag.name }}</span>
         </th>
         <td>
-          <button type="button" (click)="prepareEditTag(tag)" class="btn btn-link" data-bs-toggle="modal"
-                  data-bs-target="#editTagModal">
+          <button type="button" (click)="prepareEditTag(tag)" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#editTagModal">
             <i class="bi bi-pencil text-success"></i>
           </button>
 
-          <button type="button" (click)="readyToRemove(tag)" class="btn btn-link" data-bs-toggle="modal"
-                  data-bs-target="#removeTagModal">
+          <button type="button" (click)="readyToRemove(tag)" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#removeTagModal">
             <i class="bi bi-trash3 text-danger"></i>
           </button>
         </td>
@@ -102,12 +98,8 @@
     </li>
 
     <!-- Pages around current -->
-    <li class="page-item"
-        *ngFor="let page of getDisplayedPages()"
-        [class.active]="currentPage === page">
-      <button class="page-link directions-btn" (click)="goToPage(page)">
-        {{ page }}
-      </button>
+    <li class="page-item" *ngFor="let page of getDisplayedPages()" [class.active]="currentPage === page">
+      <button class="page-link directions-btn" (click)="goToPage(page)">{{ page }}</button>
     </li>
 
     <!-- Right ellipsis -->
@@ -117,9 +109,7 @@
 
     <!-- Last page -->
     <li class="page-item" [class.active]="currentPage === totalPages" *ngIf="totalPages > 1">
-      <button class="page-link directions-btn" (click)="goToPage(totalPages)">
-        {{ totalPages }}
-      </button>
+      <button class="page-link directions-btn" (click)="goToPage(totalPages)">{{ totalPages }}</button>
     </li>
 
     <!-- Next -->
@@ -130,16 +120,15 @@
   </ul>
 </nav>
 
-
 <!-- Modal Create Tag -->
 <div class="modal fade" id="addTagModal" tabindex="-1" aria-labelledby="addTagModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <form [formGroup]="tagForm" (ngSubmit)="onSubmitCreate()">
         <div class="modal-header">
-          <h5 class="modal-title" id="addMemberModalLabel">
-            <i class="bi bi-person-plus me-2 icon-style"></i>
-            <span class="section-title">New Member</span>
+          <h5 class="modal-title" id="addTagModalLabel">
+            <i class="bi bi-tags me-2 icon-style"></i>
+            <span class="section-title">New Tag</span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -147,29 +136,21 @@
         <div class="modal-body">
           <div class="container">
             <div class="row">
-              <!-- General Data -->
-              <div class="col-md-4 mb-3">
-                <label class="section-number-title-section">General Data</label>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> First Name:</label>
-                  <input type="text" formControlName="first" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': tagForm.get('name')?.touched && tagForm.get('name')?.invalid }"/>
-                  <div class="invalid-feedback"
-                       *ngIf="tagForm.get('name')?.touched && tagForm.get('name')?.invalid">
-                    <span class="error-text">First name is required.</span>
-                  </div>
+              <div class="col-md-6 mb-3">
+                <label class="section-number-title-section">Name</label>
+                <input type="text" formControlName="name" class="form-control mt-1 placeholder-input"
+                       [ngClass]="{ 'is-invalid': tagForm.get('name')?.touched && tagForm.get('name')?.invalid }" />
+                <div class="invalid-feedback" *ngIf="tagForm.get('name')?.touched && tagForm.get('name')?.invalid">
+                  <span class="error-text">Name is required.</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
         <div class="modal-footer">
-          <button type="submit"
-                  class="btn btn-primary custom-btn d-flex align-items-center"
-                  [disabled]="tagForm.invalid || isLoading">
-            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
-                  aria-hidden="true"></span>
+          <button type="submit" class="btn btn-primary custom-btn d-flex align-items-center" [disabled]="tagForm.invalid || isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             {{ isLoading ? 'Saving...' : 'Save Tag' }}
           </button>
           <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
@@ -186,7 +167,7 @@
       <form [formGroup]="tagForm" (ngSubmit)="onSaveTagChanges()">
         <div class="modal-header">
           <h5 class="modal-title" id="editTagModalLabel">
-            <i class="bi bi-person-plus me-2 icon-style"></i>
+            <i class="bi bi-tags me-2 icon-style"></i>
             <span class="section-title">Update Tag</span>
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -195,18 +176,12 @@
         <div class="modal-body">
           <div class="container">
             <div class="row">
-              <!-- General Data -->
-              <div class="col-md-4 mb-3">
-                <label class="section-number-title-section">General Data</label>
-
-                <div class="mt-3">
-                  <label class="title-info d-block"><i class="bi bi-person-badge"></i> Name:</label>
-                  <input type="text" formControlName="first" class="form-control mt-1 placeholder-input"
-                         [ngClass]="{ 'is-invalid': tagForm.get('name')?.touched && tagForm.get('name')?.invalid }"/>
-                  <div class="invalid-feedback"
-                       *ngIf="tagForm.get('name')?.touched && tagForm.get('name')?.invalid">
-                    <span class="error-text">Name is required.</span>
-                  </div>
+              <div class="col-md-6 mb-3">
+                <label class="section-number-title-section">Name</label>
+                <input type="text" formControlName="name" class="form-control mt-1 placeholder-input"
+                       [ngClass]="{ 'is-invalid': tagForm.get('name')?.touched && tagForm.get('name')?.invalid }" />
+                <div class="invalid-feedback" *ngIf="tagForm.get('name')?.touched && tagForm.get('name')?.invalid">
+                  <span class="error-text">Name is required.</span>
                 </div>
               </div>
             </div>
@@ -214,11 +189,8 @@
         </div>
 
         <div class="modal-footer">
-          <button type="submit"
-                  class="btn btn-primary custom-btn d-flex align-items-center"
-                  [disabled]="tagForm.invalid || isLoading">
-            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
-                  aria-hidden="true"></span>
+          <button type="submit" class="btn btn-primary custom-btn d-flex align-items-center" [disabled]="tagForm.invalid || isLoading">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             {{ isLoading ? 'Saving...' : 'Save Tag' }}
           </button>
           <button type="button" class="btn btn-secondary custom-btn-return" data-bs-dismiss="modal">Close</button>
@@ -229,12 +201,12 @@
 </div>
 
 <!-- Modal Remove Tag -->
-<div class="modal fade" id="removeTagModal" tabindex="-1">
+<div class="modal fade" id="removeTagModal" tabindex="-1" aria-labelledby="removeTagModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">
-          <i class="bi bi-collection me-2 icon-style"></i>
+        <h5 class="modal-title" id="removeTagModalLabel">
+          <i class="bi bi-tags me-2 icon-style"></i>
           <span class="section-title">Remove Tag</span>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -247,7 +219,6 @@
         </p>
       </div>
 
-
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" (click)="deleteTag()">
           <i class="bi bi-trash"></i>
@@ -258,4 +229,3 @@
     </div>
   </div>
 </div>
-

@@ -61,14 +61,14 @@ export class TagsService {
 
   updateTag(id:number,tag: any): Observable<any> {
     return this.http.put<any>(
-      `${this.server}/members/${id}`,
+      `${this.server}/tags/${id}`,
       { tag: tag },
       { headers: this.getAuthHeaders() }
     );
   }
 
   deleteTag(memberId: number): Observable<any> {
-    return this.http.delete(`${this.server}/members/${memberId}`, {
+    return this.http.delete(`${this.server}/tags/${memberId}`, {
       headers: this.getAuthHeaders()
     });
   }

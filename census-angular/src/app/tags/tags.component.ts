@@ -1,19 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MessagesComponent} from '../messages/messages.component';
 import {NgSelectModule} from "@ng-select/ng-select";
 import {TagsService} from "./service/tags.service";
-import {CompanyService} from "../companies/service/company.service";
-import { GroupService } from '../group/service/group.service';
 
 declare var bootstrap: any;
 
@@ -197,7 +187,7 @@ export class TagsComponent implements OnInit {
 
     this.service.getTagDetail(tagId).subscribe({
       next: (response: any) => {
-        this.initModal(response)
+        this.initModal(response.tag)
       },
       error: (error: any) => {
         this.showErrorMsg(error);
@@ -237,22 +227,35 @@ export class TagsComponent implements OnInit {
 
     this.service.deleteTag(this.tagToRemove.id).subscribe({
       next: (response: any) => {
-        this.showSuccessMsg(response.message || 'Member removed successfully');
+        this.showSuccessMsg(response.message || 'Tag removed successfully');
         this.closeRemoveTagModal();
         this.getTags(this.currentPage);
       },
       error: (error) => {
-        console.error('Error deleting member', error);
+        console.error('Error deleting tag', error);
         this.showErrorMsg(error);
       }
     });
   }
 
   closeRemoveTagModal() {
-    const modalElement = document.getElementById('removeMemberModal');
+    const modalElement = document.getElementById('removeTagModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
     }
+  }
+
+  getDisplayedPages(): number[] {
+    const pages: number[] = [];
+
+    const start = Math.max(2, this.currentPage - 2);
+    const end = Math.min(this.totalPages - 1, this.currentPage + 2);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 }
