@@ -125,6 +125,55 @@ export class MembersComponent implements OnInit {
     }
   }
 
+  downloadMassiveCompaniesTemplate() {
+    this.service.downloadTemplate('massive_companies_template.csv');
+  }
+
+  downloadNewCensusTemplate() {
+    this.service.downloadTemplate('new_census_template.csv');
+  }
+
+  benefitReport() {
+    this.service.billingReportByBenefitsAllCompanies().subscribe(
+      (res: any) => {
+        const blob = res.body as Blob;
+        const cd = res.headers.get('content-disposition') || '';
+        const match = /filename="?([^"]+)"?/.exec(cd);
+        const filename = match?.[1] || `billing-report-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }, (error: any) => {
+        this.showErrorMsg(error);
+      }
+    );
+  }
+
+  exportMembers() {
+    this.service.exportMembers().subscribe(
+      (res: any) => {
+        const blob = res.body as Blob;
+        // Intentar extraer filename del header (si Rails lo envía con send_data)
+        const cd = res.headers.get('content-disposition') || '';
+        const match = /filename="?([^"]+)"?/.exec(cd);
+        const filename = match?.[1] || `members-${new Date().toISOString().slice(0,19).replace(/[:T]/g,'-')}.csv`;
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }, (error: any) => {
+        this.showErrorMsg(error);
+      }
+    );
+  }
+
   getMembers(page: number) {
     this.service.getMembers(page, this.searchTerm, this.sort, this.direction, this.selectedTag).subscribe(
       (data: any) => {

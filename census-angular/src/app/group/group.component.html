@@ -86,8 +86,8 @@
                         role="switch"
                         [checked]="group.is_active"
                         id="switchCheckChecked-{{ group.id }}"
-                        (change)="onToggleActive($event, group, false)"/>
-
+                        (change)="onToggleActive($event, group, false)"
+                        title="Toggle active status"/>
                     <label
                     class="form-check-label ms-2"
                     [for]="'switchCheckChecked-' + group.id">
@@ -96,6 +96,10 @@
                 </div>
             </td>
             <td>
+                <button type="button" (click)="downloadGroupMembersCsv(group.id)" class="btn btn-link">
+                    <i class="bi bi-filetype-csv"></i>
+                </button>
+
                 <button type="button" (click)="showDetails(group)" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#showGroupModal">
                     <i class="bi bi-eye"></i>
                 </button>

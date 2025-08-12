@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {environment} from "../../environments/environment";
@@ -45,6 +45,34 @@ export class MembersService {
     return this.http.get(`${this.server}/members`, {
       headers: this.getAuthHeaders(),
       params
+    });
+  }
+
+  billingReportByBenefitsAllCompanies() {
+    return this.http.get(`${this.server}/members/billing_report_by_benefits_all_companies`, {
+      headers: this.getAuthHeaders(),
+      responseType: 'blob',
+      observe: 'response'
+    });
+  }
+
+  downloadTemplate(fileName: string) {
+    this.http.get(`assets/downloads/${fileName}`, { responseType: 'blob' })
+      .subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
+
+  exportMembers() {
+    return this.http.get(`${this.server}/members/export`, {
+      headers: this.getAuthHeaders(),
+      responseType: 'blob',
+      observe: 'response' // para leer el filename del header si viene
     });
   }
 
