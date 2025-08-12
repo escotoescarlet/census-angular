@@ -125,14 +125,6 @@ export class MembersComponent implements OnInit {
     }
   }
 
-  downloadMassiveCompaniesTemplate() {
-    this.service.downloadTemplate('massive_companies_template.csv');
-  }
-
-  downloadNewCensusTemplate() {
-    this.service.downloadTemplate('new_census_template.csv');
-  }
-
   benefitReport() {
     this.service.billingReportByBenefitsAllCompanies().subscribe(
       (res: any) => {
