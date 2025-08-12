@@ -82,7 +82,7 @@
     color: #A7A9B7;
     font-family: 'OpenSans Light';
     font-size: 12px;
-    width: 200px;
+    width: 200px !important;
 }
 
 .custom-btn-return {
