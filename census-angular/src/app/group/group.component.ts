@@ -1,10 +1,17 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, NgModel, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
-import { MessagesComponent } from '../messages/messages.component';
-import { GroupService } from './service/group.service';
+import {Component, OnInit} from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+import {MessagesComponent} from '../messages/messages.component';
+import {GroupService} from './service/group.service';
+import {BenefitsService} from "../benefits/service/benefits.service";
+import {CommonModule} from "@angular/common";
 
 declare var bootstrap: any;
 
@@ -89,7 +96,11 @@ export class GroupComponent implements OnInit {
     admin_accounts: []
   };
 
-  constructor(private fb: FormBuilder, private service: GroupService) {
+  constructor(
+    private fb: FormBuilder,
+    private service: GroupService,
+    private benefitsService: BenefitsService
+  ) {
   }
 
   ngOnInit(): void {
@@ -143,8 +154,8 @@ export class GroupComponent implements OnInit {
       next: (response: any) => {
         group.is_active = response.group.is_active;
 
-        if(fromModal) {
-          let groupFounded : any = this.searchGroup(group.id);
+        if (fromModal) {
+          let groupFounded: any = this.searchGroup(group.id);
           groupFounded.is_active = response.group.is_active;
         }
       },
@@ -155,7 +166,7 @@ export class GroupComponent implements OnInit {
     });
   }
 
-  searchGroup(id: number) : any {
+  searchGroup(id: number): any {
     return this.groups.find(group => group.id == id);
   }
 
@@ -227,7 +238,7 @@ export class GroupComponent implements OnInit {
       const newValue = event.target.checked;
 
       this.service.updateGroupBenefits(this.groupDetailEdit.id, [
-        { id: b.id, enabled: newValue }
+        {id: b.id, enabled: newValue}
       ]).subscribe({
         next: (data) => {
           b.enabled = newValue;
@@ -246,7 +257,7 @@ export class GroupComponent implements OnInit {
       const newValue = event.target.checked;
 
       this.service.updateGroupBenefits(this.groupDetail.id, [
-        { id: b.id, enabled: newValue }
+        {id: b.id, enabled: newValue}
       ]).subscribe({
         next: (data) => {
           b.enabled = newValue;
@@ -359,14 +370,17 @@ export class GroupComponent implements OnInit {
   }
 
   loadBenefits() {
-    this.service.getBenefits().subscribe((benefits: any[]) => {
-      this.benefits = benefits;
+    this.benefitsService.getBenefits().subscribe((data: any) => {
+      this.benefits = data.benefits;
 
-      const benefitControls = benefits.map(b => new FormControl(false));
-      const benefitPrices = benefits.reduce((acc, b) => {
-        acc[b.id] = b.price;
-        return acc;
-      }, {} as Record<number, number>);
+      const benefitControls = data.benefits.map(() => new FormControl(false));
+      const benefitPrices = data.benefits.reduce(
+        (acc: Record<number, number>, b: { id: number; price: number }) => {
+          acc[b.id] = b.price;
+          return acc;
+        },
+        {}
+      );
 
       this.groupForm.setControl('benefits', new FormArray(benefitControls));
       this.benefitPrices = benefitPrices;
