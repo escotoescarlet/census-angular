@@ -12,6 +12,7 @@ import {LogsComponent} from "./logs/logs.component";
 import {TagsComponent} from "./tags/tags.component";
 import {AdminCodifierComponent} from "./admin-codifier/admin-codifier.component";
 import {BenefitsComponent} from "./benefits/benefits.component";
+import { ReportsComponent } from './reports/reports.component';
 
 export const routes: Routes = [
   {path: 'login', component: LoginComponent},
@@ -28,6 +29,7 @@ export const routes: Routes = [
       { path: 'admin', component: AdminCodifierComponent },
       { path: 'admin/tags', component: TagsComponent },
       { path: 'admin/benefits', component: BenefitsComponent },
+      { path: 'reports', component: ReportsComponent },
     ]
   },
   {path: '', redirectTo: '/login', pathMatch: 'full'}

@@ -1,0 +1,101 @@
+<app-messages [show]="showMsg" [message]="messageInfo" [type]="typeMessage"></app-messages>
+
+<div class="row justify-content-center">
+  <div class="col-md-11 d-flex align-items-center">
+    <i class="bi bi-collection me-2 icon-style"></i>
+    <span class="section-title">Reports</span>
+  </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+
+        <div class="card">
+            <div class="d-flex justify-content-center mt-3">
+                <i class="bi bi-file-earmark-excel report-icon-style"></i>
+            </div>
+            <div class="card-body justify-content-center">
+                <h5 class="card-title card-title-style">Benefit Report</h5>
+                <p class="card-text card-text-style">The Benefit Report provides a detailed breakdown of all active and inactive benefits across companies or groups, including benefit names.</p>
+                <button class="btn custom-btn w-100" data-bs-toggle="modal" data-bs-target="#modalBenefitReport">Generate</button>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+<!-- Modal Benefit Report -->
+<div class="modal fade" id="modalBenefitReport" tabindex="-1" aria-labelledby="modalBenefitReportLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalBenefitReportLabel">
+            <i class="bi bi-file-earmark-excel me-2 icon-style"></i>
+            <span class="section-title">Benefit Report</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <!-- Benefit -->
+            <div class="mb-3">
+            <label for="benefitSelect" class="form-label text-modal-title">Benefit</label>
+            <select id="benefitSelect"
+                    class="form-select text-modal-body"
+                    [(ngModel)]="selectedBenefitId"
+                    name="benefitSelect"
+                    required>
+                <option [ngValue]="null" disabled selected>Select a benefit</option>
+                <option *ngFor="let b of benefits" [ngValue]="b.id">
+                {{ b.name }}
+                </option>
+            </select>
+            <div class="mt-2 text-modal-body-note">Note: Choose which benefit to include in the report.</div>
+            </div>
+
+            <!-- Date range -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="fromDate" class="form-label text-modal-title">From</label>
+                    <input id="fromDate"
+                        type="date"
+                        class="form-control text-modal-body"
+                        [(ngModel)]="fromDate"
+                        name="fromDate"
+                        required>
+                </div>
+                <div class="col-md-6">
+                    <label for="toDate" class="form-label text-modal-title">To</label>
+                    <input id="toDate"
+                        type="date"
+                        class="form-control text-modal-body"
+                        [(ngModel)]="toDate"
+                        name="toDate"
+                        required>
+                </div>
+            </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button"
+            class="btn custom-btn"
+            [disabled]="!isFormValid() || loadingBenefitReport"
+            (click)="onDownloadBenefitReport()">
+            <ng-container *ngIf="!loadingBenefitReport; else loadingTpl">
+                <i class="bi bi-download me-1"></i>
+                Download
+            </ng-container>
+            <ng-template #loadingTpl>
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Generating...
+            </ng-template>
+        </button>
+
+        <button type="button" class="btn custom-btn-return" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
