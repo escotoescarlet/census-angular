@@ -67,12 +67,6 @@ export class CompanyService {
     });
   }
 
-  getBenefits(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.server}/benefits`, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
   updateCompany(id:number,company: any): Observable<any> {
     return this.http.put<any>(
       `${this.server}/companies/${id}`,

@@ -54,12 +54,6 @@ export class GroupService {
     });
   }
 
-  getBenefits(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.server}/benefits`, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
   removeAdminFromGroup(groupId: number, accountId: number): Observable<void> {
     return this.http.delete<void>(
       `${this.server}/groups/${groupId}/admins/${accountId}`,

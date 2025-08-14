@@ -3,12 +3,12 @@ import {CommonModule} from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MessagesComponent} from '../messages/messages.component';
 import {NgSelectModule} from "@ng-select/ng-select";
-import {TagsService} from "./service/tags.service";
+import {BenefitsService} from "./service/benefits.service";
 
 declare var bootstrap: any;
 
 @Component({
-  selector: 'app-tags',
+  selector: 'app-benefits',
   standalone: true,
   imports: [
     CommonModule,
@@ -17,14 +17,14 @@ declare var bootstrap: any;
     MessagesComponent,
     NgSelectModule
   ],
-  templateUrl: './tags.component.html',
-  styleUrl: './tags.component.css'
+  templateUrl: './benefits.component.html',
+  styleUrl: './benefits.component.css'
 })
-export class TagsComponent implements OnInit {
+export class BenefitsComponent implements OnInit {
 
   Math = Math;
 
-  public tags: any[] = [];
+  public benefits: any[] = [];
   public totalPages: number = 0;
   public currentPage: number = 1;
   public isLoading = false;
@@ -36,25 +36,25 @@ export class TagsComponent implements OnInit {
   public searchTerm: string = '';
   public sort: string = 'name';
   public direction: string = 'asc';
-  public selectedTag: string = '';
-  public tagForm!: FormGroup;
+  public selectedBenefit: string = '';
+  public benefitForm!: FormGroup;
 
-  public tagToRemove: any;
+  public benefitToRemove: any;
 
   private addTagModal: any;
   private editTagModal: any;
 
   constructor(private fb: FormBuilder,
-    private service: TagsService) {}
+    private service: BenefitsService) {}
 
   ngOnInit(): void {
     this.initModal(null);
-    this.getTags(1);
+    this.getBenefits(1);
     this.initModalListeners();
   }
 
   private initModalListeners() {
-    const addModalElement = document.getElementById('addTagModal');
+    const addModalElement = document.getElementById('addBenefitModal');
     if (addModalElement) {
       this.addTagModal = new bootstrap.Modal(addModalElement);
       addModalElement.addEventListener('hidden.bs.modal', () => {
@@ -63,7 +63,7 @@ export class TagsComponent implements OnInit {
       });
     }
 
-    const editTagElement = document.getElementById('editTagModal');
+    const editTagElement = document.getElementById('editBenefitModal');
     if (editTagElement) {
       this.editTagModal = new bootstrap.Modal(editTagElement);
       editTagElement.addEventListener('hidden.bs.modal', () => {
@@ -73,55 +73,64 @@ export class TagsComponent implements OnInit {
     }
   }
 
-  getTags(page: number) {
-    this.service.getTags(page, this.searchTerm, this.sort, this.direction).subscribe(
+  getBenefits(page: number) {
+    this.service.getBenefits(page, this.searchTerm, this.sort, this.direction).subscribe(
       (data: any) => {
-        this.tags = data.tags;
+        this.benefits = data.benefits;
         this.totalPages = data.total_pages;
         this.currentPage = data.current_page;
       },
       (error: any) => {
-        console.error('Error fetching tags', error);
+        console.error('Error fetching benefit', error);
       }
     );
   }
 
   toggleSortDirection() {
     this.direction = this.direction === 'asc' ? 'desc' : 'asc';
-    this.getTags(this.currentPage);
+    this.getBenefits(this.currentPage);
   }
 
-  searchTag(id: number): any {
-    return this.tags.find(tag => tag.id == id);
+  searchBenefit(id: number): any {
+    return this.benefits.find(benefit => benefit.id == id);
   }
 
-  readyToRemove(tag: any) {
-    this.tagToRemove = tag;
+  readyToRemove(benefit: any) {
+    this.benefitToRemove = benefit;
   }
 
-  initModal(tag: any) {
-    const formData = tag ? {
-      id: tag.id,
-      name: tag.name,
+  initModal(benefit: any) {
+    const formData = benefit ? {
+      id: benefit.id,
+      name: benefit.name,
+      code: benefit.code,
+      price: benefit.price,
+      description: benefit.description,
     } : {
       id: null,
       name: null,
+      code: null,
+      price: null,
+      description: null,
     };
 
-    this.tagForm = this.fb.group({
+    this.benefitForm = this.fb.group({
       id: [formData.id],
       name: [formData.name, Validators.required],
+      code: [formData.code, Validators.required],
+      price: [formData.price],
+      description: [formData.description],
     });
   }
 
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
-      this.getTags(page);
+      this.getBenefits(page);
     }
   }
 
-  closeModalAddTag() {
-    const modalElement = document.getElementById('addTagModal');
+  closeModalAddBenefit() {
+    const modalElement = document.getElementById('addBenefitModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
@@ -150,44 +159,44 @@ export class TagsComponent implements OnInit {
   }
 
   onSubmitCreate() {
-    if (this.tagForm.invalid) return;
+    if (this.benefitForm.invalid) return;
 
     this.isLoading = true;
 
     const data = {
-      tag: {
-        ...this.tagForm.value,
+      benefit: {
+        ...this.benefitForm.value,
       }
     };
 
-    this.service.createTag(data).subscribe(
+    this.service.createBenefit(data).subscribe(
       (data: any) => {
-        console.log('Tag created', data);
+        console.log('Benefit created', data);
 
-        this.tagForm.reset();
+        this.benefitForm.reset();
         this.showSuccessMsg(data.message);
         this.initModal(null);
-        this.closeModalAddTag();
-        this.getTags(this.currentPage);
+        this.closeModalAddBenefit();
+        this.getBenefits(this.currentPage);
         this.isLoading = false;
       },
       (err: any) => {
-        console.error('Error creating tag', err);
+        console.error('Error creating benefit', err);
         this.showErrorMsg(err);
-        this.tagForm.reset();
-        this.closeModalAddTag();
-        this.getTags(this.currentPage);
+        this.benefitForm.reset();
+        this.closeModalAddBenefit();
+        this.getBenefits(this.currentPage);
         this.isLoading = false;
       }
     );
   }
 
-  prepareEditTag(selected: any) {
-    const tagId = selected.id;
+  prepareEditBenefit(selected: any) {
+    const benefitId = selected.id;
 
-    this.service.getTagDetail(tagId).subscribe({
+    this.service.getBenefitDetail(benefitId).subscribe({
       next: (response: any) => {
-        this.initModal(response.tag)
+        this.initModal(response.benefit)
       },
       error: (error: any) => {
         this.showErrorMsg(error);
@@ -195,17 +204,17 @@ export class TagsComponent implements OnInit {
     });
   }
 
-  onSaveTagChanges(): void {
+  onSaveBenefitChanges(): void {
 
     const data = {
-      ...this.tagForm.value,
+      ...this.benefitForm.value,
     };
 
-    this.service.updateTag(data.id, data).subscribe({
+    this.service.updateBenefit(data.id, data).subscribe({
       next: (data: any) => {
         this.showSuccessMsg(data.message);
-        this.closeModalEditTag();
-        this.getTags(this.currentPage);
+        this.closeModalEditBenefit();
+        this.getBenefits(this.currentPage);
       },
       error: (err: any) => {
         this.showErrorMsg(err);
@@ -213,8 +222,8 @@ export class TagsComponent implements OnInit {
     });
   }
 
-  closeModalEditTag(): void {
-    const modalElement = document.getElementById('editTagModal');
+  closeModalEditBenefit(): void {
+    const modalElement = document.getElementById('editBenefitModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
@@ -222,24 +231,24 @@ export class TagsComponent implements OnInit {
     }
   }
 
-  deleteTag(): void {
-    if (!this.tagToRemove || !this.tagToRemove.id) return;
+  deleteBenefit(): void {
+    if (!this.benefitToRemove || !this.benefitToRemove.id) return;
 
-    this.service.deleteTag(this.tagToRemove.id).subscribe({
+    this.service.deleteBenefit(this.benefitToRemove.id).subscribe({
       next: (response: any) => {
-        this.showSuccessMsg(response.message || 'Tag removed successfully');
-        this.closeRemoveTagModal();
-        this.getTags(this.currentPage);
+        this.showSuccessMsg(response.message || 'Benefit removed successfully');
+        this.closeRemoveBenefitModal();
+        this.getBenefits(this.currentPage);
       },
       error: (error) => {
-        console.error('Error deleting tag', error);
+        console.error('Error deleting benefit', error);
         this.showErrorMsg(error);
       }
     });
   }
 
-  closeRemoveTagModal() {
-    const modalElement = document.getElementById('removeTagModal');
+  closeRemoveBenefitModal() {
+    const modalElement = document.getElementById('removeBenefitModal');
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();

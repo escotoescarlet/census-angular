@@ -11,10 +11,10 @@ import {
 } from '@angular/forms';
 import {MessagesComponent} from '../messages/messages.component';
 import {CompanyService} from "./service/company.service";
-import {ServiceService} from "../service.service";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {GroupService} from '../group/service/group.service';
 import {TagsService} from "../tags/service/tags.service";
+import {BenefitsService} from "../benefits/service/benefits.service";
 
 declare var bootstrap: any;
 
@@ -89,7 +89,13 @@ export class CompanyComponent implements OnInit {
     admin_accounts: []
   };
 
-  constructor(private fb: FormBuilder, private service: CompanyService, private groupServices: GroupService, private tagServices: TagsService) {
+  constructor(
+    private fb: FormBuilder,
+    private service: CompanyService,
+    private groupServices: GroupService,
+    private tagServices: TagsService,
+    private benefitServices: BenefitsService
+  ) {
   }
 
   ngOnInit(): void {
@@ -287,14 +293,17 @@ export class CompanyComponent implements OnInit {
   }
 
   loadBenefits() {
-    this.service.getBenefits().subscribe((benefits: any[]) => {
-      this.benefits = benefits;
+    this.benefitServices.getBenefits().subscribe((data: any) => {
+      this.benefits = data.benefits;
 
-      const benefitControls = benefits.map(b => new FormControl(false));
-      const benefitPrices = benefits.reduce((acc, b) => {
-        acc[b.id] = b.price;
-        return acc;
-      }, {} as Record<number, number>);
+      const benefitControls = data.benefits.map(() => new FormControl(false));
+      const benefitPrices = data.benefits.reduce(
+        (acc: Record<number, number>, b: { id: number; price: number }) => {
+          acc[b.id] = b.price;
+          return acc;
+        },
+        {}
+      );
 
       this.companyForm.setControl('benefits', new FormArray(benefitControls));
       this.benefitPrices = benefitPrices;

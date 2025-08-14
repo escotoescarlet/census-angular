@@ -13,8 +13,9 @@ import {MessagesComponent} from '../messages/messages.component';
 import {NgSelectModule} from "@ng-select/ng-select";
 import {MembersService} from "./service/members.service";
 import {CompanyService} from "../companies/service/company.service";
-import { GroupService } from '../group/service/group.service';
+import {GroupService} from '../group/service/group.service';
 import {TagsService} from "../tags/service/tags.service";
+import {BenefitsService} from "../benefits/service/benefits.service";
 
 declare var bootstrap: any;
 
@@ -89,10 +90,13 @@ export class MembersComponent implements OnInit {
   };
 
   constructor(private fb: FormBuilder,
-    private service: MembersService,
-    private companyServices: CompanyService,
-    private groupServices: GroupService,
-    private tagServices: TagsService) {}
+              private service: MembersService,
+              private companyServices: CompanyService,
+              private groupServices: GroupService,
+              private tagServices: TagsService,
+              private benefitServices: BenefitsService,
+  ) {
+  }
 
   ngOnInit(): void {
     this.initModal(null);
@@ -332,19 +336,23 @@ export class MembersComponent implements OnInit {
   }
 
   loadBenefits() {
-    this.companyServices.getBenefits().subscribe((benefits: any[]) => {
-      this.benefits = benefits;
+    this.benefitServices.getBenefits().subscribe((data: any) => {
+      this.benefits = data.benefits;
 
-      const benefitControls = benefits.map(b => new FormControl(false));
-      const benefitPrices = benefits.reduce((acc, b) => {
-        acc[b.id] = b.price;
-        return acc;
-      }, {} as Record<number, number>);
+      const benefitControls = data.benefits.map(() => new FormControl(false));
+      const benefitPrices = data.benefits.reduce(
+        (acc: Record<number, number>, b: { id: number; price: number }) => {
+          acc[b.id] = b.price;
+          return acc;
+        },
+        {}
+      );
 
       this.memberForm.setControl('benefits', new FormArray(benefitControls));
       this.benefitPrices = benefitPrices;
     });
   }
+
 
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
