@@ -1,12 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, NgModel, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
-import { MessagesComponent } from '../messages/messages.component';
-import { GroupService } from './service/group.service';
 import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
 import {
   FormArray,
   FormBuilder,
@@ -19,6 +11,7 @@ import {
 import {MessagesComponent} from '../messages/messages.component';
 import {GroupService} from './service/group.service';
 import {BenefitsService} from "../benefits/service/benefits.service";
+import {CommonModule} from "@angular/common";
 
 declare var bootstrap: any;
 
