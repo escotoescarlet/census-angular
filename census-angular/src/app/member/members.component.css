@@ -72,6 +72,19 @@
     font-family: "OpenSans";
 }
 
+.filter-title {
+    color: rgb(163, 174, 208);
+    font-family: 'OpenSans Normal';
+    font-size: 14px;
+}
+
+.tag-input {
+    color: #A7A9B7;
+    font-family: 'OpenSans Light';
+    font-size: 12px;
+    width: 200px !important;
+}
+
 .custom-btn-return {
     color: #fff;
     background: #D9DAE2;
@@ -79,6 +92,13 @@
     box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
     font-family: "OpenSans";
     height: 42px;
+}
+
+.download-options {
+    font-family: 'OpenSans Normal';
+    font-size: 14px;
+    color: #A7A9B7;
+    cursor: pointer;
 }
 
 .table-row {

@@ -141,6 +141,14 @@ export class CompanyComponent implements OnInit {
     );
   }
 
+  downloadMassiveCompaniesTemplate() {
+    this.service.downloadTemplate('massive_companies_template.csv');
+  }
+
+  downloadNewCensusTemplate() {
+    this.service.downloadTemplate('new_census_template.csv');
+  }
+
   onTagChange(tagId: string) {
     this.selectedTag = tagId;
     this.getCompanies(1);

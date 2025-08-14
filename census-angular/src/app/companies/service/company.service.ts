@@ -55,6 +55,18 @@ export class CompanyService {
     });
   }
 
+  downloadTemplate(fileName: string) {
+    this.http.get(`assets/downloads/${fileName}`, { responseType: 'blob' })
+      .subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
+
   getCompanyDetails(companyId: string): Observable<any> {
     return this.http.get(`${this.server}/companies/${companyId}`,
       {headers: this.getAuthHeaders()}
