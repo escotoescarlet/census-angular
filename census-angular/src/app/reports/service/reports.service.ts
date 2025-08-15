@@ -51,4 +51,29 @@ export class ReportsService {
     });
   }
 
+  downloadSnaphostEnrollment(startDate: string, endDate: string): Observable<Blob> {
+    const params = new HttpParams()
+      .set('start_date', startDate)
+      .set('end_date', endDate);
+
+    return this.http.get(`${this.server}/report/members/snapshot_enrollment/export`, {
+      params,
+      responseType: 'blob',
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  downloadCompanyMemberEnrollment(company_id: string, startDate: string, endDate: string): Observable<Blob> {
+    const params = new HttpParams()
+      .set('company_id', company_id)
+      .set('start_date', startDate)
+      .set('end_date', endDate);
+
+    return this.http.get(`${this.server}/report/companies/members/enrollment/export`, {
+      params,
+      responseType: 'blob',
+      headers: this.getAuthHeaders()
+    });
+  }
+
 }

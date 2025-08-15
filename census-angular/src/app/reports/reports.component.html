@@ -33,6 +33,32 @@
           </div>
       </div>
     </div>
+
+    <div class="col-md-3">
+      <div class="card">
+          <div class="d-flex justify-content-center mt-3">
+              <i class="bi bi-file-earmark-excel report-icon-style"></i>
+          </div>
+          <div class="card-body justify-content-center">
+              <h5 class="card-title card-title-style">Snaphost Enrollment</h5>
+              <p class="card-text card-text-style">The Snapshot Enrollment Report provides a comprehensive record of all active members who experienced enrollment status changes within a date range.</p>
+              <button class="btn custom-btn w-100" data-bs-toggle="modal" data-bs-target="#modalSnaphostEnrollmentReport">Generate</button>
+          </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card">
+          <div class="d-flex justify-content-center mt-3">
+              <i class="bi bi-file-earmark-excel report-icon-style"></i>
+          </div>
+          <div class="card-body justify-content-center">
+              <h5 class="card-title card-title-style">Member Enrollment</h5>
+              <p class="card-text card-text-style">The Company Members Enrollment Report delivers a complete list of all members in a company whose enrollment status changed during a selected date range.</p>
+              <button class="btn custom-btn w-100" data-bs-toggle="modal" data-bs-target="#modalCompanyMemberEnrollmentReport">Generate</button>
+          </div>
+      </div>
+    </div>
 </div>
 
 
@@ -167,3 +193,136 @@
     </div>
   </div>
 </div>
+
+<!-- Modal Snaphot Enrollment Report -->
+<div class="modal fade" id="modalSnaphostEnrollmentReport" tabindex="-1" aria-labelledby="modalSnaphostEnrollmentReportLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalSnaphostEnrollmentReportLabel">
+            <i class="bi bi-file-earmark-excel me-2 icon-style"></i>
+            <span class="section-title">Snaphost Enrollment Report</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <!-- Date range -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="fromDateSnaphostEnrollment" class="form-label text-modal-title">From</label>
+                    <input id="fromDateSnaphostEnrollment"
+                        type="date"
+                        class="form-control text-modal-body"
+                        [(ngModel)]="fromDateSnaphostEnrollment"
+                        name="fromDateSnaphostEnrollment"
+                        required>
+                </div>
+                <div class="col-md-6">
+                    <label for="toDateSnaphostEnrollment" class="form-label text-modal-title">To</label>
+                    <input id="toDateSnaphostEnrollment"
+                        type="date"
+                        class="form-control text-modal-body"
+                        [(ngModel)]="toDateSnaphostEnrollment"
+                        name="toDateSnaphostEnrollment"
+                        required>
+                </div>
+            </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button"
+            class="btn custom-btn"
+            [disabled]="!isSnaphostEnrollmentValid() || loadingSnaphostEnrollment"
+            (click)="onDownloadSnaphostReport()">
+            <ng-container *ngIf="!loadingSnaphostEnrollment; else loadingTpl">
+                <i class="bi bi-download me-1"></i>
+                Download
+            </ng-container>
+            <ng-template #loadingTpl>
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Generating...
+            </ng-template>
+        </button>
+
+        <button type="button" class="btn custom-btn-return" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Member Enrollment by Date Report -->
+<div class="modal fade" id="modalCompanyMemberEnrollmentReport" tabindex="-1" aria-labelledby="modalCompanyMemberEnrollmentReportLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalCompanyMemberEnrollmentReportLabel">
+            <i class="bi bi-file-earmark-excel me-2 icon-style"></i>
+            <span class="section-title">Member Enrollment by Date</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <!-- Benefit -->
+            <div class="mb-3">
+            <label for="companySelect" class="form-label text-modal-title">Company</label>
+            <select id="companySelect"
+                    class="form-select text-modal-body"
+                    [(ngModel)]="companySelectedId"
+                    name="companySelect"
+                    required>
+                <option [ngValue]="null" disabled selected>Select a company</option>
+                <option *ngFor="let c of companies" [ngValue]="c.id">
+                {{ c.name }}
+                </option>
+            </select>
+            <div class="mt-2 text-modal-body-note">Note: Choose which company to include in the report.</div>
+            </div>
+
+            <!-- Date range -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="fromDateMemberEnrollment" class="form-label text-modal-title">From</label>
+                    <input id="fromDateMemberEnrollment"
+                        type="date"
+                        class="form-control text-modal-body"
+                        [(ngModel)]="fromDateMemberEnrollment"
+                        name="fromDateMemberEnrollment"
+                        required>
+                </div>
+                <div class="col-md-6">
+                    <label for="toDateMemberEnrollment" class="form-label text-modal-title">To</label>
+                    <input id="toDateMemberEnrollment"
+                        type="date"
+                        class="form-control text-modal-body"
+                        [(ngModel)]="toDateMemberEnrollment"
+                        name="toDateMemberEnrollment"
+                        required>
+                </div>
+            </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button"
+            class="btn custom-btn"
+            [disabled]="!isMemberEnrollmentFormValid() || loadingMemberEnrollment"
+            (click)="onDownloadCompanyMemberEnrollmentReport()">
+            <ng-container *ngIf="!loadingMemberEnrollment; else loadingTpl">
+                <i class="bi bi-download me-1"></i>
+                Download
+            </ng-container>
+            <ng-template #loadingTpl>
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Generating...
+            </ng-template>
+        </button>
+
+        <button type="button" class="btn custom-btn-return" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
