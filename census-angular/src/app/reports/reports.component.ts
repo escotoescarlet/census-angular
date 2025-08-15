@@ -30,6 +30,10 @@ export class ReportsComponent implements OnInit {
   public toDate: string = '';
   public loadingBenefitReport: boolean = false;
 
+  public fromDateMemberStatus: string = '';
+  public toDateMemberStatus: string = '';
+  public loadingMemberStatusReport: boolean = false;
+
   /**
    *
    */
@@ -54,13 +58,13 @@ export class ReportsComponent implements OnInit {
   }
 
   onDownloadBenefitReport() {
-  const benefitId = String(this.selectedBenefitId);
-  const startDate = this.fromDate; // 'YYYY-MM-DD'
-  const endDate   = this.toDate;   // 'YYYY-MM-DD'
+    const benefitId = String(this.selectedBenefitId);
+    const startDate = this.fromDate; // 'YYYY-MM-DD'
+    const endDate   = this.toDate;   // 'YYYY-MM-DD'
 
-  this.loadingBenefitReport = true;
-  
-  this.reportService.downloadReportBenefit(benefitId, startDate, endDate)
+    this.loadingBenefitReport = true;
+    
+    this.reportService.downloadReportBenefit(benefitId, startDate, endDate)
     .pipe(finalize(() => this.loadingBenefitReport = false))
     .subscribe({
       next: (blob) => {
@@ -80,7 +84,35 @@ export class ReportsComponent implements OnInit {
         this.showErrorMsg(err);
       }
     });
-}
+  }
+
+  onDownloadMemberStatusReport() {
+    const startDate = this.fromDateMemberStatus; // 'YYYY-MM-DD'
+    const endDate   = this.toDateMemberStatus;   // 'YYYY-MM-DD'
+
+    this.loadingMemberStatusReport = true;
+    
+    this.reportService.downloadMemberStatus(startDate, endDate)
+    .pipe(finalize(() => this.loadingMemberStatusReport = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `benefits_report_${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      }
+    });
+  }
 
   showErrorMsg(error: any) {
     this.messageInfo = error.status == 500 ? "Something went wrong" : error.error.errors[0];
@@ -104,6 +136,10 @@ export class ReportsComponent implements OnInit {
 
   isFormValid(): boolean {
     return !!this.selectedBenefitId && !!this.fromDate && !!this.toDate;
+  }
+
+  isFormMemberStatusValid(): boolean {
+    return !!this.fromDateMemberStatus && !!this.toDateMemberStatus;
   }
 
 

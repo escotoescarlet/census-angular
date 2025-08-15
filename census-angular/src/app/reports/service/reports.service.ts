@@ -39,4 +39,16 @@ export class ReportsService {
     });
   }
 
+  downloadMemberStatus(startDate: string, endDate: string): Observable<Blob> {
+    const params = new HttpParams()
+      .set('start_date', startDate)
+      .set('end_date', endDate);
+
+    return this.http.get(`${this.server}/report/members/status/export`, {
+      params,
+      responseType: 'blob',
+      headers: this.getAuthHeaders()
+    });
+  }
+
 }

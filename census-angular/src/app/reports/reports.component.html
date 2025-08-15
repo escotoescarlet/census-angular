@@ -9,19 +9,29 @@
 
 <div class="row mt-4">
     <div class="col-md-3">
+      <div class="card">
+          <div class="d-flex justify-content-center mt-3">
+              <i class="bi bi-file-earmark-excel report-icon-style"></i>
+          </div>
+          <div class="card-body justify-content-center">
+              <h5 class="card-title card-title-style">Benefit Report</h5>
+              <p class="card-text card-text-style">The Benefit Report provides a detailed breakdown of all active and inactive benefits across companies or groups, including benefit names.</p>
+              <button class="btn custom-btn w-100" data-bs-toggle="modal" data-bs-target="#modalBenefitReport">Generate</button>
+          </div>
+      </div>
+    </div>
 
-        <div class="card">
-            <div class="d-flex justify-content-center mt-3">
-                <i class="bi bi-file-earmark-excel report-icon-style"></i>
-            </div>
-            <div class="card-body justify-content-center">
-                <h5 class="card-title card-title-style">Benefit Report</h5>
-                <p class="card-text card-text-style">The Benefit Report provides a detailed breakdown of all active and inactive benefits across companies or groups, including benefit names.</p>
-                <button class="btn custom-btn w-100" data-bs-toggle="modal" data-bs-target="#modalBenefitReport">Generate</button>
-            </div>
-        </div>
-
-
+    <div class="col-md-3">
+      <div class="card">
+          <div class="d-flex justify-content-center mt-3">
+              <i class="bi bi-file-earmark-excel report-icon-style"></i>
+          </div>
+          <div class="card-body justify-content-center">
+              <h5 class="card-title card-title-style">Member Status</h5>
+              <p class="card-text card-text-style">The Member Status Report provides a detailed list of all members whose enrollment status changed within a date range, including key personal and benefit details.</p>
+              <button class="btn custom-btn w-100" data-bs-toggle="modal" data-bs-target="#modalStatusReport">Generate</button>
+          </div>
+      </div>
     </div>
 </div>
 
@@ -85,6 +95,64 @@
             [disabled]="!isFormValid() || loadingBenefitReport"
             (click)="onDownloadBenefitReport()">
             <ng-container *ngIf="!loadingBenefitReport; else loadingTpl">
+                <i class="bi bi-download me-1"></i>
+                Download
+            </ng-container>
+            <ng-template #loadingTpl>
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Generating...
+            </ng-template>
+        </button>
+
+        <button type="button" class="btn custom-btn-return" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Member Status Report -->
+<div class="modal fade" id="modalStatusReport" tabindex="-1" aria-labelledby="modalStatusReportLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalStatusReportLabel">
+            <i class="bi bi-file-earmark-excel me-2 icon-style"></i>
+            <span class="section-title">Member Status Report</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <!-- Date range -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="fromDateMemberStatus" class="form-label text-modal-title">From</label>
+                    <input id="fromDateMemberStatus"
+                        type="date"
+                        class="form-control text-modal-body"
+                        [(ngModel)]="fromDateMemberStatus"
+                        name="fromDateMemberStatus"
+                        required>
+                </div>
+                <div class="col-md-6">
+                    <label for="toDateMemberStatus" class="form-label text-modal-title">To</label>
+                    <input id="toDateMemberStatus"
+                        type="date"
+                        class="form-control text-modal-body"
+                        [(ngModel)]="toDateMemberStatus"
+                        name="toDateMemberStatus"
+                        required>
+                </div>
+            </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button"
+            class="btn custom-btn"
+            [disabled]="!isFormMemberStatusValid() || loadingMemberStatusReport"
+            (click)="onDownloadMemberStatusReport()">
+            <ng-container *ngIf="!loadingMemberStatusReport; else loadingTpl">
                 <i class="bi bi-download me-1"></i>
                 Download
             </ng-container>

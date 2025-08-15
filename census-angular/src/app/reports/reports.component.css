@@ -85,3 +85,7 @@
     font-family: "OpenSans";
     height: 42px;
 }
+
+.card-custom-class {
+    height: 300px !important;
+}
