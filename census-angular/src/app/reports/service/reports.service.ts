@@ -70,6 +70,13 @@ export class ReportsService {
     });
   }
 
+  downloadGroupReport(): Observable<Blob> {
+    return this.http.get(`${this.server}/report/groups/export_group_report`, {
+      responseType: 'blob',
+      headers: this.getAuthHeaders()
+    });
+  }
+
   downloadCompanyMemberEnrollment(company_id: string, startDate: string, endDate: string): Observable<Blob> {
     const params = new HttpParams()
       .set('company_id', company_id)
