@@ -45,6 +45,8 @@ export class ReportsComponent implements OnInit {
   public toDateMemberEnrollment: string = '';
   public loadingMemberEnrollment: boolean = false;
 
+  public loadingBillingInfo: boolean = false;
+
   /**
    *
    */
@@ -163,6 +165,31 @@ export class ReportsComponent implements OnInit {
         console.error('Error downloading report:', err);
         this.showErrorMsg(err);
       }
+    });
+  }
+
+  onDownloadBillingReport() {
+    this.loadingBillingInfo = true;
+
+    this.reportService.downloadDownloadBillingReport()
+    .pipe(finalize(() => this.loadingBillingInfo = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `company_benefits_member_export${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      },
     });
   }
 

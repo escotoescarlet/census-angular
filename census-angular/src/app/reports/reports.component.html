@@ -61,6 +61,33 @@
     </div>
 </div>
 
+<div class="row mt-4">
+  <div class="col-md-3">
+      <div class="card">
+          <div class="d-flex justify-content-center mt-3">
+              <i class="bi bi-file-earmark-excel report-icon-style"></i>
+          </div>
+          <div class="card-body justify-content-center">
+              <h5 class="card-title card-title-style">Billing Report</h5>
+              <p class="card-text card-text-style">The Company Benefits Report provides a detailed summary of each company’s active members, their assigned benefits, and related pricing data within the selected period.</p>
+              <button type="button"
+                class="btn custom-btn w-100"
+                [disabled]="loadingBillingInfo"
+                (click)="onDownloadBillingReport()">
+                <ng-container *ngIf="!loadingBillingInfo; else loadingTpl">
+                    <i class="bi bi-download me-1"></i>
+                    Download
+                </ng-container>
+                <ng-template #loadingTpl>
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Downloading...
+                </ng-template>
+            </button>
+          </div>
+      </div>
+    </div>
+</div>
+
 
 <!-- Modal Benefit Report -->
 <div class="modal fade" id="modalBenefitReport" tabindex="-1" aria-labelledby="modalBenefitReportLabel" aria-hidden="true">
