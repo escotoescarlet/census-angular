@@ -47,6 +47,8 @@ export class ReportsComponent implements OnInit {
 
   public loadingBillingInfo: boolean = false;
   public loadingGroupInfo: boolean = false;
+  public loadingSpanishSpeakersInfo: boolean = false;
+  public loadingDuplicatedInfo: boolean = false;
 
   /**
    *
@@ -216,6 +218,55 @@ export class ReportsComponent implements OnInit {
         console.error('Error downloading report:', err);
         this.showErrorMsg(err);
       },
+    });
+  }
+
+  onDownloadSpanishSpeakersReport() {
+    this.loadingSpanishSpeakersInfo = true;
+
+    this.reportService.downloadSpanishSpeakersReport()
+    .pipe(finalize(() => this.loadingSpanishSpeakersInfo = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `spanish_speakers_${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      },
+    });
+  }
+
+  onDownloadDuplicatedReport() {
+    this.loadingDuplicatedInfo = true;
+    this.reportService.downloadDuplicatedReport()
+      .pipe(finalize(() => this.loadingDuplicatedInfo = false))
+      .subscribe({
+        next: (blob) => {
+          if (!blob || blob.size === 0) {
+            this.showErrorMsgStr('No data found for the selected filters.');
+            return;
+          }
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `duplicated_member_report_${Date.now()}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          console.error('Error downloading report:', err);
+          this.showErrorMsg(err);
+        },
     });
   }
 

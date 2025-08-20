@@ -77,6 +77,20 @@ export class ReportsService {
     });
   }
 
+  downloadSpanishSpeakersReport(): Observable<Blob> {
+    return this.http.get(`${this.server}/report/member/export_members_spanish_speak`, {
+      responseType: 'blob',
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  downloadDuplicatedReport(): Observable<Blob> {
+    return this.http.get(
+      `${this.server}/report/member/members_duplicated_export`,
+      { responseType: 'blob', headers: this.getAuthHeaders() }
+    );
+  }
+
   downloadCompanyMemberEnrollment(company_id: string, startDate: string, endDate: string): Observable<Blob> {
     const params = new HttpParams()
       .set('company_id', company_id)

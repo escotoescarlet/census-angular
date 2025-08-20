@@ -111,6 +111,56 @@
           </div>
       </div>
     </div>
+
+    <div class="col-md-3">
+      <div class="card">
+          <div class="d-flex justify-content-center mt-3">
+              <i class="bi bi-file-earmark-excel report-icon-style"></i>
+          </div>
+          <div class="card-body justify-content-center">
+              <h5 class="card-title card-title-style">Spanish Speakers</h5>
+              <p class="card-text card-text-style">The Spanish Speakers Report provides a detailed list of all members who have Spanish as their preferred language and contact details, and demographic data.</p>
+              <button type="button"
+                class="btn custom-btn w-100"
+                [disabled]="loadingSpanishSpeakersInfo"
+                (click)="onDownloadSpanishSpeakersReport()">
+                <ng-container *ngIf="!loadingSpanishSpeakersInfo; else loadingTpl">
+                    <i class="bi bi-download me-1"></i>
+                    Download
+                </ng-container>
+                <ng-template #loadingTpl>
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Downloading...
+                </ng-template>
+            </button>
+          </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card">
+          <div class="d-flex justify-content-center mt-3">
+              <i class="bi bi-file-earmark-excel report-icon-style"></i>
+          </div>
+          <div class="card-body justify-content-center">
+              <h5 class="card-title card-title-style">Duplicated Report</h5>
+              <p class="card-text card-text-style">The Duplicated Members Report identifies and lists members with potential duplicate records, including company details, contact information, demographics, and unique identifiers.</p>
+              <button type="button"
+                class="btn custom-btn w-100"
+                [disabled]="loadingDuplicatedInfo"
+                (click)="onDownloadDuplicatedReport()">
+                <ng-container *ngIf="!loadingDuplicatedInfo; else loadingTpl">
+                    <i class="bi bi-download me-1"></i>
+                    Download
+                </ng-container>
+                <ng-template #loadingTpl>
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Downloading...
+                </ng-template>
+            </button>
+          </div>
+      </div>
+    </div>
 </div>
 
 
