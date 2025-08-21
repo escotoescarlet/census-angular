@@ -12,6 +12,7 @@ import {MessagesComponent} from '../messages/messages.component';
 import {GroupService} from './service/group.service';
 import {BenefitsService} from "../benefits/service/benefits.service";
 import {CommonModule} from "@angular/common";
+import {StorageService} from "../storage.service";
 
 declare var bootstrap: any;
 
@@ -63,6 +64,7 @@ export class GroupComponent implements OnInit {
   public filteredCompanies: any[] = [];
   public filteredCompaniesEdit: any[] = [];
   public groupToRemove: any;
+  public user: any;
 
   public groupDetailEdit: {
     id: number | null;
@@ -99,7 +101,8 @@ export class GroupComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private service: GroupService,
-    private benefitsService: BenefitsService
+    private benefitsService: BenefitsService,
+    private storageService: StorageService,
   ) {
   }
 
@@ -107,6 +110,7 @@ export class GroupComponent implements OnInit {
     this.initModalCreate();
     this.loadBenefits();
     this.getGroups(this.currentPage);
+    this.user = this.storageService.getItem("_user")
   }
 
   getGroups(page: number) {

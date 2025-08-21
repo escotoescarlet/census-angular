@@ -15,6 +15,7 @@ import {NgSelectModule} from "@ng-select/ng-select";
 import {GroupService} from '../group/service/group.service';
 import {TagsService} from "../tags/service/tags.service";
 import {BenefitsService} from "../benefits/service/benefits.service";
+import {StorageService} from "../storage.service";
 
 declare var bootstrap: any;
 
@@ -67,6 +68,8 @@ export class CompanyComponent implements OnInit {
 
   public companyToRemove: any;
 
+  public user: any;
+
   public companyDetailEdit: any = {
     id: null,
     name: '',
@@ -94,7 +97,8 @@ export class CompanyComponent implements OnInit {
     private service: CompanyService,
     private groupServices: GroupService,
     private tagServices: TagsService,
-    private benefitServices: BenefitsService
+    private benefitServices: BenefitsService,
+    private storageService: StorageService,
   ) {
   }
 
@@ -104,6 +108,7 @@ export class CompanyComponent implements OnInit {
     this.getCompanies(this.currentPage);
     this.getGroups()
     this.getTags();
+    this.user = this.storageService.getItem("_user")
   }
 
   getCompanies(page: number) {

@@ -1,13 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { ProfileComponent } from '../profile/profile.component';
-import { Router, RouterModule } from '@angular/router';
-import { StorageService } from '../storage.service';
-import { ServiceService } from '../service.service';
-import { MessagesComponent } from '../messages/messages.component';
-import { NotificationStateService } from '../shared/notification-state.service';
-import { NotificationService } from '../notifications/service/notification.service';
-import { DashboardService } from '../dashboard/service/dashboard.service';
+import {CommonModule} from '@angular/common';
+import {Component, OnInit} from '@angular/core';
+import {Router, RouterModule} from '@angular/router';
+import {StorageService} from '../storage.service';
+import {MessagesComponent} from '../messages/messages.component';
+import {NotificationStateService} from '../shared/notification-state.service';
+import {NotificationService} from '../notifications/service/notification.service';
+import {DashboardService} from '../dashboard/service/dashboard.service';
 
 @Component({
   selector: 'app-header-nav',
@@ -29,11 +27,13 @@ export class HeaderNavComponent implements OnInit {
   public latestNotifications: any[] = [];
   public unreadNotifCount: number = 0;
 
+  public user: any;
+
   constructor(private router: Router,
     private notificationStateService: NotificationStateService,
     private service: NotificationService,
     private dashboardService: DashboardService,
-    private storageService: StorageService) { 
+    private storageService: StorageService) {
   }
 
   ngOnInit(): void {
@@ -43,6 +43,7 @@ export class HeaderNavComponent implements OnInit {
 
     this.getLastetsNotifications();
     this.getUnreadNotifications();
+    this.user = this.storageService.getItem("_user")
   }
 
   logout(): void {

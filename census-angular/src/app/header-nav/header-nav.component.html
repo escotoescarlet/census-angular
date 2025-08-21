@@ -65,7 +65,7 @@
             <i class="bi bi-person-circle fs-4 icon-header-style"></i>
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-            <li>
+            <li *ngIf="user.admin">
               <a class="dropdown-item" [routerLink]="['/main/admin']">
                 <i class="bi bi-gear-fill icon-style"></i>
                 <span class="option-text-info">Admin</span>
@@ -77,13 +77,13 @@
                 <span class="option-text-info">Profile</span>
               </a>
             </li>
-            <li>
+            <li *ngIf="user.admin">
               <a class="dropdown-item" [routerLink]="['/main/reports']">
                 <i class="bi bi-gear-fill icon-style"></i>
                 <span class="option-text-info">Reports</span>
               </a>
             </li>
-            <li>
+            <li *ngIf="user.admin">
               <a class="dropdown-item" [routerLink]="['/main/accounts']">
                 <i class="bi bi-people icon-style"></i>
                 <span class="option-text-info">Accounts</span>

@@ -78,25 +78,33 @@
                     {{ group.companies_count }}
                 </span>
             </td>
-            <td class="text-start">
-                <div class="form-check form-switch d-flex align-items-center">
-                    <input
-                        class="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        [checked]="group.is_active"
-                        id="switchCheckChecked-{{ group.id }}"
-                        (change)="onToggleActive($event, group, false)"
-                        title="Toggle active status"/>
-                    <label
-                    class="form-check-label ms-2"
-                    [for]="'switchCheckChecked-' + group.id">
-                        <span class="section-number-data">Active</span>
-                    </label>
-                </div>
-            </td>
-            <td>
-                <button type="button" (click)="downloadGroupMembersCsv(group.id)" class="btn btn-link">
+          <td class="text-start">
+            <ng-container *ngIf="user.almost_rw_group_permissions; else readonlyGroupStatus">
+              <div class="form-check form-switch d-flex align-items-center">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [checked]="group.is_active"
+                  id="switchCheckChecked-{{ group.id }}"
+                  (change)="onToggleActive($event, group, false)"
+                  title="Toggle active status"/>
+                <label
+                  class="form-check-label ms-2"
+                  [for]="'switchCheckChecked-' + group.id">
+                  <span class="section-number-data">Active</span>
+                </label>
+              </div>
+            </ng-container>
+
+            <ng-template #readonlyGroupStatus>
+              <span class="section-number-data">
+                {{ group.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </ng-template>
+          </td>
+          <td>
+                <button *ngIf="user.almost_rw_group_permissions" type="button" (click)="downloadGroupMembersCsv(group.id)" class="btn btn-link">
                     <i class="bi bi-filetype-csv"></i>
                 </button>
 
@@ -104,11 +112,11 @@
                     <i class="bi bi-eye"></i>
                 </button>
 
-                <button type="button" (click)="prepareEditGroup(group)" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#editGroupModal">
+                <button *ngIf="user.almost_rw_group_permissions" type="button" (click)="prepareEditGroup(group)" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#editGroupModal">
                     <i class="bi bi-pencil text-success"></i>
                 </button>
 
-                <button type="button" (click)="readyToRemove(group)" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#removeGroupModal">
+                <button *ngIf="user.almost_rw_group_permissions" type="button" (click)="readyToRemove(group)" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#removeGroupModal">
                     <i class="bi bi-trash3 text-danger"></i>
                 </button>
             </td>

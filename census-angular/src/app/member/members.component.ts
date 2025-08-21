@@ -16,6 +16,7 @@ import {CompanyService} from "../companies/service/company.service";
 import {GroupService} from '../group/service/group.service';
 import {TagsService} from "../tags/service/tags.service";
 import {BenefitsService} from "../benefits/service/benefits.service";
+import {StorageService} from "../storage.service";
 
 declare var bootstrap: any;
 
@@ -67,6 +68,8 @@ export class MembersComponent implements OnInit {
   private addMemberModal: any;
   private editMemberModal: any;
 
+  public user: any;
+
   public memberDetailEdit: any = {
     id: null,
     name: '',
@@ -95,6 +98,7 @@ export class MembersComponent implements OnInit {
               private groupServices: GroupService,
               private tagServices: TagsService,
               private benefitServices: BenefitsService,
+              private storageService: StorageService,
   ) {
   }
 
@@ -105,6 +109,7 @@ export class MembersComponent implements OnInit {
     this.getGroups()
     this.getTags();
     this.initModalListeners();
+    this.user = this.storageService.getItem("_user")
   }
 
   private initModalListeners() {

@@ -4,6 +4,7 @@ import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {MessagesComponent} from '../messages/messages.component';
 import {NgSelectModule} from "@ng-select/ng-select";
 import {BenefitsService} from "./service/benefits.service";
+import {StorageService} from "../storage.service";
 
 declare var bootstrap: any;
 
@@ -43,14 +44,19 @@ export class BenefitsComponent implements OnInit {
 
   private addTagModal: any;
   private editTagModal: any;
+  public user: any;
 
   constructor(private fb: FormBuilder,
-    private service: BenefitsService) {}
+              private service: BenefitsService,
+              private storageService: StorageService,
+  ) {
+  }
 
   ngOnInit(): void {
     this.initModal(null);
     this.getBenefits(1);
     this.initModalListeners();
+    this.user = this.storageService.getItem("_user")
   }
 
   private initModalListeners() {
