@@ -91,6 +91,13 @@ export class ReportsService {
     );
   }
 
+  downloadEmptyBenefitsReport(): Observable<Blob> {
+    return this.http.get(
+      `${this.server}/report/member/report_blank_benefits`,
+      { responseType: 'blob', headers: this.getAuthHeaders() }
+    );
+  }
+
   downloadCompanyMemberEnrollment(company_id: string, startDate: string, endDate: string): Observable<Blob> {
     const params = new HttpParams()
       .set('company_id', company_id)
@@ -103,5 +110,14 @@ export class ReportsService {
       headers: this.getAuthHeaders()
     });
   }
+
+  downloadCompaniesCustomReport(params: { company_ids: string }) {
+    return this.http.get(`${this.server}/report/companies/custom_export`, {
+      params,
+      responseType: 'blob',
+      headers: this.getAuthHeaders()
+    });
+  }
+
 
 }

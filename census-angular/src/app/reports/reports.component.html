@@ -163,6 +163,37 @@
     </div>
 </div>
 
+<div class="row mt-4">
+  <div class="col-md-3">
+      <div class="card">
+        <div class="d-flex justify-content-center mt-3">
+            <i class="bi bi-file-earmark-excel report-icon-style"></i>
+        </div>
+        <div class="card-body justify-content-center">
+            <h5 class="card-title card-title-style">Empty Benefits</h5>
+            <p class="card-text card-text-style">The Blank Benefits Report lists all members without assigned benefits, showing their status, company, demographics, and contact information at the time of reporting.</p>
+            <button type="button"
+              class="btn custom-btn w-100"
+              [disabled]="loadingEmptyBenefitsInfo"
+              (click)="onDownloadEmptyBenefitsReport()">
+              <ng-container *ngIf="!loadingEmptyBenefitsInfo; else loadingTpl">
+                  <i class="bi bi-download me-1"></i>
+                  Download
+              </ng-container>
+              <ng-template #loadingTpl>
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Downloading...
+              </ng-template>
+          </button>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Modals Data -->
 
 <!-- Modal Benefit Report -->
 <div class="modal fade" id="modalBenefitReport" tabindex="-1" aria-labelledby="modalBenefitReportLabel" aria-hidden="true">
@@ -178,14 +209,14 @@
       <div class="modal-body">
         <form>
             <!-- Benefit -->
-            <div class="mb-3">
+            <div class="mb-3" *ngIf="benefits?.length">
             <label for="benefitSelect" class="form-label text-modal-title">Benefit</label>
             <select id="benefitSelect"
                     class="form-select text-modal-body"
                     [(ngModel)]="selectedBenefitId"
                     name="benefitSelect"
                     required>
-                <option [ngValue]="null" disabled selected>Select a benefit</option>
+                <option [ngValue]="null" disabled>Select a benefit</option>
                 <option *ngFor="let b of benefits" [ngValue]="b.id">
                 {{ b.name }}
                 </option>
@@ -368,19 +399,19 @@
       <div class="modal-body">
         <form>
             <!-- Benefit -->
-            <div class="mb-3">
-            <label for="companySelect" class="form-label text-modal-title">Company</label>
-            <select id="companySelect"
-                    class="form-select text-modal-body"
-                    [(ngModel)]="companySelectedId"
-                    name="companySelect"
-                    required>
-                <option [ngValue]="null" disabled selected>Select a company</option>
-                <option *ngFor="let c of companies" [ngValue]="c.id">
-                {{ c.name }}
-                </option>
-            </select>
-            <div class="mt-2 text-modal-body-note">Note: Choose which company to include in the report.</div>
+            <div class="mb-3" *ngIf="companies?.length">
+              <label for="companySelect" class="form-label text-modal-title">Company</label>
+              <select id="companySelect"
+                      class="form-select text-modal-body"
+                      [(ngModel)]="companySelectedId"
+                      name="companySelect"
+                      required>
+                  <option [ngValue]="null" disabled>Select a company</option>
+                  <option *ngFor="let c of companies" [ngValue]="c.id">
+                  {{ c.name }}
+                  </option>
+              </select>
+              <div class="mt-2 text-modal-body-note">Note: Choose which company to include in the report.</div>
             </div>
 
             <!-- Date range -->
@@ -427,4 +458,7 @@
     </div>
   </div>
 </div>
+
+
+
 

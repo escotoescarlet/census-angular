@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BenefitsService } from '../benefits/service/benefits.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -27,6 +27,7 @@ export class ReportsComponent implements OnInit {
 
   public benefits: any[] = [];
   public companies: any[] = [];
+  public companiesCustom: any[] = [];
   public selectedBenefitId: number | null = null;
   public companySelectedId: number | null = null;
   public fromDate: string = '';
@@ -49,13 +50,18 @@ export class ReportsComponent implements OnInit {
   public loadingGroupInfo: boolean = false;
   public loadingSpanishSpeakersInfo: boolean = false;
   public loadingDuplicatedInfo: boolean = false;
+  public loadingEmptyBenefitsInfo: boolean = false;
+
+  public loadingMemberCompaniesInfo: boolean = false;
+  public companySelectedCustomId: number | null = null;
 
   /**
    *
    */
   constructor(private benefitService: BenefitsService,
     private reportService: ReportsService,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private cdr: ChangeDetectorRef
   ) {
   }
 
@@ -67,8 +73,9 @@ export class ReportsComponent implements OnInit {
   getAllBenefits() {
     this.benefitService.getAllBenefits().subscribe(
       (data: any) => {
-        this.benefits = data;
+        this.benefits = data.benefits ?? [];
         this.selectedBenefitId = this.benefits[0].id;
+        this.cdr.markForCheck();
       }, (error: any) => {
         this.showErrorMsg(error);
       }
@@ -78,8 +85,10 @@ export class ReportsComponent implements OnInit {
   getAllCompanies() {
     this.companyService.getAllCompanies().subscribe(
       (data: any) => {
-        this.companies = data;
+        this.companies = data ?? [];
         this.companySelectedId = this.companies[0].id;
+        this.companySelectedCustomId = this.companies[0].id;
+        this.cdr.markForCheck();
       }, (error: any) => {
         this.showErrorMsg(error);
       }
@@ -270,6 +279,30 @@ export class ReportsComponent implements OnInit {
     });
   }
 
+  onDownloadEmptyBenefitsReport() {
+    this.loadingEmptyBenefitsInfo = true;
+    this.reportService.downloadEmptyBenefitsReport()
+      .pipe(finalize(() => this.loadingEmptyBenefitsInfo = false))
+      .subscribe({
+        next: (blob) => {
+          if (!blob || blob.size === 0) {
+            this.showErrorMsgStr('No data found for the selected filters.');
+            return;
+          }
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `report_blank_benefits_${Date.now()}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          console.error('Error downloading report:', err);
+          this.showErrorMsg(err);
+        },
+    });
+  }
+
   onDownloadCompanyMemberEnrollmentReport() {
     const companyId = String(this.companySelectedId);
     const startDate = this.fromDateMemberEnrollment; // 'YYYY-MM-DD'
@@ -334,6 +367,5 @@ export class ReportsComponent implements OnInit {
   isMemberEnrollmentFormValid(): boolean {
     return !!this.companySelectedId && !!this.fromDateMemberEnrollment && !!this.toDateMemberEnrollment;
   }
-
 
 }
