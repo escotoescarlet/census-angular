@@ -112,12 +112,10 @@ export class ReportsService {
   }
 
   downloadCompaniesCustomReport(params: { company_ids: string }) {
-    return this.http.get(`${this.server}/report/companies/custom_export`, {
-      params,
-      responseType: 'blob',
-      headers: this.getAuthHeaders()
-    });
+    return this.http.get(
+      `${this.server}/report/companies/custom_export`,
+      { params, responseType: 'blob', observe: 'response', headers: this.getAuthHeaders() }
+    );
   }
-
 
 }

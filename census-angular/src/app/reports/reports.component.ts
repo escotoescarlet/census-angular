@@ -53,7 +53,9 @@ export class ReportsComponent implements OnInit {
   public loadingEmptyBenefitsInfo: boolean = false;
 
   public loadingMemberCompaniesInfo: boolean = false;
-  public companySelectedCustomId: number | null = null;
+  public selectedCompanyId: number | null = null;
+  public selectedCompanies: Array<{ id: number; name: string }> = [];
+  public trackByCompanyId = (_: number, c: { id: number }) => c.id;
 
   /**
    *
@@ -87,7 +89,6 @@ export class ReportsComponent implements OnInit {
       (data: any) => {
         this.companies = data ?? [];
         this.companySelectedId = this.companies[0].id;
-        this.companySelectedCustomId = this.companies[0].id;
         this.cdr.markForCheck();
       }, (error: any) => {
         this.showErrorMsg(error);
@@ -332,6 +333,65 @@ export class ReportsComponent implements OnInit {
     });
   }
 
+  addCompanyToList() {
+    if (this.selectedCompanyId == null) return;
+
+    const company = this.companies.find(c => c.id === this.selectedCompanyId);
+    if (!company) return;
+
+    const already = this.selectedCompanies.some(c => c.id === company.id);
+    if (!already) {
+      this.selectedCompanies = [...this.selectedCompanies, company];
+    }
+
+    this.selectedCompanyId = null;
+  }
+
+  removeCompanyFromList(id: number) {
+    this.selectedCompanies = this.selectedCompanies.filter(c => c.id !== id);
+  }
+
+  onDownloadMemberInCustomCompaniesReport() {
+    if (!this.selectedCompanies.length) {
+      this.showErrorMsgStr('Please add at least one company.');
+      return;
+    }
+
+    this.loadingMemberCompaniesInfo = true;
+
+    const ids = this.selectedCompanies.map(c => c.id).join(',');
+    const params = { company_ids: ids };
+
+    this.reportService.downloadCompaniesCustomReport(params)
+      .subscribe({
+        next: (res: any) => {
+          const blob = res.body as Blob;
+          if (!blob || blob.size === 0) {
+            this.showErrorMsgStr('No data found for the selected companies.');
+            this.loadingMemberCompaniesInfo = false;
+            return;
+          }
+
+          const cd = res.headers.get('content-disposition') || '';
+          const match = /filename="?([^"]+)"?/.exec(cd);
+          const filename = match?.[1] || `members_custom_report_${Date.now()}.csv`;
+
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          this.loadingMemberCompaniesInfo = false;
+        },
+        error: (err) => {
+          this.showErrorMsg(err);
+          this.loadingMemberCompaniesInfo = false;
+        }
+      });
+  }
+
   showErrorMsg(error: any) {
     this.messageInfo = error.status == 500 ? "Something went wrong" : error.error.errors[0];
     this.typeMessage = "ERROR";
@@ -366,6 +426,20 @@ export class ReportsComponent implements OnInit {
 
   isMemberEnrollmentFormValid(): boolean {
     return !!this.companySelectedId && !!this.fromDateMemberEnrollment && !!this.toDateMemberEnrollment;
+  }
+
+  onCompanySelected() {
+    if (this.selectedCompanyId == null) return;
+
+    const company = this.companies.find(c => c.id === this.selectedCompanyId);
+    if (!company) return;
+
+    const already = this.selectedCompanies.some(c => c.id === company.id);
+    if (!already) {
+      this.selectedCompanies = [...this.selectedCompanies, company];
+    }
+
+    this.selectedCompanyId = null;
   }
 
 }
