@@ -55,6 +55,12 @@ export class CompanyService {
     });
   }
 
+  getAllCompanies() {
+    return this.http.get(`${this.server}/companies/all`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
   downloadTemplate(fileName: string) {
     this.http.get(`assets/downloads/${fileName}`, { responseType: 'blob' })
       .subscribe(blob => {

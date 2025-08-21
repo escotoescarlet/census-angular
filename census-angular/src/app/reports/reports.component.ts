@@ -1,0 +1,445 @@
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { BenefitsService } from '../benefits/service/benefits.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MessagesComponent } from '../messages/messages.component';
+import { ReportsService } from './service/reports.service';
+import { finalize } from 'rxjs';
+import { CompanyService } from '../companies/service/company.service';
+
+@Component({
+  selector: 'app-reports',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MessagesComponent
+  ],
+  templateUrl: './reports.component.html',
+  styleUrl: './reports.component.css'
+})
+export class ReportsComponent implements OnInit {
+
+  public messageInfo: string = '';
+  public typeMessage: string = '';
+  public showMsg: boolean = false;
+
+  public benefits: any[] = [];
+  public companies: any[] = [];
+  public companiesCustom: any[] = [];
+  public selectedBenefitId: number | null = null;
+  public companySelectedId: number | null = null;
+  public fromDate: string = '';
+  public toDate: string = '';
+  public loadingBenefitReport: boolean = false;
+
+  public fromDateMemberStatus: string = '';
+  public toDateMemberStatus: string = '';
+  public loadingMemberStatusReport: boolean = false;
+
+  public fromDateSnaphostEnrollment: string = '';
+  public toDateSnaphostEnrollment: string = '';
+  public loadingSnaphostEnrollment: boolean = false;
+
+  public fromDateMemberEnrollment: string = '';
+  public toDateMemberEnrollment: string = '';
+  public loadingMemberEnrollment: boolean = false;
+
+  public loadingBillingInfo: boolean = false;
+  public loadingGroupInfo: boolean = false;
+  public loadingSpanishSpeakersInfo: boolean = false;
+  public loadingDuplicatedInfo: boolean = false;
+  public loadingEmptyBenefitsInfo: boolean = false;
+
+  public loadingMemberCompaniesInfo: boolean = false;
+  public selectedCompanyId: number | null = null;
+  public selectedCompanies: Array<{ id: number; name: string }> = [];
+  public trackByCompanyId = (_: number, c: { id: number }) => c.id;
+
+  /**
+   *
+   */
+  constructor(private benefitService: BenefitsService,
+    private reportService: ReportsService,
+    private companyService: CompanyService,
+    private cdr: ChangeDetectorRef
+  ) {
+  }
+
+  ngOnInit(): void {
+    this.getAllBenefits();
+    this.getAllCompanies();
+  }
+
+  getAllBenefits() {
+    this.benefitService.getAllBenefits().subscribe(
+      (data: any) => {
+        this.benefits = data.benefits ?? [];
+        this.selectedBenefitId = this.benefits[0].id;
+        this.cdr.markForCheck();
+      }, (error: any) => {
+        this.showErrorMsg(error);
+      }
+    );
+  }
+
+  getAllCompanies() {
+    this.companyService.getAllCompanies().subscribe(
+      (data: any) => {
+        this.companies = data ?? [];
+        this.companySelectedId = this.companies[0].id;
+        this.cdr.markForCheck();
+      }, (error: any) => {
+        this.showErrorMsg(error);
+      }
+    );
+  }
+
+  onDownloadBenefitReport() {
+    const benefitId = String(this.selectedBenefitId);
+    const startDate = this.fromDate; // 'YYYY-MM-DD'
+    const endDate   = this.toDate;   // 'YYYY-MM-DD'
+
+    this.loadingBenefitReport = true;
+    
+    this.reportService.downloadReportBenefit(benefitId, startDate, endDate)
+    .pipe(finalize(() => this.loadingBenefitReport = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `benefits_report_${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  onDownloadMemberStatusReport() {
+    const startDate = this.fromDateMemberStatus; // 'YYYY-MM-DD'
+    const endDate   = this.toDateMemberStatus;   // 'YYYY-MM-DD'
+
+    this.loadingMemberStatusReport = true;
+    
+    this.reportService.downloadMemberStatus(startDate, endDate)
+    .pipe(finalize(() => this.loadingMemberStatusReport = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `member_status_report_${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  onDownloadSnaphostReport() {
+    const startDate = this.fromDateSnaphostEnrollment; // 'YYYY-MM-DD'
+    const endDate   = this.toDateSnaphostEnrollment;   // 'YYYY-MM-DD'
+
+    this.loadingSnaphostEnrollment = true;
+    
+    this.reportService.downloadSnaphostEnrollment(startDate, endDate)
+    .pipe(finalize(() => this.loadingSnaphostEnrollment = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `snaphost_enrollment_report_${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  onDownloadBillingReport() {
+    this.loadingBillingInfo = true;
+
+    this.reportService.downloadDownloadBillingReport()
+    .pipe(finalize(() => this.loadingBillingInfo = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `company_benefits_member_export${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      },
+    });
+  }
+
+  onDownloadGroupReport() {
+    this.loadingGroupInfo = true;
+
+    this.reportService.downloadGroupReport()
+    .pipe(finalize(() => this.loadingGroupInfo = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `group_reports_${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      },
+    });
+  }
+
+  onDownloadSpanishSpeakersReport() {
+    this.loadingSpanishSpeakersInfo = true;
+
+    this.reportService.downloadSpanishSpeakersReport()
+    .pipe(finalize(() => this.loadingSpanishSpeakersInfo = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `spanish_speakers_${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      },
+    });
+  }
+
+  onDownloadDuplicatedReport() {
+    this.loadingDuplicatedInfo = true;
+    this.reportService.downloadDuplicatedReport()
+      .pipe(finalize(() => this.loadingDuplicatedInfo = false))
+      .subscribe({
+        next: (blob) => {
+          if (!blob || blob.size === 0) {
+            this.showErrorMsgStr('No data found for the selected filters.');
+            return;
+          }
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `duplicated_member_report_${Date.now()}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          console.error('Error downloading report:', err);
+          this.showErrorMsg(err);
+        },
+    });
+  }
+
+  onDownloadEmptyBenefitsReport() {
+    this.loadingEmptyBenefitsInfo = true;
+    this.reportService.downloadEmptyBenefitsReport()
+      .pipe(finalize(() => this.loadingEmptyBenefitsInfo = false))
+      .subscribe({
+        next: (blob) => {
+          if (!blob || blob.size === 0) {
+            this.showErrorMsgStr('No data found for the selected filters.');
+            return;
+          }
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `report_blank_benefits_${Date.now()}.csv`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          console.error('Error downloading report:', err);
+          this.showErrorMsg(err);
+        },
+    });
+  }
+
+  onDownloadCompanyMemberEnrollmentReport() {
+    const companyId = String(this.companySelectedId);
+    const startDate = this.fromDateMemberEnrollment; // 'YYYY-MM-DD'
+    const endDate   = this.toDateMemberEnrollment;   // 'YYYY-MM-DD'
+
+    this.loadingMemberEnrollment = true;
+    
+    this.reportService.downloadCompanyMemberEnrollment(companyId, startDate, endDate)
+    .pipe(finalize(() => this.loadingMemberEnrollment = false))
+    .subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) {
+          this.showErrorMsgStr('No data found for the selected filters.');
+          return;
+        }
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `company_member_enrollment_report_${Date.now()}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error downloading report:', err);
+        this.showErrorMsg(err);
+      }
+    });
+  }
+
+  addCompanyToList() {
+    if (this.selectedCompanyId == null) return;
+
+    const company = this.companies.find(c => c.id === this.selectedCompanyId);
+    if (!company) return;
+
+    const already = this.selectedCompanies.some(c => c.id === company.id);
+    if (!already) {
+      this.selectedCompanies = [...this.selectedCompanies, company];
+    }
+
+    this.selectedCompanyId = null;
+  }
+
+  removeCompanyFromList(id: number) {
+    this.selectedCompanies = this.selectedCompanies.filter(c => c.id !== id);
+  }
+
+  onDownloadMemberInCustomCompaniesReport() {
+    if (!this.selectedCompanies.length) {
+      this.showErrorMsgStr('Please add at least one company.');
+      return;
+    }
+
+    this.loadingMemberCompaniesInfo = true;
+
+    const ids = this.selectedCompanies.map(c => c.id).join(',');
+    const params = { company_ids: ids };
+
+    this.reportService.downloadCompaniesCustomReport(params)
+      .subscribe({
+        next: (res: any) => {
+          const blob = res.body as Blob;
+          if (!blob || blob.size === 0) {
+            this.showErrorMsgStr('No data found for the selected companies.');
+            this.loadingMemberCompaniesInfo = false;
+            return;
+          }
+
+          const cd = res.headers.get('content-disposition') || '';
+          const match = /filename="?([^"]+)"?/.exec(cd);
+          const filename = match?.[1] || `members_custom_report_${Date.now()}.csv`;
+
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          this.loadingMemberCompaniesInfo = false;
+        },
+        error: (err) => {
+          this.showErrorMsg(err);
+          this.loadingMemberCompaniesInfo = false;
+        }
+      });
+  }
+
+  showErrorMsg(error: any) {
+    this.messageInfo = error.status == 500 ? "Something went wrong" : error.error.errors[0];
+    this.typeMessage = "ERROR";
+    this.showMsg = true;
+
+    setTimeout(() => {
+      this.showMsg = false;
+    }, 5000);
+  }
+
+  showErrorMsgStr(error: string) {
+    this.messageInfo = error;
+    this.typeMessage = "ERROR";
+    this.showMsg = true;
+
+    setTimeout(() => {
+      this.showMsg = false;
+    }, 5000);
+  }
+
+  isFormValid(): boolean {
+    return !!this.selectedBenefitId && !!this.fromDate && !!this.toDate;
+  }
+
+  isFormMemberStatusValid(): boolean {
+    return !!this.fromDateMemberStatus && !!this.toDateMemberStatus;
+  }
+
+  isSnaphostEnrollmentValid(): boolean {
+    return !!this.fromDateSnaphostEnrollment && !!this.toDateSnaphostEnrollment;
+  }
+
+  isMemberEnrollmentFormValid(): boolean {
+    return !!this.companySelectedId && !!this.fromDateMemberEnrollment && !!this.toDateMemberEnrollment;
+  }
+
+  onCompanySelected() {
+    if (this.selectedCompanyId == null) return;
+
+    const company = this.companies.find(c => c.id === this.selectedCompanyId);
+    if (!company) return;
+
+    const already = this.selectedCompanies.some(c => c.id === company.id);
+    if (!already) {
+      this.selectedCompanies = [...this.selectedCompanies, company];
+    }
+
+    this.selectedCompanyId = null;
+  }
+
+}

@@ -1,0 +1,91 @@
+@font-face {
+    font-family: 'OpenSans';
+    src: url('../../assets/webfonts/opensans_bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans Normal';
+    src: url('../../assets/webfonts/opensans_regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans Light';
+    src: url('../../assets/webfonts/opensans_light.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.section-title {
+    color: rgb(163, 174, 208);
+    font-family: 'OpenSans';
+    font-size: 24px;
+}
+
+.icon-style {
+    color: rgb(163, 174, 208);
+    font-size: 24px;
+}
+
+.report-icon-style {
+    color: rgb(163, 174, 208);
+    font-size: 3rem;
+}
+
+.card-title-style {
+    font-family: 'OpenSans';
+    color: rgb(163, 174, 208);
+}
+
+.card-text-style {
+    font-family: 'OpenSans Normal';
+    color: rgb(163, 174, 208);
+    font-size: 12px;
+}
+
+.custom-btn {
+    background: #006BD1;
+    color: #fff;
+    border: 1px solid white;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    height: 42px;
+    font-family: "OpenSans";
+}
+
+.section-title {
+    color: rgb(163, 174, 208);
+    font-family: 'OpenSans';
+    font-size: 24px;
+}
+
+.text-modal-body {
+    font-family: 'OpenSans Normal';
+    font-size: 12px;
+    color: rgb(163, 174, 208);
+}
+
+.text-modal-title {
+    font-family: 'OpenSans';
+    color: rgb(163, 174, 208);
+}
+
+.text-modal-body-note {
+    color: rgb(255, 0, 0);
+    font-size: 12px;
+}
+
+.custom-btn-return {
+    color: #fff;
+    background: #D9DAE2;
+    border: 1px solid white;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    font-family: "OpenSans";
+    height: 42px;
+}
+
+.card-custom-class {
+    height: 300px !important;
+}
