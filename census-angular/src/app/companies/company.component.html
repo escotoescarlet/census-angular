@@ -50,6 +50,7 @@
         <li><a class="dropdown-item download-options download-options" (click)="downloadNewCensusTemplate()">Download Census Template</a></li>
         <li><a class="dropdown-item download-options download-options" (click)="downloadMassiveCompaniesTemplate()">Download Massive Company Template</a></li>
         <li><a class="dropdown-item download-options download-options" data-bs-toggle="modal" data-bs-target="#importModal">Import</a></li>
+        <li><a class="dropdown-item download-options download-options" data-bs-toggle="modal" data-bs-target="#importMassiveCompaniesModal">Import Massive Companies</a></li>
       </ul>
     </div>
   </div>
@@ -1092,6 +1093,72 @@
           <span *ngIf="isUploading">Uploading… {{ uploadProgress }}%</span>
         </button>
         <button type="button" class="btn custom-btn-return" data-bs-dismiss="modal" (click)="resetModal()" [disabled]="isUploading">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Import Massive Companies -->
+<div class="modal fade" id="importMassiveCompaniesModal" #massiveModalEl tabindex="-1"
+     aria-labelledby="importMassiveCompaniesLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title section-title" id="importMassiveCompaniesLabel">Import Massive Companies</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="resetMassiveModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Dropzone -->
+        <div class="dropzone"
+             [class.dropzone--active]="isDraggingMassive"
+             (dragover)="onDragOverMassive($event)"
+             (dragleave)="onDragLeaveMassive($event)"
+             (drop)="onDropMassive($event)"
+             role="button" tabindex="0"
+             (click)="openMassiveFilePicker()"
+             (keyup.enter)="openMassiveFilePicker()"
+             aria-label="Upload CSV via drag and drop or click to browse">
+          <div class="dropzone__content">
+            <i class="bi bi-cloud-arrow-up fs-1"></i>
+            <p class="mb-1 fw-semibold">Drop your CSV here</p>
+            <p class="text-muted small mb-2">or click to browse</p>
+            <span class="badge text-bg-light">Only .csv</span>
+          </div>
+          <input #massiveFileInput type="file" class="d-none" accept=".csv,text/csv"
+                 (change)="onMassiveFileSelected($event)" />
+        </div>
+
+        <!-- Info / mensajes -->
+        <div class="mt-3">
+          <div *ngIf="selectedMassiveFile" class="alert alert-secondary py-2 mb-2">
+            <i class="bi bi-filetype-csv me-2"></i>
+            <strong>{{ selectedMassiveFile.name }}</strong>
+            <span class="ms-2 text-muted">
+              ({{ (selectedMassiveFile.size/1024 | number:'1.0-0') }} KB)
+            </span>
+          </div>
+
+          <div *ngIf="massiveErrorMsg" class="alert alert-danger py-2 mb-2">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ massiveErrorMsg }}
+          </div>
+
+          <div *ngIf="massiveMessage && !massiveErrorMsg" class="alert alert-info py-2 mb-0">
+            {{ massiveMessage }}
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn custom-btn"
+                [disabled]="!selectedMassiveFile || isUploadingMassive"
+                (click)="uploadMassiveFile()">
+          <ng-container *ngIf="!isUploadingMassive">Upload</ng-container>
+          <ng-container *ngIf="isUploadingMassive">Uploading… {{ massiveProgress }}%</ng-container>
+        </button>
+        <button type="button" class="btn custom-btn-return"
+                data-bs-dismiss="modal" [disabled]="isUploadingMassive"
+                (click)="resetMassiveModal()">Cancel</button>
       </div>
     </div>
   </div>
