@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {
   FormArray,
@@ -15,6 +15,7 @@ import {NgSelectModule} from "@ng-select/ng-select";
 import {GroupService} from '../group/service/group.service';
 import {TagsService} from "../tags/service/tags.service";
 import {BenefitsService} from "../benefits/service/benefits.service";
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 declare var bootstrap: any;
 
@@ -34,6 +35,15 @@ declare var bootstrap: any;
 export class CompanyComponent implements OnInit {
 
   Math = Math;
+
+  @ViewChild('fileInput') 
+  public fileInput!: ElementRef<HTMLInputElement>;
+
+  @ViewChild('massiveModalEl') 
+  public massiveModalEl!: ElementRef<HTMLDivElement>;
+
+  @ViewChild('massiveFileInput') 
+  public massiveFileInput!: ElementRef<HTMLInputElement>;
 
   public companies: any[] = [];
   public totalPages: number = 0;
@@ -65,7 +75,23 @@ export class CompanyComponent implements OnInit {
   public paginatedMembers: any[] = [];
   public filteredMembers: any[] = [];
 
+  public selectedFile: File | null = null;
+
   public companyToRemove: any;
+  public isDragging = false;
+  public isUploading = false;
+  public uploadProgress = 0;
+  public message = '';
+  public errorMsg = '';
+
+  public selectedMassiveFile: File | null = null;
+  public isDraggingMassive = false;
+  public isUploadingMassive = false;
+  public massiveProgress = 0;
+  public massiveMessage = '';
+  public massiveErrorMsg = '';
+
+  private onModalHiddenMassive?: () => void;
 
   public companyDetailEdit: any = {
     id: null,
@@ -104,6 +130,109 @@ export class CompanyComponent implements OnInit {
     this.getCompanies(this.currentPage);
     this.getGroups()
     this.getTags();
+  }
+
+  openFilePicker() {
+    this.fileInput?.nativeElement.click();
+  }
+
+  onFileSelected(event: Event) {
+    this.clearMessages();
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] || null;
+
+    if (file && !this.isCsv(file)) {
+      this.errorMsg = 'Only CSV files are allowed.';
+      this.selectedFile = null;
+      this.resetInput();
+      return;
+    }
+    this.selectedFile = file;
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+    this.clearMessages();
+
+    const file = event.dataTransfer?.files?.[0] || null;
+    if (!file) return;
+
+    if (!this.isCsv(file)) {
+      this.errorMsg = 'Only CSV files are allowed.';
+      this.selectedFile = null;
+      return;
+    }
+    this.selectedFile = file;
+    this.resetInput(); // opcional: para que al volver a abrir también dispare change
+  }
+
+  uploadFile() {
+    this.clearMessages();
+    if (!this.selectedFile) {
+      this.errorMsg = 'Please select a CSV file.';
+      return;
+    }
+
+    this.isUploading = true;
+    this.uploadProgress = 0;
+
+    this.service.importMembers(this.selectedFile).subscribe({
+      next: (event: HttpEvent<any>) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          this.uploadProgress = Math.round(100 * (event.loaded / event.total));
+        } else if (event.type === HttpEventType.Response) {
+          this.message = event.body?.message || 'Upload successful';
+          this.isUploading = false;
+          this.getCompanies(this.currentPage);
+        }
+      },
+      error: (err) => {
+        this.errorMsg = err?.error?.message || 'Error uploading file';
+        this.isUploading = false;
+      }
+    });
+  }
+
+  // helper para validar CSV
+  private isCsv(file: File): boolean {
+    const nameOk = /\.csv$/i.test(file.name);
+    const typeOk = ['text/csv', 'application/vnd.ms-excel'].includes(file.type) || file.type === '';
+    return nameOk || typeOk;
+  }
+
+  private clearMessages() {
+    this.message = '';
+    this.errorMsg = '';
+  }
+
+  private resetInput() {
+    if (this.fileInput?.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+  }
+
+  resetModal(): void {
+    this.selectedFile = null;
+    this.isDragging = false;
+    this.isUploading = false;
+    this.uploadProgress = 0;
+    this.message = '';
+    this.errorMsg = '';
+    this.resetInput();
   }
 
   getCompanies(page: number) {
@@ -381,6 +510,16 @@ export class CompanyComponent implements OnInit {
     }, 5000);
   }
 
+  showErrorMsgStr(error: string) {
+    this.messageInfo = error;
+    this.typeMessage = "ERROR";
+    this.showMsg = true;
+
+    setTimeout(() => {
+      this.showMsg = false;
+    }, 5000);
+  }
+
   showSuccessMsg(message: string) {
     this.messageInfo = message;
     this.typeMessage = "SUCCESS";
@@ -597,5 +736,75 @@ export class CompanyComponent implements OnInit {
     }
 
     return pages;
+  }
+
+  openMassiveFilePicker() { this.massiveFileInput?.nativeElement.click(); }
+
+  onMassiveFileSelected(ev: Event) {
+    this.clearMassiveMsgs();
+    const input = ev.target as HTMLInputElement;
+    const f = input.files?.[0] || null;
+    if (f && !this.isCsvMassive(f)) {
+      this.massiveErrorMsg = 'Only CSV files are allowed.';
+      this.selectedMassiveFile = null;
+      this.resetMassiveInput();
+      return;
+    }
+    this.selectedMassiveFile = f;
+  }
+
+  onDragOverMassive(e: DragEvent) { e.preventDefault(); e.stopPropagation(); this.isDraggingMassive = true; }
+  onDragLeaveMassive(e: DragEvent) { e.preventDefault(); e.stopPropagation(); this.isDraggingMassive = false; }
+  onDropMassive(e: DragEvent) {
+    e.preventDefault(); e.stopPropagation(); this.isDraggingMassive = false; this.clearMassiveMsgs();
+    const f = e.dataTransfer?.files?.[0] || null;
+    if (!f) return;
+    if (!this.isCsvMassive(f)) { this.massiveErrorMsg = 'Only CSV files are allowed.'; this.selectedMassiveFile = null; return; }
+    this.selectedMassiveFile = f;
+    this.resetMassiveInput();
+  }
+
+  uploadMassiveFile() {
+    this.clearMassiveMsgs();
+    if (!this.selectedMassiveFile) { this.massiveErrorMsg = 'Please select a CSV file.'; return; }
+
+    this.isUploadingMassive = true;
+    this.massiveProgress = 0;
+
+    this.service.importMassiveCompanies(this.selectedMassiveFile).subscribe({
+      next: (event: HttpEvent<any>) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          this.massiveProgress = Math.round(100 * (event.loaded / event.total));
+        } else if (event.type === HttpEventType.Response) {
+          const body = event.body || {};
+          this.massiveMessage = body.message || 'Upload successful';
+          this.isUploadingMassive = false;
+          this.getCompanies(this.currentPage);
+        }
+      },
+      error: (err) => {
+        this.massiveErrorMsg = err?.error?.message || 'Error uploading file';
+        this.isUploadingMassive = false;
+      }
+    });
+  }
+
+  resetMassiveModal() {
+    this.selectedMassiveFile = null;
+    this.isDraggingMassive = false;
+    this.isUploadingMassive = false;
+    this.massiveProgress = 0;
+    this.massiveMessage = '';
+    this.massiveErrorMsg = '';
+    this.resetMassiveInput();
+  }
+
+  private resetMassiveInput() { if (this.massiveFileInput?.nativeElement) this.massiveFileInput.nativeElement.value = ''; }
+  private clearMassiveMsgs() { this.massiveMessage = ''; this.massiveErrorMsg = ''; }
+
+  private isCsvMassive(file: File): boolean {
+    const byName = /\.csv$/i.test(file.name);
+    const byType = ['text/csv', 'application/csv', 'application/vnd.ms-excel'].includes(file.type) || file.type === '';
+    return byName || byType;
   }
 }

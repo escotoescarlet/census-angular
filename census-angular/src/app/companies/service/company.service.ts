@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {environment} from "../../environments/environment";
@@ -53,6 +53,28 @@ export class CompanyService {
       headers: this.getAuthHeaders(),
       params
     });
+  }
+
+  importMembers(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name); // opcional el file.name
+
+    const headers = this.getAuthHeaders()
+      .delete('Content-Type')     // ✨ clave
+      .delete('Accept');          // opcional (pero ayuda a simplificar)
+
+    const req = new HttpRequest(
+      'POST',
+      `${this.server}/companies/import`,
+      formData,
+      {
+        reportProgress: true,
+        headers,                  // solo Authorization
+        // observe lo maneja HttpRequest implícitamente como 'events'
+      }
+    );
+
+    return this.http.request(req);
   }
 
   getAllCompanies() {
@@ -110,6 +132,24 @@ export class CompanyService {
     return this.http.get(`${this.server}/companies/by_group/${groupId}`, {
       headers: this.getAuthHeaders(),
     });
+  }
+
+  importMassiveCompanies(file: File): Observable<HttpEvent<any>> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+
+    const headers = this.getAuthHeaders()
+      .delete('Content-Type')     // ✨ clave
+      .delete('Accept');          // opcional (pero ayuda a simplificar)
+
+    const req = new HttpRequest(
+      'POST',
+      `${this.server}/companies/import_massive`,
+      formData,
+      { reportProgress: true, headers }
+    );
+
+    return this.http.request(req);
   }
 
 }
